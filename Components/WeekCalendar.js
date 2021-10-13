@@ -4,24 +4,24 @@ import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import Icon from 'react-native-vector-icons/AntDesign';
 import {months} from './Calendar';
 
+export const weekMonths = {
+  0: 'Jan',
+  1: 'Feb',
+  2: 'Mar',
+  3: 'Apr',
+  4: 'May',
+  5: 'June',
+  6: 'July',
+  7: 'Aug',
+  8: 'Sept',
+  9: 'Oct',
+  10: 'Nov',
+  11: 'Dec',
+}; //these r the months for the week in mainTodos
+
 const WeekCalendar = ({navigation}) => {
   const [currentMonth, setCurrentMonth] = useState(new Date().getMonth());
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
-  const weekMonths = {
-    0: 'Jan',
-    1: 'Feb',
-    2: 'Mar',
-    3: 'Apr',
-    4: 'May',
-    5: 'June',
-    6: 'July',
-    7: 'Aug',
-    8: 'Sept',
-    9: 'Oct',
-    10: 'Nov',
-    11: 'Dec',
-  }; //these r the months for the week in mainTodos
-
   const getWeekFormattedDate = date => {
     //this converts the date to the format dd M yyyy
     return `${date.getDate()} ${
@@ -144,7 +144,7 @@ const WeekCalendar = ({navigation}) => {
   };
 
   function handleWeekPress(week) {
-    navigation.navigate('Todos', {time: week.split("#")[0], lastPage: 'week'});
+    navigation.navigate('Todos', {time: week.split('#')[0], lastPage: 'week'});
   }
 
   return (
