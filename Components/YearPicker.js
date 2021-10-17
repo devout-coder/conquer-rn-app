@@ -21,18 +21,19 @@ const YearPicker = ({year, changeYear}) => {
       style={{
         width: 120,
         color: '#ffffff',
+        fontSize:24
       }}
       //   itemStyle={{fontFamily:"Poppins-Medium", height:10}}
       mode={'dropdown'}
       onValueChange={newYear => changeYear(newYear)}>
       {getYears().map(year => (
-        <Picker.Item label={String(year)} value={year} />
+        <Picker.Item
+          label={String(year)}
+          value={year}
+          fontFamily="Poppins-Medium"
+          style={{fontFamily:"Poppins-Medium", height:10}}
+        />
       ))}
-      {/* <Picker.Item label="Data-Structures" value="DSA" />
-      <Picker.Item label="ReactJs" value="react" />
-      <Picker.Item label="C++" value="cpp" />
-      <Picker.Item label="Python" value="py" />
-      <Picker.Item label="Java" value="java" /> */}
     </Picker>
   );
 };

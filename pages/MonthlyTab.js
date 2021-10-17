@@ -1,4 +1,3 @@
-// chem: 32 physics: 23 maths: 30 total 115
 import React, {useState} from 'react';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import Navbar from '../Components/Navbar';
