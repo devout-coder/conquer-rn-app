@@ -22,10 +22,24 @@ import EachTodo from '../Components/EachTodo';
 import {userContext} from '../context';
 import YearPicker from '../Components/YearPicker';
 
-const Todos = ({route, navigation,}) => {
+const Todos = ({route, year, longTerm}) => {
+  console.log(year);
   let user = useContext(userContext);
-  const [time, setTime] = useState(route.params['time']);
-  const [lastPage, setLastPage] = useState(route.params['lastPage']);
+
+  const [time, setTime] =
+    year != undefined
+      ? useState(year)
+      : longTerm != undefined
+      ? useState('Long Term Goals🎯')
+      : useState(route.params['time']);
+
+  const [lastPage, setLastPage] =
+    year != undefined
+      ? useState('year')
+      : longTerm != undefined
+      ? useState('longTerm')
+      : useState(route.params['lastPage']);
+
   const [finishedTodos, setFinishedTodos] = useState([]);
   const [unfinishedTodos, setUnfinishedTodos] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -201,7 +215,8 @@ const styles = StyleSheet.create({
     marginLeft: 18,
   },
   allTodosContainer: {
-    flex: 0.9,
+    flex: 0.88,
+    marginTop: 10,
   },
   topBar: {
     display: 'flex',
