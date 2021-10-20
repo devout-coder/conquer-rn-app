@@ -21,9 +21,9 @@ import auth from '@react-native-firebase/auth';
 import EachTodo from '../Components/EachTodo';
 import {userContext} from '../context';
 import YearPicker from '../Components/YearPicker';
+import TodoModal from '../Components/TodoModal';
 
 const Todos = ({route, year, longTerm}) => {
-  console.log(year);
   let user = useContext(userContext);
 
   const [time, setTime] =
@@ -42,6 +42,7 @@ const Todos = ({route, year, longTerm}) => {
 
   const [finishedTodos, setFinishedTodos] = useState([]);
   const [unfinishedTodos, setUnfinishedTodos] = useState([]);
+  const [modalOpen, setModalOpen] = useState(false); //this state controls the delete modal
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -130,7 +131,9 @@ const Todos = ({route, year, longTerm}) => {
           ) : (
             <Text style={styles.time}>{replaceDate(time)}</Text>
           )}
-          <TouchableOpacity style={styles.addIcon}>
+          <TouchableOpacity
+            style={styles.addIcon}
+            onPress={() => setModalOpen(true)}>
             <Icon name="my-library-add" color="#ffffff" size={28} />
           </TouchableOpacity>
         </View>
@@ -138,6 +141,7 @@ const Todos = ({route, year, longTerm}) => {
           <ActivityIndicator size="large" color="#00ff00" />
         ) : unfinishedTodos.length != 0 || finishedTodos.length != 0 ? (
           <View style={styles.mainTodos}>
+            <TodoModal modalOpen={modalOpen} setModalOpen={setModalOpen} />
             {unfinishedTodos.length != 0 ? (
               <View style={styles.unfinishedTodos}>
                 <Text style={styles.numTodos}>

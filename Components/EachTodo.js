@@ -1,8 +1,16 @@
 import React, {useState} from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import {
+  Button,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+  View,
+} from 'react-native';
 import CheckBox from '@react-native-community/checkbox';
 import firestore from '@react-native-firebase/firestore';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import TodoModal from './TodoModal';
 
 const EachTodo = ({
   id,
@@ -37,23 +45,20 @@ const EachTodo = ({
       .catch(error => console.log(error));
   };
 
-  function deleteTodoManagePri(newIndex) {
-    //this function manages index of todos below a certain todo in case i delete it
-
-    props.unfinishedTodos.forEach((each, index) => {
-      if (index >= newIndex) {
-        firebaseApp
-          .firestore()
-          .collection('todos')
-          .doc(each.id)
-          .update({
-            index: index - 1,
-          });
-      }
-    });
-  }
   return (
     <View style={styles.eachTodo}>
+      <TodoModal
+        modalOpen={modalOpen}
+        setModalOpen={setModalOpen}
+        id={id}
+        taskName={taskName}
+        taskDesc={taskDesc}
+        priority={priority}
+        finished={finished}
+        time={time}
+        index={index}
+        timeType={timeType}
+      />
       {!finished ? (
         <Icon name="drag-indicator" style={styles.dragIcon} size={26} />
       ) : (
@@ -74,25 +79,27 @@ const EachTodo = ({
         }}
         onValueChange={val => checkUncheckfunc(val)}
       />
-      <Text
-        style={[
-          styles.taskName,
-          {
-            color: finished
-              ? '#474747'
-              : priority == 3
-              ? '#ff5151'
-              : priority == 2
-              ? '#7885fb'
-              : priority == 1
-              ? '#20e734'
-              : 'rgba(198, 196, 196, 0.61)',
-            textDecorationLine: finished ? 'line-through' : 'none',
-            width: finished ? 265 : 240,
-          },
-        ]}>
-        {taskName}
-      </Text>
+      <TouchableOpacity onPress={() => setModalOpen(true)}>
+        <Text
+          style={[
+            styles.taskName,
+            {
+              color: finished
+                ? '#474747'
+                : priority == 3
+                ? '#ff5151'
+                : priority == 2
+                ? '#7885fb'
+                : priority == 1
+                ? '#20e734'
+                : 'rgba(198, 196, 196, 0.61)',
+              textDecorationLine: finished ? 'line-through' : 'none',
+              width: finished ? 265 : 240,
+            },
+          ]}>
+          {taskName}
+        </Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -104,8 +111,8 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop:5,
-    marginBottom:5,
+    marginTop: 5,
+    marginBottom: 5,
     // backgroundColor:"#ffffff",
     width: 320,
   },
@@ -116,7 +123,7 @@ const styles = StyleSheet.create({
     color: '#ffffff',
     // backgroundColor: '#ffffff',
     fontFamily: 'Ubuntu-Italic',
-    lineHeight:30,
+    lineHeight: 30,
     marginLeft: 8,
     fontSize: 20,
   },
