@@ -22,6 +22,7 @@ const EachTodo = ({
   time,
   timeType,
   reloadTodos,
+  unfinishedTodos
 }) => {
   const [checked, setChecked] = useState(finished);
   const [modalOpen, setModalOpen] = useState(false); //this state controls the delete modal
@@ -58,6 +59,8 @@ const EachTodo = ({
         time={time}
         index={index}
         timeType={timeType}
+        reloadTodos={reloadTodos}
+        unfinishedTodos={unfinishedTodos}
       />
       {!finished ? (
         <Icon name="drag-indicator" style={styles.dragIcon} size={26} />

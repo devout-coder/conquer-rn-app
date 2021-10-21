@@ -1,15 +1,18 @@
-import {useFocusEffect} from '@react-navigation/core';
 import React, {useCallback, useEffect, useState} from 'react';
 import {
   BackHandler,
+  Button,
   Keyboard,
   StyleSheet,
+  Text,
   TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
-import Modal from 'react-native-modal';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import Modal from 'react-native-modal';
+import PrioritySelector from './PrioritySelector';
+import DeleteModal from './DeleteModal';
 
 const TodoModal = ({
   modalOpen,
@@ -22,12 +25,19 @@ const TodoModal = ({
   time,
   index,
   timeType,
+  reloadTodos,
+  unfinishedTodos,
 }) => {
   const [todoTaskName, setTodoTaskName] = useState(taskName);
   const [todoTaskDesc, setTodoTaskDesc] = useState(taskDesc);
+  const [todoTaskPriority, setTodoTaskPriority] = useState(priority);
+
+  const [deleteModalVisible, setDeleteModalVisible] = useState(false);
+  const toggleModal = () => {
+    setDeleteModalVisible(!deleteModalVisible);
+  };
 
   const [keyboardStatus, setKeyboardStatus] = useState(undefined);
-
   function provideKeyboardStatus() {
     const showSubscription = Keyboard.addListener('keyboardDidShow', () => {
       setKeyboardStatus(true);
@@ -52,7 +62,7 @@ const TodoModal = ({
         <TouchableOpacity
           style={styles.closeButton}
           onPress={() => setModalOpen(false)}>
-          <Icon name="close" color="#ffffff" size={27} />
+          <Icon name="close" color="#ffffff" size={30} />
         </TouchableOpacity>
         <TextInput
           defaultValue={todoTaskName}
@@ -73,6 +83,27 @@ const TodoModal = ({
           multiline={true}
           numberOfLines={200}
         />
+        <View style={[styles.bottomBar, {bottom: keyboardStatus ? -190 : 0}]}>
+          <PrioritySelector
+            style={styles.prioritySelector}
+            priority={todoTaskPriority}
+            changePriority={setTodoTaskPriority}
+          />
+          <TouchableOpacity style={styles.deleteIcon} onPress={toggleModal}>
+            <Icon name="delete" size={32} color="#ffffff" />
+          </TouchableOpacity>
+          <DeleteModal
+            modalVisible={deleteModalVisible}
+            closeModal={toggleModal}
+            reloadTodos={reloadTodos}
+            unfinishedTodos={unfinishedTodos}
+            index={index}
+            id={id}
+          />
+          <TouchableOpacity style={styles.saveIcon}>
+            <Icon name="save" size={32} color="#ffffff" />
+          </TouchableOpacity>
+        </View>
       </View>
     </Modal>
   );
@@ -110,6 +141,26 @@ const styles = StyleSheet.create({
     color: '#F1D7D7',
     padding: 0,
     marginTop: 25,
+    // backgroundColor:"#ffffff",
     textAlignVertical: 'top',
+  },
+  bottomBar: {
+    display: 'flex',
+    position: 'relative',
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  prioritySelector: {
+    // marginRight: 'auto',
+  },
+  deleteIcon: {
+    // marginRight: jauto',
+    position: 'absolute',
+    right: 55,
+  },
+  saveIcon: {
+    position: 'absolute',
+    right: 0,
+    // marginRight: 'auto',
   },
 });

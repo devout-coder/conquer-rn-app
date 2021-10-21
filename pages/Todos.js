@@ -11,7 +11,6 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {SafeAreaView} from 'react-native-safe-area-context';
 import Navbar from '../Components/Navbar';
 import globalStyles from '../globalStyles';
 import {weekMonths} from '../Components/WeekCalendar';
@@ -163,6 +162,7 @@ const Todos = ({route, year, longTerm}) => {
                       time={each.time}
                       timeType={each.timeType}
                       reloadTodos={loadData}
+                      unfinishedTodos={unfinishedTodos}
                     />
                   ))}
                 </ScrollView>
@@ -189,6 +189,7 @@ const Todos = ({route, year, longTerm}) => {
                       time={each.time}
                       timeType={each.timeType}
                       reloadTodos={loadData}
+                      unfinishedTodos={unfinishedTodos}
                     />
                   ))}
                 </ScrollView>
