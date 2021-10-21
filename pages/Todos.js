@@ -140,7 +140,17 @@ const Todos = ({route, year, longTerm}) => {
           <ActivityIndicator size="large" color="#00ff00" />
         ) : unfinishedTodos.length != 0 || finishedTodos.length != 0 ? (
           <View style={styles.mainTodos}>
-            <TodoModal modalOpen={modalOpen} setModalOpen={setModalOpen} />
+            <TodoModal
+              taskName=""
+              taskDesc=""
+              priority="0"
+              time={time}
+              timeType={lastPage}
+              modalOpen={modalOpen}
+              setModalOpen={setModalOpen}
+              reloadTodos={loadData}
+              unfinishedTodos={unfinishedTodos}
+            />
             {unfinishedTodos.length != 0 ? (
               <View style={styles.unfinishedTodos}>
                 <Text style={styles.numTodos}>

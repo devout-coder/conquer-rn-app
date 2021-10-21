@@ -22,7 +22,7 @@ const PrioritySelector = ({priority, changePriority}) => {
       icon: () => <Icon name="priority-high" color="#11B421" size={24} />,
     },
     {
-      label: 'Null',
+      label: 'No Priority',
       value: '0',
       icon: () => <Icon name="priority-high" color="#414141" size={24} />,
     },

@@ -22,7 +22,7 @@ const EachTodo = ({
   time,
   timeType,
   reloadTodos,
-  unfinishedTodos
+  unfinishedTodos,
 }) => {
   const [checked, setChecked] = useState(finished);
   const [modalOpen, setModalOpen] = useState(false); //this state controls the delete modal

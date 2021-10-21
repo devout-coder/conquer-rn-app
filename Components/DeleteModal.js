@@ -20,7 +20,8 @@ const DeleteModal = ({
           .doc(each.id)
           .update({
             index: ind - 1,
-          });
+          })
+          .catch(error => console.log(error));
       }
     });
   }
@@ -35,7 +36,8 @@ const DeleteModal = ({
       .delete()
       .then(() => {
         reloadTodos();
-      });
+      })
+      .catch(error => console.log(error));
   }
 
   return (
