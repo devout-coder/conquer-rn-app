@@ -18,12 +18,14 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import EachTodo from '../Components/EachTodo';
-import {userContext} from '../context';
 import YearPicker from '../Components/YearPicker';
 import TodoModal from '../Components/TodoModal';
+import {tabNavbarContext, userContext} from '../context';
+import { NavigationContainerRefContext } from '@react-navigation/core';
 
-const Todos = ({route, year, longTerm}) => {
+const Todos = ({navigation, route, year, longTerm}) => {
   let user = useContext(userContext);
+  let {tabNav, setTabNav} = useContext(tabNavbarContext);
 
   const [time, setTime] =
     year != undefined
@@ -45,11 +47,24 @@ const Todos = ({route, year, longTerm}) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const backHandler = BackHandler.removeEventListener(
+    const backHandler = BackHandler.addEventListener(
       'hardwareBackPress',
-      () => true,
+      () => {
+        if (lastPage == 'daily') {
+          navigation.push('Daily');
+          return true;
+        } else if (lastPage == 'week') {
+          navigation.push('Weekly');
+          return true;
+        } else if (lastPage == 'month') {
+          navigation.push('Monthly');
+          return true;
+        } else {
+          tabNav.navigate('DailyTab')
+        }
+      },
     );
-    // return () => backHandler.remove();
+    return () => backHandler.remove();
   }, []);
 
   useEffect(() => {

@@ -30,7 +30,7 @@ const Navbar = () => {
     <View style={styles.navbar}>
       <TouchableOpacity
         onPress={() =>
-          user != null ? tabNav.navigate('Daily') : nav.navigate('Landing')
+          user != null ? tabNav.navigate('DailyTab') : nav.navigate('Landing')
         }>
         <Image
           source={require('../resources/images/conquerLogo.png')}

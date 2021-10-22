@@ -142,7 +142,7 @@ const Calendar = ({navigation}) => {
   };
 
   function handleDatePress(date) {
-    navigation.navigate('Todos', {time: date, lastPage: 'daily'});
+    navigation.push('Todos', {time: date, lastPage: 'daily'});
   }
 
   return (

@@ -1,5 +1,5 @@
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import {NavigationContainer} from '@react-navigation/native';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import React, {useContext, useEffect} from 'react';
 import {BackHandler, View} from 'react-native';
 import Calendar from '../Components/Calendar';
@@ -11,6 +11,11 @@ import Todos from './Todos';
 const Stack = createNativeStackNavigator();
 
 const DailyTab = ({navigation}) => {
+  let {tabNav, setTabNav} = useContext(tabNavbarContext);
+
+  useEffect(() => {
+    setTabNav(navigation);
+  }, []);
 
   return (
     <NavigationContainer independent={true}>
@@ -31,10 +36,8 @@ const DailyTab = ({navigation}) => {
 };
 
 const Daily = ({navigation}) => {
-  let {tabNav, setTabNav} = useContext(tabNavbarContext);
 
   useEffect(() => {
-    setTabNav(navigation);
     const backHandler = BackHandler.addEventListener(
       'hardwareBackPress',
       () => true,

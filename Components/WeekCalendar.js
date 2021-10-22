@@ -144,7 +144,7 @@ const WeekCalendar = ({navigation}) => {
   };
 
   function handleWeekPress(week) {
-    navigation.navigate('Todos', {time: week.split('#')[0], lastPage: 'week'});
+    navigation.push('Todos', {time: week.split('#')[0], lastPage: 'week'});
   }
 
   return (

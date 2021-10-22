@@ -30,7 +30,7 @@ const TodoModal = ({
   reloadTodos,
   unfinishedTodos,
 }) => {
-  console.log(index)
+
   const [todoTaskName, setTodoTaskName] = useState(taskName);
   const [todoTaskDesc, setTodoTaskDesc] = useState(taskDesc);
   const [todoTaskPriority, setTodoTaskPriority] = useState(priority);
