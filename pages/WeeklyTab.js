@@ -2,6 +2,7 @@ import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import React from 'react';
 import {StyleSheet, Text, View} from 'react-native';
+import IncompleteTodosSidebar from '../Components/IncompleteTodosSidebar';
 import Navbar from '../Components/Navbar';
 import WeekCalendar from '../Components/WeekCalendar';
 import globalStyles from '../globalStyles';
@@ -33,6 +34,7 @@ const Weekly = ({navigation}) => {
     <View style={globalStyles.overallBackground}>
       <Navbar />
       <WeekCalendar navigation={navigation} />
+      <IncompleteTodosSidebar timeType="week" />
     </View>
   );
 };

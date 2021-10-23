@@ -3,6 +3,7 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import React, {useContext, useEffect} from 'react';
 import {BackHandler, View} from 'react-native';
 import Calendar from '../Components/Calendar';
+import IncompleteTodosSidebar from '../Components/IncompleteTodosSidebar';
 import Navbar from '../Components/Navbar';
 import {navbarContext, tabNavbarContext} from '../context';
 import globalStyles from '../globalStyles';
@@ -36,7 +37,6 @@ const DailyTab = ({navigation}) => {
 };
 
 const Daily = ({navigation}) => {
-
   useEffect(() => {
     const backHandler = BackHandler.addEventListener(
       'hardwareBackPress',
@@ -48,6 +48,7 @@ const Daily = ({navigation}) => {
     <View style={globalStyles.overallBackground}>
       <Navbar />
       <Calendar navigation={navigation} />
+      <IncompleteTodosSidebar timeType="daily" />
     </View>
   );
 };

@@ -21,7 +21,7 @@ import EachTodo from '../Components/EachTodo';
 import YearPicker from '../Components/YearPicker';
 import TodoModal from '../Components/TodoModal';
 import {tabNavbarContext, userContext} from '../context';
-import { NavigationContainerRefContext } from '@react-navigation/core';
+import IncompleteTodosSidebar from '../Components/IncompleteTodosSidebar';
 
 const Todos = ({navigation, route, year, longTerm}) => {
   let user = useContext(userContext);
@@ -60,7 +60,7 @@ const Todos = ({navigation, route, year, longTerm}) => {
           navigation.push('Monthly');
           return true;
         } else {
-          tabNav.navigate('DailyTab')
+          tabNav.navigate('DailyTab');
         }
       },
     );
@@ -227,6 +227,11 @@ const Todos = ({navigation, route, year, longTerm}) => {
           <Text style={styles.noTodosMessage}>No tasks added yet!</Text>
         )}
       </View>
+      {lastPage == 'year' ? (
+        <IncompleteTodosSidebar timeType="year" />
+      ) : (
+        <View></View>
+      )}
     </View>
   );
 };
@@ -245,7 +250,8 @@ const styles = StyleSheet.create({
     marginLeft: 18,
   },
   allTodosContainer: {
-    flex: 0.88,
+    flex: 0.83,
+    // backgroundColor: '#ffffff',
     marginTop: 10,
   },
   topBar: {

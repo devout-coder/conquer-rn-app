@@ -8,7 +8,6 @@ import {
   tabNavbarContext,
   userContext,
 } from '../context';
-import {useNavigation} from '@react-navigation/core';
 
 const Navbar = () => {
   let user = useContext(userContext);

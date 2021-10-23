@@ -7,6 +7,7 @@ import {months as singleListMonths} from '../Components/Calendar';
 import Todos from './Todos';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import IncompleteTodosSidebar from '../Components/IncompleteTodosSidebar';
 
 const Stack = createNativeStackNavigator();
 
@@ -38,7 +39,7 @@ const Monthly = ({navigation}) => {
 
   function handleMonthPress(month) {
     navigation.push('Todos', {
-      time: month + " " + year.toString(),
+      time: month + ' ' + year.toString(),
       lastPage: 'month',
     });
   }
@@ -70,6 +71,7 @@ const Monthly = ({navigation}) => {
           ))}
         </View>
       </View>
+      <IncompleteTodosSidebar timeType="month" />
     </View>
   );
 };
