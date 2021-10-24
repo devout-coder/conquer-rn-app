@@ -34,7 +34,7 @@ const Weekly = ({navigation}) => {
     <View style={globalStyles.overallBackground}>
       <Navbar />
       <WeekCalendar navigation={navigation} />
-      <IncompleteTodosSidebar timeType="week" />
+      <IncompleteTodosSidebar timeType="week" navigation={navigation} />
     </View>
   );
 };

@@ -134,7 +134,6 @@ const Todos = ({navigation, route, year, longTerm}) => {
         console.log(error.message);
       });
   }
-  console.log(unfinishedTodos);
 
   return (
     <View style={globalStyles.overallBackground}>
@@ -152,27 +151,26 @@ const Todos = ({navigation, route, year, longTerm}) => {
             <Icon name="my-library-add" color="#ffffff" size={28} />
           </TouchableOpacity>
         </View>
+        <TodoModal
+          taskName=""
+          taskDesc=""
+          priority="0"
+          time={time}
+          timeType={lastPage}
+          modalOpen={modalOpen}
+          setModalOpen={setModalOpen}
+          reloadTodos={loadData}
+          unfinishedTodos={unfinishedTodos}
+        />
         {loading ? (
           <ActivityIndicator size="large" color="#00ff00" />
         ) : unfinishedTodos.length != 0 || finishedTodos.length != 0 ? (
           <View style={styles.mainTodos}>
-            <TodoModal
-              taskName=""
-              taskDesc=""
-              priority="0"
-              time={time}
-              timeType={lastPage}
-              modalOpen={modalOpen}
-              setModalOpen={setModalOpen}
-              reloadTodos={loadData}
-              unfinishedTodos={unfinishedTodos}
-            />
             {unfinishedTodos.length != 0 ? (
               <View style={styles.unfinishedTodos}>
                 <Text style={styles.numTodos}>
                   {unfinishedTodos.length} unfinished
                 </Text>
-                {/* <ScrollView> */}
                 <ScrollView
                   style={styles.unfinishedTodosList}
                   indicatorStyle={{color: '#ffffff'}}>
@@ -193,7 +191,6 @@ const Todos = ({navigation, route, year, longTerm}) => {
                     />
                   ))}
                 </ScrollView>
-                {/* </ScrollView> */}
               </View>
             ) : (
               <View></View>
@@ -231,7 +228,11 @@ const Todos = ({navigation, route, year, longTerm}) => {
         )}
       </View>
       {lastPage == 'year' ? (
-        <IncompleteTodosSidebar timeType="year" />
+        <IncompleteTodosSidebar
+          timeType="year"
+          year={time}
+          changeYear={newYear => setTime(newYear)}
+        />
       ) : (
         <View></View>
       )}

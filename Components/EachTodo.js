@@ -18,6 +18,11 @@ const EachTodo = ({
   reloadTodos,
   unfinishedTodos,
   sidebarTodo,
+  navigation,
+  year,
+  changeYear,
+  spinArrowDown,
+  decreaseSidebarHeight,
 }) => {
   const [checked, setChecked] = useState(finished);
   const [modalOpen, setModalOpen] = useState(false); //this state controls the delete modal
@@ -40,6 +45,16 @@ const EachTodo = ({
       })
       .catch(error => console.log(error));
   };
+
+  function handleTimePress() {
+    if (timeType == 'year') {
+      changeYear(time);
+      spinArrowDown();
+      decreaseSidebarHeight();
+    } else {
+      navigation.push('Todos', {time: time, lastPage: timeType});
+    }
+  }
 
   return (
     <View style={styles.eachTodo}>
@@ -99,7 +114,7 @@ const EachTodo = ({
         </Text>
       </TouchableOpacity>
       {sidebarTodo ? (
-        <TouchableOpacity onPress>
+        <TouchableOpacity onPress={() => handleTimePress()}>
           <Text style={styles.time}>{time}</Text>
         </TouchableOpacity>
       ) : (
@@ -136,7 +151,7 @@ const styles = StyleSheet.create({
     color: 'rgba(115, 110, 110, 0.68)',
     fontFamily: 'Poppins-Regular',
     fontSize: 12,
-    marginLeft: 15,
+    marginLeft: 8,
     position: 'relative',
     top: 10,
     // backgroundColor: '#ffffff',

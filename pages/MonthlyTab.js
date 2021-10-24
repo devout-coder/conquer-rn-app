@@ -71,7 +71,7 @@ const Monthly = ({navigation}) => {
           ))}
         </View>
       </View>
-      <IncompleteTodosSidebar timeType="month" />
+      <IncompleteTodosSidebar timeType="month" navigation={navigation} />
     </View>
   );
 };

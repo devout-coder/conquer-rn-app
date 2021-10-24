@@ -45,7 +45,7 @@ const weekMonths = [
   'Dec',
 ];
 
-const IncompleteTodosSidebar = ({timeType}) => {
+const IncompleteTodosSidebar = ({timeType, navigation, year, changeYear}) => {
   let user = useContext(userContext);
   let [loading, setLoading] = useState(true);
   const [reqTodos, setReqTodos] = useState([]);
@@ -247,7 +247,11 @@ const IncompleteTodosSidebar = ({timeType}) => {
                 timeType={each.timeType}
                 reloadTodos={loadReqTodos}
                 sidebarTodo={true}
-                // unfinishedTodos={unfinishedTodos}
+                navigation={navigation}
+                year={year}
+                changeYear={changeYear}
+                spinArrowDown={spinDown}
+                decreaseSidebarHeight={decreaseHeight}
               />
             ))}
           </ScrollView>

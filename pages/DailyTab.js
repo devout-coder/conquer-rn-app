@@ -48,7 +48,7 @@ const Daily = ({navigation}) => {
     <View style={globalStyles.overallBackground}>
       <Navbar />
       <Calendar navigation={navigation} />
-      <IncompleteTodosSidebar timeType="daily" />
+      <IncompleteTodosSidebar timeType="daily" navigation={navigation} />
     </View>
   );
 };
