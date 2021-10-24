@@ -83,7 +83,7 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    marginTop: 60,
+    marginTop: 40,
   },
   allMonths: {
     display: 'flex',

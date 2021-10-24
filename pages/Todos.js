@@ -134,6 +134,7 @@ const Todos = ({navigation, route, year, longTerm}) => {
         console.log(error.message);
       });
   }
+  console.log(unfinishedTodos);
 
   return (
     <View style={globalStyles.overallBackground}>
@@ -179,7 +180,7 @@ const Todos = ({navigation, route, year, longTerm}) => {
                     <EachTodo
                       id={each.id}
                       key={each.id}
-                      index={index}
+                      index={each.index}
                       priority={each.priority}
                       taskName={each.taskName}
                       taskDesc={each.taskDesc}
@@ -188,6 +189,7 @@ const Todos = ({navigation, route, year, longTerm}) => {
                       timeType={each.timeType}
                       reloadTodos={loadData}
                       unfinishedTodos={unfinishedTodos}
+                      sidebarTodo={false}
                     />
                   ))}
                 </ScrollView>
@@ -206,7 +208,7 @@ const Todos = ({navigation, route, year, longTerm}) => {
                     <EachTodo
                       id={each.id}
                       key={each.id}
-                      index={index}
+                      index={each.index}
                       priority={each.priority}
                       taskName={each.taskName}
                       taskDesc={each.taskDesc}
@@ -215,6 +217,7 @@ const Todos = ({navigation, route, year, longTerm}) => {
                       timeType={each.timeType}
                       reloadTodos={loadData}
                       unfinishedTodos={unfinishedTodos}
+                      sidebarTodo={false}
                     />
                   ))}
                 </ScrollView>
@@ -252,7 +255,6 @@ const styles = StyleSheet.create({
   allTodosContainer: {
     flex: 0.83,
     // backgroundColor: '#ffffff',
-    marginTop: 10,
   },
   topBar: {
     display: 'flex',

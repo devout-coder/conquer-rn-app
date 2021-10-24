@@ -1,16 +1,10 @@
-import React, {useState} from 'react';
-import {
-  Button,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  TouchableWithoutFeedback,
-  View,
-} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import CheckBox from '@react-native-community/checkbox';
 import firestore from '@react-native-firebase/firestore';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import TodoModal from './TodoModal';
+import auth from '@react-native-firebase/auth';
 
 const EachTodo = ({
   id,
@@ -23,6 +17,7 @@ const EachTodo = ({
   timeType,
   reloadTodos,
   unfinishedTodos,
+  sidebarTodo,
 }) => {
   const [checked, setChecked] = useState(finished);
   const [modalOpen, setModalOpen] = useState(false); //this state controls the delete modal
@@ -62,7 +57,7 @@ const EachTodo = ({
         reloadTodos={reloadTodos}
         unfinishedTodos={unfinishedTodos}
       />
-      {!finished ? (
+      {!finished && !sidebarTodo ? (
         <Icon name="drag-indicator" style={styles.dragIcon} size={26} />
       ) : (
         <View></View>
@@ -103,6 +98,13 @@ const EachTodo = ({
           {taskName}
         </Text>
       </TouchableOpacity>
+      {sidebarTodo ? (
+        <TouchableOpacity onPress>
+          <Text style={styles.time}>{time}</Text>
+        </TouchableOpacity>
+      ) : (
+        <View></View>
+      )}
     </View>
   );
 };
@@ -113,9 +115,9 @@ const styles = StyleSheet.create({
   eachTodo: {
     display: 'flex',
     flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 5,
-    marginBottom: 5,
+    alignItems: 'flex-start',
+    marginTop: 10,
+    marginBottom: 10,
     // backgroundColor:"#ffffff",
     width: 320,
   },
@@ -129,5 +131,15 @@ const styles = StyleSheet.create({
     lineHeight: 30,
     marginLeft: 8,
     fontSize: 20,
+  },
+  time: {
+    color: 'rgba(115, 110, 110, 0.68)',
+    fontFamily: 'Poppins-Regular',
+    fontSize: 12,
+    marginLeft: 15,
+    position: 'relative',
+    top: 10,
+    // backgroundColor: '#ffffff',
+    width: 70,
   },
 });

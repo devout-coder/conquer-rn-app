@@ -3,6 +3,7 @@ import {
   ActivityIndicator,
   Animated,
   Easing,
+  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -13,6 +14,7 @@ import {userContext} from '../context';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import EachTodo from './EachTodo';
 
 const fullMonths = [
   'January',
@@ -231,6 +233,24 @@ const IncompleteTodosSidebar = ({timeType}) => {
               </Animated.View>
             </View>
           </TouchableWithoutFeedback>
+          <ScrollView style={styles.incompleteTodos}>
+            {reqTodos.map((each, index) => (
+              <EachTodo
+                id={each.id}
+                key={each.id}
+                index={each.index}
+                priority={each.priority}
+                taskName={each.taskName}
+                taskDesc={each.taskDesc}
+                finished={each.finished}
+                time={each.time}
+                timeType={each.timeType}
+                reloadTodos={loadReqTodos}
+                sidebarTodo={true}
+                // unfinishedTodos={unfinishedTodos}
+              />
+            ))}
+          </ScrollView>
         </View>
       )}
     </Animated.View>
@@ -249,6 +269,9 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 10,
     borderTopLeftRadius: 10,
     backgroundColor: '#000000',
+    padding: 3,
+    paddingLeft: 10,
+    paddingRight: 10,
   },
   topBar: {
     display: 'flex',

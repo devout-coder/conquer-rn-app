@@ -187,7 +187,7 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    marginTop: 40,
+    marginTop: 60,
   },
   topbar: {
     display: 'flex',
