@@ -98,66 +98,82 @@ const IncompleteTodosSidebar = ({timeType, navigation, year, changeYear}) => {
     //later in func loadReqTodos i ve taken reqTodos as a parameter and sorts it by the time and in accordance of timeType(month, daily, week, year)
     let sortedTodos = arr;
     sortedTodos = arr.sort((a, b) => {
-      return a.index - b.index;
-    });
-    sortedTodos = arr.sort((a, b) => {
       let temparr = [a.time, b.time];
       if (timeType == 'year') {
-        return temparr[1] - temparr[0];
-      } else if (timeType == 'month') {
-        let newTemp = Array.from(
-          temparr.map(each => {
-            return [fullMonths.indexOf(each.split(' ')[0]), each.split(' ')[1]];
-          }),
-        ); //this is something like this [[0, 2021],[8, 2022]]
-        let compareYear = newTemp[1][1] - newTemp[0][1]; //this contains the difference of years
-        let compareMonth = newTemp[1][0] - newTemp[0][0]; //this contains the difference of months
-        if (compareYear != 0) {
-          //evaluates true if its not the same year
-          return compareYear;
+        if (temparr[0] == temparr[1]) {
+          return a.index - b.index;
         } else {
-          return compareMonth;
+          return temparr[1] - temparr[0];
+        }
+      } else if (timeType == 'month') {
+        if (temparr[0] == temparr[1]) {
+          return a.index - b.index;
+        } else {
+          let newTemp = Array.from(
+            temparr.map(each => {
+              return [
+                fullMonths.indexOf(each.split(' ')[0]),
+                each.split(' ')[1],
+              ];
+            }),
+          ); //this is something like this [[0, 2021],[8, 2022]]
+          let compareYear = newTemp[1][1] - newTemp[0][1]; //this contains the difference of years
+          let compareMonth = newTemp[1][0] - newTemp[0][0]; //this contains the difference of months
+          if (compareYear != 0) {
+            //evaluates true if its not the same year
+            return compareYear;
+          } else {
+            return compareMonth;
+          }
         }
       } else if (timeType == 'week') {
-        let newTemp = Array.from(
-          temparr.map(each => {
-            let reqWeek = each.split('-')[0].split(' '); //this stores the first part of the week like ["4", "Jan", "2021"]
-            reqWeek[1] = weekMonths.indexOf(reqWeek[1]); //replaces the name of the month to a no
-            return reqWeek;
-          }),
-        );
-        let compareYear = newTemp[1][2] - newTemp[0][2]; //this contains the difference of years
-        let compareMonth = newTemp[1][1] - newTemp[0][1]; //this contains the difference of months
-        let compareDay = newTemp[1][0] - newTemp[0][0];
-        if (compareYear != 0) {
-          //evaluates true if its not the same year
-          return compareYear;
-        } else if (compareMonth != 0) {
-          //evaluates true if its not the same month
-          return compareMonth;
+        if (temparr[0] == temparr[1]) {
+          return a.index - b.index;
         } else {
-          //evaluates true if its not the same day
-          return compareDay;
+          let newTemp = Array.from(
+            temparr.map(each => {
+              let reqWeek = each.split('-')[0].split(' '); //this stores the first part of the week like ["4", "Jan", "2021"]
+              reqWeek[1] = weekMonths.indexOf(reqWeek[1]); //replaces the name of the month to a no
+              return reqWeek;
+            }),
+          );
+          let compareYear = newTemp[1][2] - newTemp[0][2]; //this contains the difference of years
+          let compareMonth = newTemp[1][1] - newTemp[0][1]; //this contains the difference of months
+          let compareDay = newTemp[1][0] - newTemp[0][0];
+          if (compareYear != 0) {
+            //evaluates true if its not the same year
+            return compareYear;
+          } else if (compareMonth != 0) {
+            //evaluates true if its not the same month
+            return compareMonth;
+          } else {
+            //evaluates true if its not the same day
+            return compareDay;
+          }
         }
       } else if (timeType == 'daily') {
-        let newTemp = Array.from(
-          temparr.map(each => {
-            let reqDay = each.split('/'); //this stores the first part of the week like ["4", "1", "2021"]
-            return reqDay;
-          }),
-        );
-        let compareYear = newTemp[1][2] - newTemp[0][2]; //this contains the difference of years
-        let compareMonth = newTemp[1][1] - newTemp[0][1]; //this contains the difference of months
-        let compareDay = newTemp[1][0] - newTemp[0][0];
-        if (compareYear != 0) {
-          //evaluates true if its not the same year
-          return compareYear;
-        } else if (compareMonth != 0) {
-          //evaluates true if its not the same month
-          return compareMonth;
+        if (temparr[0] == temparr[1]) {
+          return a.index - b.index;
         } else {
-          //evaluates true if its not the same day
-          return compareDay;
+          let newTemp = Array.from(
+            temparr.map(each => {
+              let reqDay = each.split('/'); //this stores the first part of the week like ["4", "1", "2021"]
+              return reqDay;
+            }),
+          );
+          let compareYear = newTemp[1][2] - newTemp[0][2]; //this contains the difference of years
+          let compareMonth = newTemp[1][1] - newTemp[0][1]; //this contains the difference of months
+          let compareDay = newTemp[1][0] - newTemp[0][0];
+          if (compareYear != 0) {
+            //evaluates true if its not the same year
+            return compareYear;
+          } else if (compareMonth != 0) {
+            //evaluates true if its not the same month
+            return compareMonth;
+          } else {
+            //evaluates true if its not the same day
+            return compareDay;
+          }
         }
       }
     });

@@ -43,6 +43,7 @@ const Todos = ({navigation, route, year, longTerm}) => {
 
   const [finishedTodos, setFinishedTodos] = useState([]);
   const [unfinishedTodos, setUnfinishedTodos] = useState([]);
+  const [allTodos, setAllTodos] = useState([]);
   const [modalOpen, setModalOpen] = useState(false); //this state controls the delete modal
   const [loading, setLoading] = useState(true);
 
@@ -115,6 +116,7 @@ const Todos = ({navigation, route, year, longTerm}) => {
             unfinished.push(eachdict);
           }
         });
+        let all = [...finished, ...unfinished];
         setFinishedTodos(
           finished.sort((a, b) => {
             return a.index - b.index;
@@ -125,15 +127,18 @@ const Todos = ({navigation, route, year, longTerm}) => {
             return a.index - b.index;
           }),
         );
-
+        setAllTodos(
+          all.sort((a, b) => {
+            return a.index - b.index;
+          }),
+        );
         setLoading(false);
-        // console.log(unfinishedTodos)
-        // console.log(finishedTodos)
       })
       .catch(error => {
         console.log(error.message);
       });
   }
+  // console.log(unfinishedTodos);
 
   return (
     <View style={globalStyles.overallBackground}>
@@ -160,7 +165,7 @@ const Todos = ({navigation, route, year, longTerm}) => {
           modalOpen={modalOpen}
           setModalOpen={setModalOpen}
           reloadTodos={loadData}
-          unfinishedTodos={unfinishedTodos}
+          allTodos={allTodos}
         />
         {loading ? (
           <ActivityIndicator size="large" color="#00ff00" />
@@ -186,7 +191,7 @@ const Todos = ({navigation, route, year, longTerm}) => {
                       time={each.time}
                       timeType={each.timeType}
                       reloadTodos={loadData}
-                      unfinishedTodos={unfinishedTodos}
+                      allTodos={allTodos}
                       sidebarTodo={false}
                     />
                   ))}
@@ -213,7 +218,7 @@ const Todos = ({navigation, route, year, longTerm}) => {
                       time={each.time}
                       timeType={each.timeType}
                       reloadTodos={loadData}
-                      unfinishedTodos={unfinishedTodos}
+                      allTodos={allTodos}
                       sidebarTodo={false}
                     />
                   ))}

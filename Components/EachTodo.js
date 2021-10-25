@@ -16,7 +16,7 @@ const EachTodo = ({
   time,
   timeType,
   reloadTodos,
-  unfinishedTodos,
+  allTodos,
   sidebarTodo,
   navigation,
   year,
@@ -56,6 +56,7 @@ const EachTodo = ({
     }
   }
 
+
   return (
     <View style={styles.eachTodo}>
       <TodoModal
@@ -70,7 +71,7 @@ const EachTodo = ({
         index={index}
         timeType={timeType}
         reloadTodos={reloadTodos}
-        unfinishedTodos={unfinishedTodos}
+        allTodos={allTodos}
       />
       {!finished && !sidebarTodo ? (
         <Icon name="drag-indicator" style={styles.dragIcon} size={26} />

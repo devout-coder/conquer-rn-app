@@ -28,11 +28,12 @@ const TodoModal = ({
   index,
   timeType,
   reloadTodos,
-  unfinishedTodos,
+  allTodos,
 }) => {
   const [todoTaskName, setTodoTaskName] = useState(taskName);
   const [todoTaskDesc, setTodoTaskDesc] = useState(taskDesc);
   const [todoTaskPriority, setTodoTaskPriority] = useState(priority);
+
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
   const toggleModal = () => {
     setDeleteModalVisible(!deleteModalVisible);
@@ -53,51 +54,54 @@ const TodoModal = ({
     };
   }
 
-  const [loadedUnfinishedTodos, setLoadedUnfinishedTodos] = useState([
-    unfinishedTodos != undefined ? unfinishedTodos : null,
-  ]);
+  // const [loadedUnfinishedTodos, setLoadedUnfinishedTodos] =
+  // useState(allTodos);
 
-  function loadUnfinishedTodos() {
-    firestore()
-      .collection('todos')
-      .where('user', '==', auth().currentUser.uid)
-      .where('time', '==', time)
-      .orderBy('priority', 'desc')
-      .get()
-      .then(snap => {
-        let unfinished = [];
-        snap.docs.map(each => {
-          let eachdict = {
-            id: each.id,
-            taskName: each.get('taskName'),
-            taskDesc: each.get('taskDesc'),
-            priority: each.get('priority'),
-            finished: each.get('finished'),
-            time: each.get('time'),
-            index: each.get('index'),
-            timeType: each.get('timeType'),
-          };
-          if (!each.get('finished')) {
-            //each doc in todos collection of firebase is added to either finished or unfinished list based on its finished status
-            unfinished.push(eachdict);
-          }
-        });
-        setLoadedUnfinishedTodos(
-          unfinished.sort((a, b) => {
-            return a.index - b.index;
-          }),
-        );
-      })
-      .catch(error => {
-        console.log(error.message);
-      });
-  }
+  // function loadUnfinishedTodos() {
+  //   firestore()
+  //     .collection('todos')
+  //     .where('user', '==', auth().currentUser.uid)
+  //     .where('time', '==', time)
+  //     .orderBy('priority', 'desc')
+  //     .get()
+  //     .then(snap => {
+  //       let unfinished = [];
+  //       snap.docs.map(each => {
+  //         let eachdict = {
+  //           id: each.id,
+  //           taskName: each.get('taskName'),
+  //           taskDesc: each.get('taskDesc'),
+  //           priority: each.get('priority'),
+  //           finished: each.get('finished'),
+  //           time: each.get('time'),
+  //           index: each.get('index'),
+  //           timeType: each.get('timeType'),
+  //         };
+  //         if (!each.get('finished')) {
+  //           //each doc in todos collection of firebase is added to either finished or unfinished list based on its finished status
+  //           unfinished.push(eachdict);
+  //         }
+  //       });
+  //       setLoadedUnfinishedTodos(
+  //         unfinished.sort((a, b) => {
+  //           return a.index - b.index;
+  //         }),
+  //       );
+  //     })
+  //     .catch(error => {
+  //       console.log(error.message);
+  //     });
+  // }
+
+  // useEffect(() => {
+  // if (allTodos == undefined) {
+  // loadUnfinishedTodos();
+  // console.log('this seems like incomplete todos sidebar');
+  // }
+  // }, []);
 
   useEffect(() => {
     provideKeyboardStatus();
-    if (unfinishedTodos == undefined) {
-      loadUnfinishedTodos();
-    }
   }, []);
 
   function priPosition() {
@@ -106,13 +110,13 @@ const TodoModal = ({
     //it means the  array has 1 todo already exisiting at 0 position so appropriate position for new element of priority 3 is 1 and so on
     let reqPos = [];
     for (let i = 3; i >= 0; i--) {
-      if (loadedUnfinishedTodos.length != 0) {
-        for (let index = 0; index < loadedUnfinishedTodos.length; index++) {
-          if (i > loadedUnfinishedTodos[index].priority) {
+      if (allTodos.length != 0) {
+        for (let index = 0; index < allTodos.length; index++) {
+          if (i > allTodos[index].priority) {
             reqPos.push([i, index]);
             break;
-          } else if (index == loadedUnfinishedTodos.length - 1) {
-            reqPos.push([i, loadedUnfinishedTodos.length]);
+          } else if (index == allTodos.length - 1) {
+            reqPos.push([i, allTodos.length]);
           }
         }
       } else {
@@ -148,7 +152,7 @@ const TodoModal = ({
 
   function newTodoManagePri(newIndex) {
     // it increases the index of all todos which have index value equal to or more than newIndex
-    loadedUnfinishedTodos.forEach((each, index) => {
+    allTodos.forEach((each, index) => {
       if (index >= newIndex) {
         firestore()
           .collection('todos')
@@ -167,7 +171,7 @@ const TodoModal = ({
     let initialPos = index;
     let finalPos = decidePosition(todoTaskPriority);
     if (initialPos < finalPos) {
-      loadedUnfinishedTodos.forEach((each, index) => {
+      allTodos.forEach((each, index) => {
         if (index > initialPos && index < finalPos) {
           // this reduces index of all items in between initial and final position by 1
           firestore()
@@ -181,7 +185,7 @@ const TodoModal = ({
       });
     } else if (initialPos > finalPos) {
       // this increases index of all items in between initial and final position by 1
-      loadedUnfinishedTodos.forEach((each, index) => {
+      allTodos.forEach((each, index) => {
         if (index < initialPos && index >= finalPos) {
           firestore()
             .collection('todos')
@@ -194,9 +198,19 @@ const TodoModal = ({
       });
     }
   }
+  function closeModal() {
+    setModalOpen(false);
+    setTimeout(() => {
+      setTodoTaskName('');
+      setTodoTaskDesc('');
+      setTodoTaskPriority('0');
+    }, 1000);
+    reloadTodos();
+  }
   function saveTodo() {
     if (id === undefined) {
       //makes a new todo if the id prop is empty str which means that no particular todo is opened
+      // decidePosition(todoTaskPriority);
 
       newTodoManagePri(decidePosition(todoTaskPriority));
       let todo = {
@@ -236,7 +250,7 @@ const TodoModal = ({
         );
       setPriChanged(false);
     }
-    setModalOpen(false);
+    closeModal();
     reloadTodos();
   }
 
@@ -245,7 +259,7 @@ const TodoModal = ({
       <View style={{flex: 1}}>
         <TouchableOpacity
           style={styles.closeButton}
-          onPress={() => setModalOpen(false)}>
+          onPress={() => closeModal()}>
           <Icon name="close" color="#ffffff" size={30} />
         </TouchableOpacity>
         <TextInput
@@ -280,7 +294,7 @@ const TodoModal = ({
             modalVisible={deleteModalVisible}
             closeModal={toggleModal}
             reloadTodos={reloadTodos}
-            unfinishedTodos={loadedUnfinishedTodos}
+            allTodos={allTodos}
             index={index}
             id={id}
           />
