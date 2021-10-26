@@ -138,7 +138,6 @@ const Todos = ({navigation, route, year, longTerm}) => {
         console.log(error.message);
       });
   }
-  // console.log(unfinishedTodos);
 
   return (
     <View style={globalStyles.overallBackground}>

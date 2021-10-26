@@ -26,7 +26,6 @@ const EachTodo = ({
 }) => {
   const [checked, setChecked] = useState(finished);
   const [modalOpen, setModalOpen] = useState(false); //this state controls the delete modal
-
   const checkUncheckfunc = val => {
     //this toggles check of todo checkbox and also toggles boolean value of finished property of that particular todo in firestore
 
@@ -55,24 +54,26 @@ const EachTodo = ({
       navigation.push('Todos', {time: time, lastPage: timeType});
     }
   }
-
-
   return (
     <View style={styles.eachTodo}>
-      <TodoModal
-        modalOpen={modalOpen}
-        setModalOpen={setModalOpen}
-        id={id}
-        taskName={taskName}
-        taskDesc={taskDesc}
-        priority={priority}
-        finished={finished}
-        time={time}
-        index={index}
-        timeType={timeType}
-        reloadTodos={reloadTodos}
-        allTodos={allTodos}
-      />
+      {modalOpen ? (
+        <TodoModal
+          modalOpen={modalOpen}
+          setModalOpen={setModalOpen}
+          id={id}
+          taskName={taskName}
+          taskDesc={taskDesc}
+          priority={priority}
+          finished={finished}
+          time={time}
+          index={index}
+          timeType={timeType}
+          reloadTodos={reloadTodos}
+          allTodos={allTodos}
+        />
+      ) : (
+        <View></View>
+      )}
       {!finished && !sidebarTodo ? (
         <Icon name="drag-indicator" style={styles.dragIcon} size={26} />
       ) : (

@@ -1,5 +1,6 @@
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {
+  ActivityIndicator,
   BackHandler,
   Button,
   Keyboard,
@@ -33,12 +34,10 @@ const TodoModal = ({
   const [todoTaskName, setTodoTaskName] = useState(taskName);
   const [todoTaskDesc, setTodoTaskDesc] = useState(taskDesc);
   const [todoTaskPriority, setTodoTaskPriority] = useState(priority);
-
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
   const toggleModal = () => {
     setDeleteModalVisible(!deleteModalVisible);
   };
-
   const [keyboardStatus, setKeyboardStatus] = useState(undefined);
   function provideKeyboardStatus() {
     const showSubscription = Keyboard.addListener('keyboardDidShow', () => {
@@ -54,51 +53,40 @@ const TodoModal = ({
     };
   }
 
-  // const [loadedUnfinishedTodos, setLoadedUnfinishedTodos] =
-  // useState(allTodos);
-
-  // function loadUnfinishedTodos() {
-  //   firestore()
-  //     .collection('todos')
-  //     .where('user', '==', auth().currentUser.uid)
-  //     .where('time', '==', time)
-  //     .orderBy('priority', 'desc')
-  //     .get()
-  //     .then(snap => {
-  //       let unfinished = [];
-  //       snap.docs.map(each => {
-  //         let eachdict = {
-  //           id: each.id,
-  //           taskName: each.get('taskName'),
-  //           taskDesc: each.get('taskDesc'),
-  //           priority: each.get('priority'),
-  //           finished: each.get('finished'),
-  //           time: each.get('time'),
-  //           index: each.get('index'),
-  //           timeType: each.get('timeType'),
-  //         };
-  //         if (!each.get('finished')) {
-  //           //each doc in todos collection of firebase is added to either finished or unfinished list based on its finished status
-  //           unfinished.push(eachdict);
-  //         }
-  //       });
-  //       setLoadedUnfinishedTodos(
-  //         unfinished.sort((a, b) => {
-  //           return a.index - b.index;
-  //         }),
-  //       );
-  //     })
-  //     .catch(error => {
-  //       console.log(error.message);
-  //     });
-  // }
-
-  // useEffect(() => {
-  // if (allTodos == undefined) {
-  // loadUnfinishedTodos();
-  // console.log('this seems like incomplete todos sidebar');
-  // }
-  // }, []);
+  const [loadedTodos, setLoadedTodos] = useState(null);
+  function loadUnfinishedTodos() {
+    firestore()
+      .collection('todos')
+      .where('user', '==', auth().currentUser.uid)
+      .where('time', '==', time)
+      .orderBy('index', 'asc')
+      .get()
+      .then(snap => {
+        let all = [];
+        snap.docs.map(each => {
+          let eachdict = {
+            id: each.id,
+            taskName: each.get('taskName'),
+            taskDesc: each.get('taskDesc'),
+            priority: each.get('priority'),
+            finished: each.get('finished'),
+            time: each.get('time'),
+            index: each.get('index'),
+            timeType: each.get('timeType'),
+          };
+          all.push(eachdict);
+        });
+        setLoadedTodos(all);
+      })
+      .catch(error => {
+        console.log(error.message);
+      });
+  }
+  useEffect(() => {
+    if (allTodos == undefined) {
+      loadUnfinishedTodos();
+    }
+  }, []);
 
   useEffect(() => {
     provideKeyboardStatus();
@@ -108,15 +96,16 @@ const TodoModal = ({
     //this function computes the appropriate position for any new todo of each priority
     //it returns an array something like this [[3,1], [2, 4], [1, 8], [0, 10]]
     //it means the  array has 1 todo already exisiting at 0 position so appropriate position for new element of priority 3 is 1 and so on
+    let todos = allTodos != undefined ? allTodos : loadedTodos;
     let reqPos = [];
     for (let i = 3; i >= 0; i--) {
-      if (allTodos.length != 0) {
-        for (let index = 0; index < allTodos.length; index++) {
-          if (i > allTodos[index].priority) {
+      if (todos.length != 0) {
+        for (let index = 0; index < todos.length; index++) {
+          if (i > todos[index].priority) {
             reqPos.push([i, index]);
             break;
-          } else if (index == allTodos.length - 1) {
-            reqPos.push([i, allTodos.length]);
+          } else if (index == todos.length - 1) {
+            reqPos.push([i, todos.length]);
           }
         }
       } else {
@@ -152,7 +141,9 @@ const TodoModal = ({
 
   function newTodoManagePri(newIndex) {
     // it increases the index of all todos which have index value equal to or more than newIndex
-    allTodos.forEach((each, index) => {
+
+    let todos = allTodos != undefined ? allTodos : loadedTodos;
+    todos.forEach((each, index) => {
       if (index >= newIndex) {
         firestore()
           .collection('todos')
@@ -167,11 +158,11 @@ const TodoModal = ({
 
   function existingTodoChangePri() {
     //this changes the priority of all todos in between the todo and its new position
-
+    let todos = allTodos != undefined ? allTodos : loadedTodos;
     let initialPos = index;
     let finalPos = decidePosition(todoTaskPriority);
     if (initialPos < finalPos) {
-      allTodos.forEach((each, index) => {
+      todos.forEach((each, index) => {
         if (index > initialPos && index < finalPos) {
           // this reduces index of all items in between initial and final position by 1
           firestore()
@@ -185,7 +176,7 @@ const TodoModal = ({
       });
     } else if (initialPos > finalPos) {
       // this increases index of all items in between initial and final position by 1
-      allTodos.forEach((each, index) => {
+      todos.forEach((each, index) => {
         if (index < initialPos && index >= finalPos) {
           firestore()
             .collection('todos')
@@ -198,6 +189,7 @@ const TodoModal = ({
       });
     }
   }
+
   function closeModal() {
     setModalOpen(false);
     setTimeout(() => {
@@ -205,12 +197,12 @@ const TodoModal = ({
       setTodoTaskDesc('');
       setTodoTaskPriority('0');
     }, 1000);
-    reloadTodos();
   }
+
   function saveTodo() {
+    // decidePosition(todoTaskPriority)
     if (id === undefined) {
       //makes a new todo if the id prop is empty str which means that no particular todo is opened
-      // decidePosition(todoTaskPriority);
 
       newTodoManagePri(decidePosition(todoTaskPriority));
       let todo = {
@@ -262,45 +254,47 @@ const TodoModal = ({
           onPress={() => closeModal()}>
           <Icon name="close" color="#ffffff" size={30} />
         </TouchableOpacity>
-        <TextInput
-          defaultValue={todoTaskName}
-          onChangeText={newVal => setTodoTaskName(newVal)}
-          style={styles.taskName}
-          placeholder="Task Name"
-          placeholderTextColor="#6C6C6C"
-          multiline={true}
-          numberOfLines={2}
-          maxLength={40}
-        />
-        <TextInput
-          defaultValue={todoTaskDesc}
-          onChangeText={newVal => setTodoTaskDesc(newVal)}
-          style={[styles.taskDesc, {height: keyboardStatus ? 240 : 430}]}
-          placeholder="Task Description"
-          placeholderTextColor="#6C6C6C"
-          multiline={true}
-          numberOfLines={200}
-        />
-        <View style={[styles.bottomBar, {bottom: keyboardStatus ? -190 : 0}]}>
-          <PrioritySelector
-            style={styles.prioritySelector}
-            priority={todoTaskPriority}
-            changePriority={setTodoTaskPriority}
+        <View style={styles.lowerModal}>
+          <TextInput
+            defaultValue={todoTaskName}
+            onChangeText={newVal => setTodoTaskName(newVal)}
+            style={styles.taskName}
+            placeholder="Task Name"
+            placeholderTextColor="#6C6C6C"
+            multiline={true}
+            numberOfLines={2}
+            maxLength={40}
           />
-          <TouchableOpacity style={styles.deleteIcon} onPress={toggleModal}>
-            <Icon name="delete" size={32} color="#ffffff" />
-          </TouchableOpacity>
-          <DeleteModal
-            modalVisible={deleteModalVisible}
-            closeModal={toggleModal}
-            reloadTodos={reloadTodos}
-            allTodos={allTodos}
-            index={index}
-            id={id}
+          <TextInput
+            defaultValue={todoTaskDesc}
+            onChangeText={newVal => setTodoTaskDesc(newVal)}
+            style={[styles.taskDesc, {height: keyboardStatus ? 240 : 430}]}
+            placeholder="Task Description"
+            placeholderTextColor="#6C6C6C"
+            multiline={true}
+            numberOfLines={200}
           />
-          <TouchableOpacity style={styles.saveIcon} onPress={saveTodo}>
-            <Icon name="save" size={32} color="#ffffff" />
-          </TouchableOpacity>
+          <View style={[styles.bottomBar, {bottom: keyboardStatus ? -190 : 0}]}>
+            <PrioritySelector
+              style={styles.prioritySelector}
+              priority={todoTaskPriority}
+              changePriority={setTodoTaskPriority}
+            />
+            <TouchableOpacity style={styles.deleteIcon} onPress={toggleModal}>
+              <Icon name="delete" size={32} color="#ffffff" />
+            </TouchableOpacity>
+            <DeleteModal
+              modalVisible={deleteModalVisible}
+              closeModal={toggleModal}
+              reloadTodos={reloadTodos}
+              allTodos={allTodos != undefined ? allTodos : loadedTodos}
+              index={index}
+              id={id}
+            />
+            <TouchableOpacity style={styles.saveIcon} onPress={saveTodo}>
+              <Icon name="save" size={32} color="#ffffff" />
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
     </Modal>

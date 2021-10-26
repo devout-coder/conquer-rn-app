@@ -14,6 +14,7 @@ const DeleteModal = ({
 
   function deleteTodoManagePri(newIndex) {
     //this function manages index of todos below a certain todo in case i delete it
+    // console.log(allTodos)
     allTodos.forEach((each, ind) => {
       if (ind >= newIndex) {
         firestore()
