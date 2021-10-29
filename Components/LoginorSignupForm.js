@@ -185,14 +185,14 @@ const LoginorSignupForm = ({loginorSignup}) => {
         {loginorSignup == 'Signup' ? (
           <Text
             style={styles.altText}
-            onPress={() => navigation.navigate('Login')}>
+            onPress={() => nav.navigate('Login')}>
             Have an account? &nbsp;
             <Text style={styles.altLink}>Login</Text>
           </Text>
         ) : (
           <Text
             style={styles.altText}
-            onPress={() => navigation.navigate('Signup')}>
+            onPress={() => nav.navigate('Signup')}>
             Don't have an account? &nbsp;
             <Text style={styles.altLink}>Signup</Text>
           </Text>

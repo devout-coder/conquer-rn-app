@@ -18,11 +18,11 @@ const Landing = ({navigation}) => {
 
   useEffect(() => {
     setNav(navigation);
-    if (justLoggedOut) {
+    if (user == null && !justLoggedOut) {
+      navigation.navigate('Landing');
+    } else if (justLoggedOut) {
       navigation.navigate('Login');
       toggleJustLoggedOut();
-    } else if (user == null && !justLoggedOut) {
-      navigation.navigate('Landing');
     } else if (user == false) {
       navigation.navigate('Loading');
     } else {

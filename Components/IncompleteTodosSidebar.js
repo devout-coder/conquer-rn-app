@@ -253,7 +253,7 @@ const IncompleteTodosSidebar = ({timeType, navigation, year, changeYear}) => {
             {reqTodos.map((each, index) => (
               <EachTodo
                 id={each.id}
-                key={each.id}
+                key={index}
                 index={each.index}
                 priority={each.priority}
                 taskName={each.taskName}

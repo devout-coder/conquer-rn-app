@@ -50,11 +50,11 @@ const Monthly = ({navigation}) => {
       <View style={styles.monthCalendar}>
         <YearPicker year={year} changeYear={year => setYear(year)} />
         <View style={styles.allMonths}>
-          {months.map(monthset => (
-            <View style={styles.monthsColumn}>
-              {monthset.map(month => (
+          {months.map((monthset, ind) => (
+            <View style={styles.monthsColumn} key={ind}>
+              {monthset.map((month, index) => (
                 <TouchableOpacity
-                  key={month}
+                  key={index}
                   onPress={() => handleMonthPress(month)}>
                   <Text
                     style={

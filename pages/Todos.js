@@ -181,7 +181,7 @@ const Todos = ({navigation, route, year, longTerm}) => {
                   {unfinishedTodos.map((each, index) => (
                     <EachTodo
                       id={each.id}
-                      key={each.id}
+                      key={index}
                       index={each.index}
                       priority={each.priority}
                       taskName={each.taskName}
@@ -208,7 +208,7 @@ const Todos = ({navigation, route, year, longTerm}) => {
                   {finishedTodos.map((each, index) => (
                     <EachTodo
                       id={each.id}
-                      key={each.id}
+                      key={index}
                       index={each.index}
                       priority={each.priority}
                       taskName={each.taskName}

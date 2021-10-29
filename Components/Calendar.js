@@ -161,10 +161,10 @@ const Calendar = ({navigation}) => {
         </TouchableOpacity>
       </View>
       <View style={styles.table}>
-        {getReqCols().map(col => (
-          <View style={styles.col}>
+        {getReqCols().map((col, ind) => (
+          <View style={styles.col} key={ind}>
             {col.map((date, index) => (
-              <TouchableOpacity>
+              <TouchableOpacity key={index}>
                 <Text
                   style={
                     index == 0

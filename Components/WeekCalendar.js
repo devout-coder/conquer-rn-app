@@ -163,8 +163,8 @@ const WeekCalendar = ({navigation}) => {
         </TouchableOpacity>
       </View>
       <View style={styles.allWeeks}>
-        {getWeeks().map(week => (
-          <TouchableOpacity onPress={() => handleWeekPress(week)}>
+        {getWeeks().map((week, index) => (
+          <TouchableOpacity onPress={() => handleWeekPress(week)} key={index}>
             <Text
               style={
                 week.split('#')[1] == 'currentWeek'
