@@ -179,40 +179,48 @@ const IncompleteTodosSidebar = ({timeType, navigation, year, changeYear}) => {
     });
     return sortedTodos;
   }
-  function loadReqTodos() {
-    firestore()
-      .collection('todos')
-      .where('user', '==', auth().currentUser.uid)
-      .where('timeType', '==', timeType)
-      .orderBy('priority', 'desc')
-      // .orderBy("index", "asc")
-      .onSnapshot(snap => {
-        setLoading(true);
-        let tparray = [];
-        snap.docs.map(each => {
-          let eachdict = {
-            id: each.id,
-            taskName: each.get('taskName'),
-            taskDesc: each.get('taskDesc'),
-            priority: each.get('priority'),
-            finished: each.get('finished'),
-            time: each.get('time'),
-            index: each.get('index'),
-            timeType: each.get('timeType'),
-          };
-          if (!each.get('finished')) {
-            tparray.push(eachdict);
-          }
+  class loadReqTodos {
+    constructor() {
+      this.todos = firestore()
+        .collection('todos')
+        .where('user', '==', auth().currentUser.uid)
+        .where('timeType', '==', timeType)
+        .orderBy('priority', 'desc')
+        // .orderBy("index", "asc")
+        .onSnapshot(snap => {
+          setLoading(true);
+          let tparray = [];
+          snap.docs.map(each => {
+            let eachdict = {
+              id: each.id,
+              taskName: each.get('taskName'),
+              taskDesc: each.get('taskDesc'),
+              priority: each.get('priority'),
+              finished: each.get('finished'),
+              time: each.get('time'),
+              index: each.get('index'),
+              timeType: each.get('timeType'),
+            };
+            if (!each.get('finished')) {
+              tparray.push(eachdict);
+            }
+          });
+          sortTodos(tparray);
+          setReqTodos(tparray);
+          setLoading(false);
         });
-        sortTodos(tparray);
-        setReqTodos(tparray);
-        setLoading(false);
-      });
+    }
+    unsubscribe() {
+      return this.todos();
+    }
   }
 
   useEffect(() => {
     if (user) {
-      loadReqTodos();
+      const loadTodos = new loadReqTodos();
+      return function cleanup(){
+        loadTodos.unsubscribe()
+      }
     } else {
       setLoading(true);
     }

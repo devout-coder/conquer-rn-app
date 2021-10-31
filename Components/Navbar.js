@@ -16,10 +16,10 @@ const Navbar = () => {
   let {tabNav, setTabNav} = useContext(tabNavbarContext);
 
   function logout() {
+    toggleJustLoggedOut();
     auth()
       .signOut()
       .then(() => {
-        toggleJustLoggedOut();
         nav.navigate('Login');
       })
       .catch(error => console.log(error));

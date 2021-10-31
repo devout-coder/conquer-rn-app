@@ -40,7 +40,11 @@ const EachTodo = ({
         {merge: true},
       )
       .then(() => {
-        reloadTodos(); //this triggers that loadData func in allTodos which fetches all todos again
+        if (sidebarTodo) {
+          new reloadTodos();
+        } else {
+          reloadTodos(); //this triggers that loadData func in allTodos which fetches all todos again
+        }
       })
       .catch(error => console.log(error));
   };
@@ -68,7 +72,7 @@ const EachTodo = ({
           time={time}
           index={index}
           timeType={timeType}
-          reloadTodos={reloadTodos}
+          reloadTodos={() => new reloadTodos()}
           allTodos={allTodos}
         />
       ) : (
