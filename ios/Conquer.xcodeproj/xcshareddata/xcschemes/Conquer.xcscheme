@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-               BuildableName = "conquer_app.app"
-               BlueprintName = "conquer_app"
-               ReferencedContainer = "container:conquer_app.xcodeproj">
+               BuildableName = "Conquer.app"
+               BlueprintName = "Conquer"
+               ReferencedContainer = "container:Conquer.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,9 +33,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "00E356ED1AD99517003FC87E"
-               BuildableName = "conquer_appTests.xctest"
-               BlueprintName = "conquer_appTests"
-               ReferencedContainer = "container:conquer_app.xcodeproj">
+               BuildableName = "ConquerTests.xctest"
+               BlueprintName = "ConquerTests"
+               ReferencedContainer = "container:Conquer.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -55,9 +55,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "conquer_app.app"
-            BlueprintName = "conquer_app"
-            ReferencedContainer = "container:conquer_app.xcodeproj">
+            BuildableName = "Conquer.app"
+            BlueprintName = "Conquer"
+            ReferencedContainer = "container:Conquer.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -72,9 +72,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "conquer_app.app"
-            BlueprintName = "conquer_app"
-            ReferencedContainer = "container:conquer_app.xcodeproj">
+            BuildableName = "Conquer.app"
+            BlueprintName = "Conquer"
+            ReferencedContainer = "container:Conquer.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

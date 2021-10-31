@@ -3,7 +3,7 @@ require_relative '../node_modules/@react-native-community/cli-platform-ios/nativ
 
 platform :ios, '11.0'
 
-target 'conquer_app' do
+target 'Conquer' do
   config = use_native_modules!
 
   use_react_native!(
@@ -16,7 +16,7 @@ target 'conquer_app' do
 
   pod 'RNSVG', :path => '../node_modules/react-native-svg'
 
-  target 'conquer_appTests' do
+  target 'ConquerTests' do
     inherit! :complete
     # Pods for testing
   end
