@@ -138,10 +138,19 @@ const Todos = ({navigation, route, year, longTerm}) => {
         console.log(error.message);
       });
   }
+  function navbarName() {
+    if (lastPage == 'daily') {
+      return 'Day';
+    } else if (lastPage == 'longTerm') {
+      return 'Long Term';
+    } else {
+      return lastPage.charAt(0).toUpperCase() + lastPage.slice(1);
+    }
+  }
 
   return (
     <View style={globalStyles.overallBackground}>
-      <Navbar />
+      <Navbar page={navbarName()} />
       <View style={styles.allTodosContainer}>
         <View style={styles.topBar}>
           {lastPage == 'year' ? (

@@ -1,8 +1,24 @@
-import React from 'react';
+import React, {useContext, useEffect} from 'react';
 import {ActivityIndicator, StyleSheet, Text, View} from 'react-native';
+import {loginContext, navbarContext, userContext} from '../context';
 import globalStyles from '../globalStyles';
 
-const Loading = () => {
+const Loading = ({navigation}) => {
+  let user = useContext(userContext);
+  let {justLoggedOut, toggleJustLoggedOut} = useContext(loginContext);
+  let {nav, setNav} = useContext(navbarContext);
+
+  useEffect(() => {
+    setNav(navigation);
+    if (justLoggedOut) {
+      navigation.navigate('Login');
+    } else if (user == null) {
+      navigation.navigate('Landing');
+    } else if (user != false) {
+      navigation.navigate('Main');
+    }
+  }, [user]);
+
   return (
     <View style={styles.background}>
       <ActivityIndicator style={styles.loading} size="large" color="#00ff00" />
@@ -19,6 +35,6 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    justifyContent:'center'
+    justifyContent: 'center',
   },
 });

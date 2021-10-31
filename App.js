@@ -39,7 +39,7 @@ export default function App() {
         <navbarContext.Provider value={{nav, setNav}}>
           <tabNavbarContext.Provider value={{tabNav, setTabNav}}>
             <NavigationContainer>
-              <Stack.Navigator>
+              <Stack.Navigator initialRouteName="Loading" >
                 <Stack.Screen
                   name="Landing"
                   component={Landing}

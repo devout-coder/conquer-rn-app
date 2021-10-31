@@ -46,7 +46,7 @@ const Monthly = ({navigation}) => {
 
   return (
     <View style={globalStyles.overallBackground}>
-      <Navbar />
+      <Navbar page="Month" />
       <View style={styles.monthCalendar}>
         <YearPicker year={year} changeYear={year => setYear(year)} />
         <View style={styles.allMonths}>

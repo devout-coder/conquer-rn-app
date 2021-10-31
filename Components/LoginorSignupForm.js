@@ -9,13 +9,14 @@ import {
   ActivityIndicator,
   Modal,
   Pressable,
+  BackHandler,
 } from 'react-native';
 import Navbar from '../Components/Navbar';
 import globalStyles from '../globalStyles';
 import Icon from 'react-native-vector-icons/Entypo';
 import auth from '@react-native-firebase/auth';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
-import { navbarContext } from '../context';
+import {navbarContext} from '../context';
 
 GoogleSignin.configure({
   webClientId:
@@ -23,7 +24,7 @@ GoogleSignin.configure({
 });
 
 const LoginorSignupForm = ({loginorSignup}) => {
-  const {nav, setNav} = useContext(navbarContext)
+  const {nav, setNav} = useContext(navbarContext);
 
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
@@ -33,6 +34,17 @@ const LoginorSignupForm = ({loginorSignup}) => {
   const [loading, setLoading] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [modalMessage, setModalMessage] = useState('');
+
+  useEffect(() => {
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      () => {
+        nav.navigate('Landing');
+        return true;
+      },
+    );
+    return () => backHandler.remove();
+  }, []);
 
   const openEyeStyles = {
     display: openEye,
@@ -183,16 +195,12 @@ const LoginorSignupForm = ({loginorSignup}) => {
           />
         </TouchableOpacity>
         {loginorSignup == 'Signup' ? (
-          <Text
-            style={styles.altText}
-            onPress={() => nav.navigate('Login')}>
+          <Text style={styles.altText} onPress={() => nav.navigate('Login')}>
             Have an account? &nbsp;
             <Text style={styles.altLink}>Login</Text>
           </Text>
         ) : (
-          <Text
-            style={styles.altText}
-            onPress={() => nav.navigate('Signup')}>
+          <Text style={styles.altText} onPress={() => nav.navigate('Signup')}>
             Don't have an account? &nbsp;
             <Text style={styles.altLink}>Signup</Text>
           </Text>

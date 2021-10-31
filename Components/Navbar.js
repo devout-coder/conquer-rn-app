@@ -9,7 +9,7 @@ import {
   userContext,
 } from '../context';
 
-const Navbar = () => {
+const Navbar = ({page}) => {
   let user = useContext(userContext);
   let {justLoggedOut, toggleJustLoggedOut} = useContext(loginContext);
   let {nav, setNav} = useContext(navbarContext);
@@ -27,15 +27,16 @@ const Navbar = () => {
 
   return (
     <View style={styles.navbar}>
-      <TouchableOpacity
-        onPress={() =>
-          user != null ? tabNav.navigate('DailyTab') : nav.navigate('Landing')
-        }>
+      {page == 'Landing' ? (
         <Image
           source={require('../resources/images/conquerLogo.png')}
           style={styles.conquerLogo}
         />
-      </TouchableOpacity>
+      ) : (
+        <View style={styles.pageName}>
+          <Text style={styles.pageName}>{page}</Text>
+        </View>
+      )}
       {user != null ? (
         <TouchableOpacity onPress={logout}>
           <Icon name="logout" color="#ffffff" size={28} />
@@ -56,7 +57,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: 350,
     justifyContent: 'space-between',
-    // backgroundColor:"#000000"
+    marginBottom: 30,
+    marginTop: 15,
   },
 
   conquerLogo: {
@@ -64,5 +66,11 @@ const styles = StyleSheet.create({
     width: 80,
     position: 'relative',
     right: 18,
+  },
+  pageName: {
+    // color: '#ffffff',
+    color: '#ffffff',
+    fontFamily: 'Poppins-SemiBold',
+    fontSize: 28,
   },
 });

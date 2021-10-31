@@ -32,7 +32,7 @@ const WeeklyTab = () => {
 const Weekly = ({navigation}) => {
   return (
     <View style={globalStyles.overallBackground}>
-      <Navbar />
+      <Navbar page="Week" />
       <WeekCalendar navigation={navigation} />
       <IncompleteTodosSidebar timeType="week" navigation={navigation} />
     </View>
