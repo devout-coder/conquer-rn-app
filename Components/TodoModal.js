@@ -318,6 +318,9 @@ const styles = StyleSheet.create({
   closeButton: {
     alignSelf: 'flex-end',
   },
+  lowerModal:{
+    flex:1,
+  },
   taskName: {
     color: '#ffffff',
     fontFamily: 'Poppins-SemiBold',

@@ -218,9 +218,9 @@ const IncompleteTodosSidebar = ({timeType, navigation, year, changeYear}) => {
   useEffect(() => {
     if (user) {
       const loadTodos = new loadReqTodos();
-      return function cleanup(){
-        loadTodos.unsubscribe()
-      }
+      return function cleanup() {
+        loadTodos.unsubscribe();
+      };
     } else {
       setLoading(true);
     }
@@ -300,6 +300,12 @@ const styles = StyleSheet.create({
     padding: 3,
     paddingLeft: 10,
     paddingRight: 10,
+    zIndex: 10000,
+  },
+  noTodosMessage: {
+    color: '#a8e3ff',
+    fontFamily: 'Poppins-SemiBold',
+    fontSize:20
   },
   topBar: {
     display: 'flex',

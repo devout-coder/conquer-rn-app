@@ -14,7 +14,10 @@ const Landing = ({navigation}) => {
   useEffect(() => {
     const backHandler = BackHandler.addEventListener(
       'hardwareBackPress',
-      () => true,
+      () => {
+        BackHandler.exitApp();
+        return true;
+      },
     );
     return () => backHandler.remove();
   }, []);
