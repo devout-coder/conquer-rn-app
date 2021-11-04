@@ -268,7 +268,7 @@ const TodoModal = ({
           <TextInput
             defaultValue={todoTaskDesc}
             onChangeText={newVal => setTodoTaskDesc(newVal)}
-            style={[styles.taskDesc, {height: keyboardStatus ? 240 : 430}]}
+            style={[styles.taskDesc, {height: keyboardStatus ? '65%' : '71%'}]}
             placeholder="Task Description"
             placeholderTextColor="#6C6C6C"
             multiline={true}
@@ -318,8 +318,8 @@ const styles = StyleSheet.create({
   closeButton: {
     alignSelf: 'flex-end',
   },
-  lowerModal:{
-    flex:1,
+  lowerModal: {
+    flex: 1,
   },
   taskName: {
     color: '#ffffff',
@@ -335,9 +335,10 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins-Medium',
     color: '#F1D7D7',
     padding: 0,
-    marginTop: 25,
-    // backgroundColor:"#ffffff",
+    marginTop: 20,
+    marginBottom: 15,
     textAlignVertical: 'top',
+    lineHeight: 42
   },
   bottomBar: {
     display: 'flex',
@@ -345,17 +346,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
-  prioritySelector: {
-    // marginRight: 'auto',
-  },
+  prioritySelector: {},
   deleteIcon: {
-    // marginRight: jauto',
     position: 'absolute',
     right: 55,
   },
   saveIcon: {
     position: 'absolute',
     right: 0,
-    // marginRight: 'auto',
   },
 });
