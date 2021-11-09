@@ -25,8 +25,8 @@ const YearPicker = ({year, changeYear}) => {
       setOpen={setOpen}
       setValue={changeYear}
       setItems={setItems}
-      style={{width: 90, backgroundColor: '#262647', borderColor: '#262647'}}
-      containerStyle={{width: 90}}
+      style={{width: 95, backgroundColor: '#262647', borderColor: '#262647'}}
+      containerStyle={{width: 95}}
       labelStyle={{color: '#ffffff', fontSize: 20}}
       textStyle={{
         fontSize: 15,

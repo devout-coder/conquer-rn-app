@@ -6,7 +6,6 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  TouchableOpacity,
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
@@ -16,7 +15,7 @@ import auth from '@react-native-firebase/auth';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import EachTodo from './EachTodo';
 
-const fullMonths = [
+export const fullMonths = [
   'January',
   'February',
   'March',
@@ -30,7 +29,7 @@ const fullMonths = [
   'November',
   'December',
 ];
-const weekMonths = [
+export const weekMonths = [
   'Jan',
   'Feb',
   'Mar',

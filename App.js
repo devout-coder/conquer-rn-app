@@ -60,11 +60,6 @@ export default function App() {
                   component={Loading}
                   options={{headerShown: false}}
                 />
-                {/* <Stack.Screen
-              name="Daily"
-              component={Daily}
-              options={{headerShown: false}}
-            /> */}
                 <Stack.Screen
                   name="Main"
                   component={Main}

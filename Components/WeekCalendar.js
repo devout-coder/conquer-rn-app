@@ -142,9 +142,48 @@ const WeekCalendar = ({navigation}) => {
     }
     return weeksList;
   };
+  function reverseObject(object) {
+    let tempObj = {};
+    for (let key in object) {
+      tempObj[object[key]] = key;
+    }
+    return tempObj;
+  }
 
-  function handleWeekPress(week) {
-    navigation.push('Todos', {time: week.split('#')[0], lastPage: 'week'});
+  function calculateNextWeek(index) {
+    let nextWeek = getWeeks()[index + 1];
+    if (nextWeek == undefined) {
+      let lastDay = getWeeks()[index].split('-')[1];
+      let [day, month, year] = lastDay.split(' ');
+      month = parseInt(reverseObject(weekMonths)[month]) + 1;
+      month = month.toString();
+      if (day.length == 1) {
+        day = '0' + day;
+      }
+      if (month.length == 1) {
+        month = '0' + month;
+      }
+      let thisDay = new Date(`${year}-${month}-${day}`);
+      let nextDay = new Date(thisDay);
+      nextDay.setDate(thisDay.getDate() + 1);
+      let newLastDay = new Date(thisDay);
+      newLastDay.setDate(thisDay.getDate() + 7);
+      return `${nextDay.getDate()} ${
+        weekMonths[nextDay.getMonth()]
+      } ${nextDay.getFullYear()}-${newLastDay.getDate()} ${
+        weekMonths[newLastDay.getMonth()]
+      } ${newLastDay.getFullYear()}`;
+    } else {
+      return nextWeek.split('#')[0];
+    }
+  }
+
+  function handleWeekPress(week, index) {
+    navigation.push('Todos', {
+      time: week.split('#')[0],
+      lastPage: 'week',
+      nextWeek: calculateNextWeek(index),
+    });
   }
 
   return (
@@ -164,7 +203,9 @@ const WeekCalendar = ({navigation}) => {
       </View>
       <View style={styles.allWeeks}>
         {getWeeks().map((week, index) => (
-          <TouchableOpacity onPress={() => handleWeekPress(week)} key={index}>
+          <TouchableOpacity
+            onPress={() => handleWeekPress(week, index)}
+            key={index}>
             <Text
               style={
                 week.split('#')[1] == 'currentWeek'

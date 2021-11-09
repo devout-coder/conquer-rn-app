@@ -22,6 +22,8 @@ import YearPicker from '../Components/YearPicker';
 import TodoModal from '../Components/TodoModal';
 import {tabNavbarContext, userContext} from '../context';
 import IncompleteTodosSidebar from '../Components/IncompleteTodosSidebar';
+import {fullMonths} from '../Components/IncompleteTodosSidebar';
+import {months} from '../Components/Calendar';
 
 const Todos = ({navigation, route, year, longTerm}) => {
   let user = useContext(userContext);
@@ -41,6 +43,7 @@ const Todos = ({navigation, route, year, longTerm}) => {
       ? useState('longTerm')
       : useState(route.params['lastPage']);
 
+  let nextWeek = lastPage == 'week' ? route.params['nextWeek'] : null;
   const [finishedTodos, setFinishedTodos] = useState([]);
   const [unfinishedTodos, setUnfinishedTodos] = useState([]);
   const [allTodos, setAllTodos] = useState([]);
@@ -147,6 +150,41 @@ const Todos = ({navigation, route, year, longTerm}) => {
       return lastPage.charAt(0).toUpperCase() + lastPage.slice(1);
     }
   }
+
+  function nextTime() {
+    if (lastPage == 'year') {
+      return parseInt(time) + 1;
+    } else if (lastPage == 'month') {
+      let month = time.split(' ')[0];
+      let year = time.split(' ')[1];
+      if (month == 'December') {
+        let nextYear = parseInt(year) + 1;
+        return 'January ' + nextYear.toString();
+      } else {
+        return months[fullMonths.indexOf(month) + 1] + ' ' + year;
+      }
+    } else if (lastPage == 'week') {
+      return nextWeek;
+    } else if (lastPage == 'daily') {
+      let [day, month, year] = time.split('/');
+      if (day.length == 1) {
+        day = '0' + day;
+      }
+      if (month.length == 1) {
+        month = '0' + month;
+      }
+      let thisDay = new Date(`${year}-${month}-${day}`);
+      let nextDay = new Date(thisDay);
+      nextDay.setDate(thisDay.getDate() + 1);
+      day = nextDay.getDate();
+      month = parseInt(nextDay.getMonth()) + 1;
+      year = nextDay.getFullYear();
+      return `${day}/${month}/${year}`;
+    }
+  }
+
+  console.log('now: ', time);
+  console.log('future: ', nextTime());
 
   return (
     <View style={globalStyles.overallBackground}>
