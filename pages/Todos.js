@@ -4,12 +4,12 @@ import React, {useContext, useEffect, useState} from 'react';
 import {
   ActivityIndicator,
   BackHandler,
-  FlatList,
   ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
+  ToastAndroid,
 } from 'react-native';
 import Navbar from '../Components/Navbar';
 import globalStyles from '../globalStyles';
@@ -183,6 +183,11 @@ const Todos = ({navigation, route, year, longTerm}) => {
     }
   }
 
+  const Toast = message => {
+    console.log('toast');
+    ToastAndroid.show(message, ToastAndroid.SHORT);
+  };
+
   console.log('now: ', time);
   console.log('future: ', nextTime());
 
@@ -198,8 +203,14 @@ const Todos = ({navigation, route, year, longTerm}) => {
           )}
           <TouchableOpacity
             style={styles.addIcon}
-            onPress={() => setModalOpen(true)}>
+            onPress={() => setModalOpen(true)}
+            onLongPress={() => Toast('Add Todo')}>
             <Icon name="my-library-add" color="#ffffff" size={28} />
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.postponeIcon}
+            onLongPress={() => Toast('Postpone all Tasks')}>
+            <Icon name="subdirectory-arrow-right" color="#ffffff" size={28} />
           </TouchableOpacity>
         </View>
         <TodoModal
@@ -302,11 +313,15 @@ const styles = StyleSheet.create({
   addIcon: {
     position: 'relative',
     bottom: 3,
-    marginLeft: 18,
+    marginLeft: 25,
   },
   allTodosContainer: {
     flex: 0.83,
     // backgroundColor: '#ffffff',
+  },
+  postponeIcon: {
+    marginLeft: 15,
+    bottom: 3,
   },
   topBar: {
     display: 'flex',
@@ -315,7 +330,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     alignItems: 'center',
     position: 'relative',
-    left: 13,
+    left: 35,
   },
   numTodos: {
     color: '#c6c4c4',
