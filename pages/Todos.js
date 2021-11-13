@@ -153,7 +153,8 @@ const Todos = ({navigation, route, year, longTerm}) => {
 
   function nextTime() {
     if (lastPage == 'year') {
-      return parseInt(time) + 1;
+      let str = parseInt(time) + 1;
+      return str.toString();
     } else if (lastPage == 'month') {
       let month = time.split(' ')[0];
       let year = time.split(' ')[1];
@@ -188,9 +189,90 @@ const Todos = ({navigation, route, year, longTerm}) => {
     ToastAndroid.show(message, ToastAndroid.SHORT);
   };
 
-  console.log('now: ', time);
-  console.log('future: ', nextTime());
+  function loadFutureTodos() {
+    return new Promise(resolve => {
+      firestore()
+        .collection('todos')
+        .where('user', '==', auth().currentUser.uid)
+        .where('time', '==', nextTime())
+        .orderBy('priority', 'desc')
+        .get()
+        .then(snap => {
+          let futureTodos = [];
+          snap.docs.map(each => {
+            let eachdict = {
+              id: each.id,
+              taskName: each.get('taskName'),
+              taskDesc: each.get('taskDesc'),
+              priority: each.get('priority'),
+              finished: each.get('finished'),
+              time: each.get('time'),
+              index: each.get('index'),
+              timeType: each.get('timeType'),
+            };
+            futureTodos.push(eachdict);
+          });
+          resolve(futureTodos);
+        });
+    });
+  }
 
+  function priPosition(todos, priority) {
+    //this function computes the appropriate position for any new todo of given priority
+    //this function computes the appropriate position for any new todo of given priority
+    // console.log('future todos in pri position', todos);
+    let reqPos = [];
+    for (let i = 3; i >= 0; i--) {
+      if (todos.length != 0) {
+        for (let index = 0; index < todos.length; index++) {
+          if (i > todos[index].priority) {
+            reqPos.push([i, index]);
+            break;
+          } else if (index == todos.length - 1) {
+            reqPos.push([i, todos.length]);
+          }
+        }
+      } else {
+        reqPos.push([i, 0]);
+      }
+    }
+    let reqIndex;
+    reqPos.forEach(each => {
+      if (priority == each[0]) {
+        reqIndex = each[1];
+      }
+    });
+    return reqIndex;
+  }
+
+  function updateFutureTodosIndex(todos, newIndex) {
+    todos.forEach(each => {
+      // console.log(each.index, each.index + 1, newIndex);
+      if (each.index >= newIndex) {
+        firestore()
+          .collection('todos')
+          .doc(each.id)
+          .update({
+            index: each.index + 1,
+          })
+          .catch(error => console.log(error));
+      }
+    });
+  }
+  function postponeTodos() {
+    unfinishedTodos.forEach(each => {
+      loadFutureTodos().then(todos => {
+        let newIndex = priPosition(todos, each.priority);
+        updateFutureTodosIndex(todos, newIndex);
+        firestore().collection('todos').doc(each.id).update({
+          time: nextTime(),
+          index: newIndex,
+        });
+      });
+    });
+    loadData();
+  }
+  console.log(unfinishedTodos)
   return (
     <View style={globalStyles.overallBackground}>
       <Navbar page={navbarName()} />
@@ -206,11 +288,6 @@ const Todos = ({navigation, route, year, longTerm}) => {
             onPress={() => setModalOpen(true)}
             onLongPress={() => Toast('Add Todo')}>
             <Icon name="my-library-add" color="#ffffff" size={28} />
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.postponeIcon}
-            onLongPress={() => Toast('Postpone all Tasks')}>
-            <Icon name="subdirectory-arrow-right" color="#ffffff" size={28} />
           </TouchableOpacity>
         </View>
         <TodoModal
@@ -246,6 +323,7 @@ const Todos = ({navigation, route, year, longTerm}) => {
                       taskDesc={each.taskDesc}
                       finished={each.finished}
                       time={each.time}
+                      nextTime={nextTime()}
                       timeType={each.timeType}
                       reloadTodos={loadData}
                       allTodos={allTodos}
@@ -273,6 +351,7 @@ const Todos = ({navigation, route, year, longTerm}) => {
                       taskDesc={each.taskDesc}
                       finished={each.finished}
                       time={each.time}
+                      nextTime={nextTime()}
                       timeType={each.timeType}
                       reloadTodos={loadData}
                       allTodos={allTodos}
