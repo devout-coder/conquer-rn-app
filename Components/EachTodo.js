@@ -18,6 +18,7 @@ const EachTodo = ({
   timeType,
   reloadTodos,
   allTodos,
+  futureTodos,
   sidebarTodo,
   navigation,
   year,
@@ -76,6 +77,7 @@ const EachTodo = ({
           timeType={timeType}
           reloadTodos={() => new reloadTodos()}
           allTodos={allTodos}
+          futureTodos={futureTodos}
         />
       ) : (
         <View></View>

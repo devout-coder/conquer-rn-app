@@ -47,6 +47,7 @@ const Todos = ({navigation, route, year, longTerm}) => {
   const [finishedTodos, setFinishedTodos] = useState([]);
   const [unfinishedTodos, setUnfinishedTodos] = useState([]);
   const [allTodos, setAllTodos] = useState([]);
+  const [futureTodos, setFutureTodos] = useState([]);
   const [modalOpen, setModalOpen] = useState(false); //this state controls the delete modal
   const [loading, setLoading] = useState(true);
 
@@ -74,6 +75,7 @@ const Todos = ({navigation, route, year, longTerm}) => {
   useEffect(() => {
     if (user) {
       loadData();
+      loadFutureTodos();
     } else {
       setLoading(true);
     }
@@ -141,6 +143,33 @@ const Todos = ({navigation, route, year, longTerm}) => {
         console.log(error.message);
       });
   }
+
+  function loadFutureTodos() {
+    firestore()
+      .collection('todos')
+      .where('user', '==', auth().currentUser.uid)
+      .where('time', '==', nextTime())
+      .orderBy('priority', 'desc')
+      .get()
+      .then(snap => {
+        let futureTodos = [];
+        snap.docs.map(each => {
+          let eachdict = {
+            id: each.id,
+            taskName: each.get('taskName'),
+            taskDesc: each.get('taskDesc'),
+            priority: each.get('priority'),
+            finished: each.get('finished'),
+            time: each.get('time'),
+            index: each.get('index'),
+            timeType: each.get('timeType'),
+          };
+          futureTodos.push(eachdict);
+        });
+        setFutureTodos(futureTodos);
+      });
+  }
+
   function navbarName() {
     if (lastPage == 'daily') {
       return 'Day';
@@ -189,90 +218,7 @@ const Todos = ({navigation, route, year, longTerm}) => {
     ToastAndroid.show(message, ToastAndroid.SHORT);
   };
 
-  function loadFutureTodos() {
-    return new Promise(resolve => {
-      firestore()
-        .collection('todos')
-        .where('user', '==', auth().currentUser.uid)
-        .where('time', '==', nextTime())
-        .orderBy('priority', 'desc')
-        .get()
-        .then(snap => {
-          let futureTodos = [];
-          snap.docs.map(each => {
-            let eachdict = {
-              id: each.id,
-              taskName: each.get('taskName'),
-              taskDesc: each.get('taskDesc'),
-              priority: each.get('priority'),
-              finished: each.get('finished'),
-              time: each.get('time'),
-              index: each.get('index'),
-              timeType: each.get('timeType'),
-            };
-            futureTodos.push(eachdict);
-          });
-          resolve(futureTodos);
-        });
-    });
-  }
-
-  function priPosition(todos, priority) {
-    //this function computes the appropriate position for any new todo of given priority
-    //this function computes the appropriate position for any new todo of given priority
-    // console.log('future todos in pri position', todos);
-    let reqPos = [];
-    for (let i = 3; i >= 0; i--) {
-      if (todos.length != 0) {
-        for (let index = 0; index < todos.length; index++) {
-          if (i > todos[index].priority) {
-            reqPos.push([i, index]);
-            break;
-          } else if (index == todos.length - 1) {
-            reqPos.push([i, todos.length]);
-          }
-        }
-      } else {
-        reqPos.push([i, 0]);
-      }
-    }
-    let reqIndex;
-    reqPos.forEach(each => {
-      if (priority == each[0]) {
-        reqIndex = each[1];
-      }
-    });
-    return reqIndex;
-  }
-
-  function updateFutureTodosIndex(todos, newIndex) {
-    todos.forEach(each => {
-      // console.log(each.index, each.index + 1, newIndex);
-      if (each.index >= newIndex) {
-        firestore()
-          .collection('todos')
-          .doc(each.id)
-          .update({
-            index: each.index + 1,
-          })
-          .catch(error => console.log(error));
-      }
-    });
-  }
-  function postponeTodos() {
-    unfinishedTodos.forEach(each => {
-      loadFutureTodos().then(todos => {
-        let newIndex = priPosition(todos, each.priority);
-        updateFutureTodosIndex(todos, newIndex);
-        firestore().collection('todos').doc(each.id).update({
-          time: nextTime(),
-          index: newIndex,
-        });
-      });
-    });
-    loadData();
-  }
-  console.log(unfinishedTodos)
+  // console.log(allTodos);
   return (
     <View style={globalStyles.overallBackground}>
       <Navbar page={navbarName()} />
@@ -327,6 +273,7 @@ const Todos = ({navigation, route, year, longTerm}) => {
                       timeType={each.timeType}
                       reloadTodos={loadData}
                       allTodos={allTodos}
+                      futureTodos={futureTodos}
                       sidebarTodo={false}
                     />
                   ))}
@@ -355,6 +302,7 @@ const Todos = ({navigation, route, year, longTerm}) => {
                       timeType={each.timeType}
                       reloadTodos={loadData}
                       allTodos={allTodos}
+                      futureTodos={futureTodos}
                       sidebarTodo={false}
                     />
                   ))}

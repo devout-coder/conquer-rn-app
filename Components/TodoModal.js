@@ -32,6 +32,7 @@ const TodoModal = ({
   timeType,
   reloadTodos,
   allTodos,
+  futureTodos,
 }) => {
   const [todoTaskName, setTodoTaskName] = useState(taskName);
   const [todoTaskDesc, setTodoTaskDesc] = useState(taskDesc);
@@ -85,33 +86,6 @@ const TodoModal = ({
       });
   }
 
-  function loadFutureTodos() {
-    return new Promise(resolve => {
-      firestore()
-        .collection('todos')
-        .where('user', '==', auth().currentUser.uid)
-        .where('time', '==', nextTime)
-        .orderBy('priority', 'desc')
-        .get()
-        .then(snap => {
-          let futureTodos = [];
-          snap.docs.map(each => {
-            let eachdict = {
-              id: each.id,
-              taskName: each.get('taskName'),
-              taskDesc: each.get('taskDesc'),
-              priority: each.get('priority'),
-              finished: each.get('finished'),
-              time: each.get('time'),
-              index: each.get('index'),
-              timeType: each.get('timeType'),
-            };
-            futureTodos.push(eachdict);
-          });
-          resolve(futureTodos);
-        });
-    });
-  }
   useEffect(() => {
     if (allTodos == undefined) {
       loadUnfinishedTodos();
@@ -259,22 +233,20 @@ const TodoModal = ({
   }
 
   function postponeTodo() {
-    loadFutureTodos().then(futureTodos => {
-      let presentTodos = allTodos != undefined ? allTodos : loadedTodos;
-      let newIndex = decidePosition(futureTodos, todoTaskPriority);
-      updateFutureTodosIndex(presentTodos, futureTodos, newIndex);
-      firestore()
-        .collection('todos')
-        .doc(id)
-        .update({
-          time: nextTime,
-          index: newIndex,
-        })
-        .then(() => {
-          closeModal();
-          reloadTodos();
-        });
-    });
+    let presentTodos = allTodos != undefined ? allTodos : loadedTodos;
+    let newIndex = decidePosition(futureTodos, todoTaskPriority);
+    updateFutureTodosIndex(presentTodos, futureTodos, newIndex);
+    firestore()
+      .collection('todos')
+      .doc(id)
+      .update({
+        time: nextTime,
+        index: newIndex,
+      })
+      .then(() => {
+        closeModal();
+        reloadTodos();
+      });
   }
 
   function saveTodo() {
