@@ -43,7 +43,6 @@ const Todos = ({navigation, route, year, longTerm}) => {
       ? useState('longTerm')
       : useState(route.params['lastPage']);
 
-  let nextWeek = lastPage == 'week' ? route.params['nextWeek'] : null;
   const [finishedTodos, setFinishedTodos] = useState([]);
   const [unfinishedTodos, setUnfinishedTodos] = useState([]);
   const [allTodos, setAllTodos] = useState([]);
@@ -75,7 +74,6 @@ const Todos = ({navigation, route, year, longTerm}) => {
   useEffect(() => {
     if (user) {
       loadData();
-      loadFutureTodos();
     } else {
       setLoading(true);
     }
@@ -144,32 +142,6 @@ const Todos = ({navigation, route, year, longTerm}) => {
       });
   }
 
-  function loadFutureTodos() {
-    firestore()
-      .collection('todos')
-      .where('user', '==', auth().currentUser.uid)
-      .where('time', '==', nextTime())
-      .orderBy('priority', 'desc')
-      .get()
-      .then(snap => {
-        let futureTodos = [];
-        snap.docs.map(each => {
-          let eachdict = {
-            id: each.id,
-            taskName: each.get('taskName'),
-            taskDesc: each.get('taskDesc'),
-            priority: each.get('priority'),
-            finished: each.get('finished'),
-            time: each.get('time'),
-            index: each.get('index'),
-            timeType: each.get('timeType'),
-          };
-          futureTodos.push(eachdict);
-        });
-        setFutureTodos(futureTodos);
-      });
-  }
-
   function navbarName() {
     if (lastPage == 'daily') {
       return 'Day';
@@ -177,39 +149,6 @@ const Todos = ({navigation, route, year, longTerm}) => {
       return 'Long Term';
     } else {
       return lastPage.charAt(0).toUpperCase() + lastPage.slice(1);
-    }
-  }
-
-  function nextTime() {
-    if (lastPage == 'year') {
-      let str = parseInt(time) + 1;
-      return str.toString();
-    } else if (lastPage == 'month') {
-      let month = time.split(' ')[0];
-      let year = time.split(' ')[1];
-      if (month == 'December') {
-        let nextYear = parseInt(year) + 1;
-        return 'January ' + nextYear.toString();
-      } else {
-        return months[fullMonths.indexOf(month) + 1] + ' ' + year;
-      }
-    } else if (lastPage == 'week') {
-      return nextWeek;
-    } else if (lastPage == 'daily') {
-      let [day, month, year] = time.split('/');
-      if (day.length == 1) {
-        day = '0' + day;
-      }
-      if (month.length == 1) {
-        month = '0' + month;
-      }
-      let thisDay = new Date(`${year}-${month}-${day}`);
-      let nextDay = new Date(thisDay);
-      nextDay.setDate(thisDay.getDate() + 1);
-      day = nextDay.getDate();
-      month = parseInt(nextDay.getMonth()) + 1;
-      year = nextDay.getFullYear();
-      return `${day}/${month}/${year}`;
     }
   }
 
@@ -269,11 +208,9 @@ const Todos = ({navigation, route, year, longTerm}) => {
                       taskDesc={each.taskDesc}
                       finished={each.finished}
                       time={each.time}
-                      nextTime={nextTime()}
                       timeType={each.timeType}
                       reloadTodos={loadData}
                       allTodos={allTodos}
-                      futureTodos={futureTodos}
                       sidebarTodo={false}
                     />
                   ))}
@@ -298,11 +235,9 @@ const Todos = ({navigation, route, year, longTerm}) => {
                       taskDesc={each.taskDesc}
                       finished={each.finished}
                       time={each.time}
-                      nextTime={nextTime()}
                       timeType={each.timeType}
                       reloadTodos={loadData}
                       allTodos={allTodos}
-                      futureTodos={futureTodos}
                       sidebarTodo={false}
                     />
                   ))}

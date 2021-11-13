@@ -182,7 +182,6 @@ const WeekCalendar = ({navigation}) => {
     navigation.push('Todos', {
       time: week.split('#')[0],
       lastPage: 'week',
-      nextWeek: calculateNextWeek(index),
     });
   }
 

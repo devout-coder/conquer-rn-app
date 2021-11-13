@@ -14,11 +14,9 @@ const EachTodo = ({
   taskDesc,
   finished,
   time,
-  nextTime,
   timeType,
   reloadTodos,
   allTodos,
-  futureTodos,
   sidebarTodo,
   navigation,
   year,
@@ -72,12 +70,10 @@ const EachTodo = ({
           priority={priority}
           finished={finished}
           time={time}
-          nextTime={nextTime}
           index={index}
           timeType={timeType}
           reloadTodos={() => new reloadTodos()}
           allTodos={allTodos}
-          futureTodos={futureTodos}
         />
       ) : (
         <View></View>

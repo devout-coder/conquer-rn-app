@@ -17,6 +17,9 @@ import PrioritySelector from './PrioritySelector';
 import DeleteModal from './DeleteModal';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
+import {fullMonths} from '../Components/IncompleteTodosSidebar';
+import {months} from '../Components/Calendar';
+import {weekMonths} from './WeekCalendar';
 
 const TodoModal = ({
   modalOpen,
@@ -27,12 +30,10 @@ const TodoModal = ({
   priority,
   finished,
   time,
-  nextTime,
   index,
   timeType,
   reloadTodos,
   allTodos,
-  futureTodos,
 }) => {
   const [todoTaskName, setTodoTaskName] = useState(taskName);
   const [todoTaskDesc, setTodoTaskDesc] = useState(taskDesc);
@@ -86,7 +87,96 @@ const TodoModal = ({
       });
   }
 
+  const [futureTodos, setFutureTodos] = useState([]);
+
+  function loadFutureTodos() {
+    firestore()
+      .collection('todos')
+      .where('user', '==', auth().currentUser.uid)
+      .where('time', '==', nextTime())
+      .orderBy('priority', 'desc')
+      .get()
+      .then(snap => {
+        let futureTodos = [];
+        snap.docs.map(each => {
+          let eachdict = {
+            id: each.id,
+            taskName: each.get('taskName'),
+            taskDesc: each.get('taskDesc'),
+            priority: each.get('priority'),
+            finished: each.get('finished'),
+            time: each.get('time'),
+            index: each.get('index'),
+            timeType: each.get('timeType'),
+          };
+          futureTodos.push(eachdict);
+        });
+        setFutureTodos(futureTodos);
+      });
+  }
+
+  function reverseObject(object) {
+    let tempObj = {};
+    for (let key in object) {
+      tempObj[object[key]] = key;
+    }
+    return tempObj;
+  }
+
+  function nextTime() {
+    if (timeType == 'year') {
+      let str = parseInt(time) + 1;
+      return str.toString();
+    } else if (timeType == 'month') {
+      let month = time.split(' ')[0];
+      let year = time.split(' ')[1];
+      if (month == 'December') {
+        let nextYear = parseInt(year) + 1;
+        return 'January ' + nextYear.toString();
+      } else {
+        return months[fullMonths.indexOf(month) + 1] + ' ' + year;
+      }
+    } else if (timeType == 'week') {
+      let lastDay = time.split('-')[1];
+      let [day, month, year] = lastDay.split(' ');
+      month = parseInt(reverseObject(weekMonths)[month]) + 1;
+      month = month.toString();
+      if (day.length == 1) {
+        day = '0' + day;
+      }
+      if (month.length == 1) {
+        month = '0' + month;
+      }
+      let thisDay = new Date(`${year}-${month}-${day}`);
+      let nextDay = new Date(thisDay);
+      nextDay.setDate(thisDay.getDate() + 1);
+      let newLastDay = new Date(thisDay);
+      newLastDay.setDate(thisDay.getDate() + 7);
+      return `${nextDay.getDate()} ${
+        weekMonths[nextDay.getMonth()]
+      } ${nextDay.getFullYear()}-${newLastDay.getDate()} ${
+        weekMonths[newLastDay.getMonth()]
+      } ${newLastDay.getFullYear()}`;
+    } else if (timeType == 'daily') {
+      let [day, month, year] = time.split('/');
+      if (day.length == 1) {
+        day = '0' + day;
+      }
+      if (month.length == 1) {
+        month = '0' + month;
+      }
+      let thisDay = new Date(`${year}-${month}-${day}`);
+      let nextDay = new Date(thisDay);
+      nextDay.setDate(thisDay.getDate() + 1);
+      day = nextDay.getDate();
+      month = parseInt(nextDay.getMonth()) + 1;
+      year = nextDay.getFullYear();
+      return `${day}/${month}/${year}`;
+    }
+  }
+
   useEffect(() => {
+    loadFutureTodos();
     if (allTodos == undefined) {
       loadUnfinishedTodos();
     }
@@ -240,7 +330,7 @@ const TodoModal = ({
       .collection('todos')
       .doc(id)
       .update({
-        time: nextTime,
+        time: nextTime(),
         index: newIndex,
       })
       .then(() => {
