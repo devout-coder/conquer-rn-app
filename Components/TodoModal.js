@@ -32,6 +32,7 @@ const TodoModal = ({
   time,
   index,
   timeType,
+  timesPostponed,
   reloadTodos,
   allTodos,
 }) => {
@@ -57,6 +58,11 @@ const TodoModal = ({
     };
   }
 
+  function postponeText() {
+    let times = timesPostponed == 1 ? '1 time' : `${timesPostponed} times`;
+    return `postponed ${times}...`;
+  }
+
   const [loadedTodos, setLoadedTodos] = useState(null);
   function loadUnfinishedTodos() {
     firestore()
@@ -77,6 +83,7 @@ const TodoModal = ({
             time: each.get('time'),
             index: each.get('index'),
             timeType: each.get('timeType'),
+            timesPostponed: each.get('timesPostponed'),
           };
           all.push(eachdict);
         });
@@ -108,6 +115,7 @@ const TodoModal = ({
             time: each.get('time'),
             index: each.get('index'),
             timeType: each.get('timeType'),
+            timesPostponed: each.get('timesPostponed'),
           };
           futureTodos.push(eachdict);
         });
@@ -285,7 +293,6 @@ const TodoModal = ({
 
   function updateFutureTodosIndex(presentTodos, futureTodos, newIndex) {
     futureTodos.forEach(each => {
-      // console.log(each.index, each.index + 1, newIndex);
       if (each.index >= newIndex) {
         firestore()
           .collection('todos')
@@ -332,6 +339,7 @@ const TodoModal = ({
       .update({
         time: nextTime(),
         index: newIndex,
+        timesPostponed: timesPostponed != undefined ? timesPostponed + 1 : 1,
       })
       .then(() => {
         closeModal();
@@ -389,12 +397,19 @@ const TodoModal = ({
   return (
     <Modal isVisible={modalOpen} style={styles.modal}>
       <View style={{flex: 1}}>
-        <TouchableOpacity
-          style={styles.closeButton}
-          onLongPress={() => Toast('Close without saving')}
-          onPress={() => closeModal()}>
-          <Icon name="close" color="#ffffff" size={30} />
-        </TouchableOpacity>
+        <View style={styles.topbar}>
+          {timesPostponed != undefined ? (
+            <Text style={styles.postponeText}>{postponeText()}</Text>
+          ) : (
+            <View></View>
+          )}
+          <TouchableOpacity
+            style={styles.closeButton}
+            onLongPress={() => Toast('Close without saving')}
+            onPress={() => closeModal()}>
+            <Icon name="close" color="#ffffff" size={30} />
+          </TouchableOpacity>
+        </View>
         <View style={styles.lowerModal}>
           <TextInput
             defaultValue={todoTaskName}
@@ -409,13 +424,19 @@ const TodoModal = ({
           <TextInput
             defaultValue={todoTaskDesc}
             onChangeText={newVal => setTodoTaskDesc(newVal)}
-            style={[styles.taskDesc, {height: keyboardStatus ? '65%' : '71%'}]}
+            style={[styles.taskDesc, {}]}
             placeholder="Task Description"
             placeholderTextColor="#6C6C6C"
             multiline={true}
             numberOfLines={200}
           />
-          <View style={[styles.bottomBar, {bottom: keyboardStatus ? -190 : 0}]}>
+          <View
+            style={[
+              styles.bottomBar,
+              {
+                bottom: keyboardStatus ? -180 : -40,
+              },
+            ]}>
             <PrioritySelector
               style={styles.prioritySelector}
               priority={todoTaskPriority}
@@ -480,6 +501,12 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     padding: 40,
   },
+  topbar: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
   closeButton: {
     alignSelf: 'flex-end',
   },
@@ -494,16 +521,25 @@ const styles = StyleSheet.create({
     padding: 0,
     fontSize: 28,
     marginTop: 20,
+    // backgroundColor: '#ffffff',
   },
   taskDesc: {
     fontSize: 25,
     fontFamily: 'Poppins-Medium',
     color: '#F1D7D7',
     padding: 0,
-    marginTop: 20,
-    marginBottom: 15,
+    marginTop: 0,
+    // marginBottom: 5,
     textAlignVertical: 'top',
     lineHeight: 42,
+    // backgroundColor: '#ffffff',
+    height: '70%',
+  },
+  postponeText: {
+    fontSize: 20,
+    fontFamily: 'Ubuntu-Medium',
+    position: 'relative',
+    color: '#595959',
   },
   bottomBar: {
     display: 'flex',

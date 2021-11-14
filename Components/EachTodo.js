@@ -15,6 +15,7 @@ const EachTodo = ({
   finished,
   time,
   timeType,
+  timesPostponed,
   reloadTodos,
   allTodos,
   sidebarTodo,
@@ -72,6 +73,7 @@ const EachTodo = ({
           time={time}
           index={index}
           timeType={timeType}
+          timesPostponed={timesPostponed}
           reloadTodos={() => new reloadTodos()}
           allTodos={allTodos}
         />

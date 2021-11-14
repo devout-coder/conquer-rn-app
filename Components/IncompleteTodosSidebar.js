@@ -199,6 +199,7 @@ const IncompleteTodosSidebar = ({timeType, navigation, year, changeYear}) => {
               time: each.get('time'),
               index: each.get('index'),
               timeType: each.get('timeType'),
+              timesPostponed: each.get('timesPostponed'),
             };
             if (!each.get('finished')) {
               tparray.push(eachdict);
@@ -268,6 +269,7 @@ const IncompleteTodosSidebar = ({timeType, navigation, year, changeYear}) => {
                 finished={each.finished}
                 time={each.time}
                 timeType={each.timeType}
+                timesPostponed={each.timesPostponed}
                 reloadTodos={loadReqTodos}
                 sidebarTodo={true}
                 navigation={navigation}
@@ -304,7 +306,7 @@ const styles = StyleSheet.create({
   noTodosMessage: {
     color: '#a8e3ff',
     fontFamily: 'Poppins-SemiBold',
-    fontSize:20
+    fontSize: 20,
   },
   topBar: {
     display: 'flex',

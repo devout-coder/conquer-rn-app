@@ -111,6 +111,7 @@ const Todos = ({navigation, route, year, longTerm}) => {
             time: each.get('time'),
             index: each.get('index'),
             timeType: each.get('timeType'),
+            timesPostponed: each.get('timesPostponed'),
           };
           if (each.get('finished')) {
             //each doc in todos collection of firebase is added to either finished or unfinished list based on its finished status
@@ -209,6 +210,7 @@ const Todos = ({navigation, route, year, longTerm}) => {
                       finished={each.finished}
                       time={each.time}
                       timeType={each.timeType}
+                      timesPostponed={each.timesPostponed}
                       reloadTodos={loadData}
                       allTodos={allTodos}
                       sidebarTodo={false}
@@ -236,6 +238,7 @@ const Todos = ({navigation, route, year, longTerm}) => {
                       finished={each.finished}
                       time={each.time}
                       timeType={each.timeType}
+                      timesPostponed={each.timesPostponed}
                       reloadTodos={loadData}
                       allTodos={allTodos}
                       sidebarTodo={false}
