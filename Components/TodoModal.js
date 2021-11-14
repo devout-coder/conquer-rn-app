@@ -97,30 +97,32 @@ const TodoModal = ({
   const [futureTodos, setFutureTodos] = useState([]);
 
   function loadFutureTodos() {
-    firestore()
-      .collection('todos')
-      .where('user', '==', auth().currentUser.uid)
-      .where('time', '==', nextTime())
-      .orderBy('priority', 'desc')
-      .get()
-      .then(snap => {
-        let futureTodos = [];
-        snap.docs.map(each => {
-          let eachdict = {
-            id: each.id,
-            taskName: each.get('taskName'),
-            taskDesc: each.get('taskDesc'),
-            priority: each.get('priority'),
-            finished: each.get('finished'),
-            time: each.get('time'),
-            index: each.get('index'),
-            timeType: each.get('timeType'),
-            timesPostponed: each.get('timesPostponed'),
-          };
-          futureTodos.push(eachdict);
+    if (timeType != 'longTerm') {
+      firestore()
+        .collection('todos')
+        .where('user', '==', auth().currentUser.uid)
+        .where('time', '==', nextTime())
+        .orderBy('priority', 'desc')
+        .get()
+        .then(snap => {
+          let futureTodos = [];
+          snap.docs.map(each => {
+            let eachdict = {
+              id: each.id,
+              taskName: each.get('taskName'),
+              taskDesc: each.get('taskDesc'),
+              priority: each.get('priority'),
+              finished: each.get('finished'),
+              time: each.get('time'),
+              index: each.get('index'),
+              timeType: each.get('timeType'),
+              timesPostponed: each.get('timesPostponed'),
+            };
+            futureTodos.push(eachdict);
+          });
+          setFutureTodos(futureTodos);
         });
-        setFutureTodos(futureTodos);
-      });
+    }
   }
 
   function reverseObject(object) {
@@ -133,8 +135,7 @@ const TodoModal = ({
 
   function nextTime() {
     if (timeType == 'year') {
-      let str = parseInt(time) + 1;
-      return str.toString();
+      return parseInt(time) + 1;
     } else if (timeType == 'month') {
       let month = time.split(' ')[0];
       let year = time.split(' ')[1];
@@ -442,9 +443,7 @@ const TodoModal = ({
               priority={todoTaskPriority}
               changePriority={setTodoTaskPriority}
             />
-            {id === undefined ? (
-              <View></View>
-            ) : (
+            {id != undefined && timeType != 'longTerm' ? (
               <TouchableOpacity
                 style={styles.postponeIcon}
                 onPress={postponeTodo}
@@ -455,16 +454,18 @@ const TodoModal = ({
                   size={28}
                 />
               </TouchableOpacity>
-            )}
-            {id === undefined ? (
-              <View></View>
             ) : (
+              <View></View>
+            )}
+            {id != undefined ? (
               <TouchableOpacity
                 style={styles.deleteIcon}
                 onLongPress={() => Toast('Delete')}
                 onPress={toggleModal}>
                 <Icon name="delete" size={32} color="#ffffff" />
               </TouchableOpacity>
+            ) : (
+              <View></View>
             )}
             <DeleteModal
               modalVisible={deleteModalVisible}
@@ -529,10 +530,8 @@ const styles = StyleSheet.create({
     color: '#F1D7D7',
     padding: 0,
     marginTop: 0,
-    // marginBottom: 5,
     textAlignVertical: 'top',
     lineHeight: 42,
-    // backgroundColor: '#ffffff',
     height: '70%',
   },
   postponeText: {
@@ -549,11 +548,11 @@ const styles = StyleSheet.create({
   },
   postponeIcon: {
     position: 'absolute',
-    right: 55,
+    right: 110,
   },
   deleteIcon: {
     position: 'absolute',
-    right: 105,
+    right: 55,
   },
   saveIcon: {
     position: 'absolute',
