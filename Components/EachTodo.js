@@ -80,11 +80,11 @@ const EachTodo = ({
       ) : (
         <View></View>
       )}
-      {/* {!finished && !sidebarTodo ? (
+      {!finished && !sidebarTodo ? (
         <Icon name="drag-indicator" style={styles.dragIcon} size={26} />
       ) : (
         <View></View>
-      )} */}
+      )}
       <CheckBox
         value={checked}
         tintColors={{
