@@ -24,6 +24,8 @@ const EachTodo = ({
   changeYear,
   spinArrowDown,
   decreaseSidebarHeight,
+  drag,
+  isActive,
 }) => {
   const [checked, setChecked] = useState(finished);
   const [modalOpen, setModalOpen] = useState(false); //this state controls the delete modal
@@ -60,7 +62,7 @@ const EachTodo = ({
     }
   }
   return (
-    <View style={styles.eachTodo}>
+    <TouchableOpacity style={styles.eachTodo}>
       {modalOpen ? (
         <TodoModal
           modalOpen={modalOpen}
@@ -81,7 +83,9 @@ const EachTodo = ({
         <View></View>
       )}
       {!finished && !sidebarTodo ? (
-        <Icon name="drag-indicator" style={styles.dragIcon} size={26} />
+        <TouchableOpacity>
+          <Icon name="drag-indicator" style={styles.dragIcon} size={26} />
+        </TouchableOpacity>
       ) : (
         <View></View>
       )}
@@ -100,7 +104,10 @@ const EachTodo = ({
         }}
         onValueChange={val => checkUncheckfunc(val)}
       />
-      <TouchableOpacity onPress={() => setModalOpen(true)}>
+      <TouchableOpacity
+        onPress={() => setModalOpen(true)}
+        onLongPress={drag}
+        disabled={isActive}>
         <Text
           style={[
             styles.taskName,
@@ -128,7 +135,7 @@ const EachTodo = ({
       ) : (
         <View></View>
       )}
-    </View>
+    </TouchableOpacity>
   );
 };
 

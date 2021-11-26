@@ -28,44 +28,27 @@ import DraggableFlatList, {
   ScaleDecorator,
 } from 'react-native-draggable-flatlist';
 
-const NUM_ITEMS = 10;
-
-function getColor(i) {
-  const multiplier = 255 / (NUM_ITEMS - 1);
-  const colorVal = i * multiplier;
-  return `rgb(${colorVal}, ${Math.abs(128 - colorVal)}, ${255 - colorVal})`;
-}
-
-const initialData = [...Array(NUM_ITEMS)].map((d, index) => {
-  const backgroundColor = getColor(index);
-  return {
-    key: `item-${index}`,
-    label: String(index) + '',
-    height: 100,
-    width: 60 + Math.random() * 40,
-    backgroundColor,
-  };
-});
-
 const Todos = ({navigation, route, year, longTerm}) => {
-  const [data, setData] = useState(initialData);
-  const renderItem = ({item, drag, isActive}) => {
+  const renderUnfinishedTodo = ({item, drag, isActive}) => {
     return (
       <ScaleDecorator>
-        <TouchableOpacity
-          onLongPress={drag}
-          disabled={isActive}
-          style={[
-            {
-              backgroundColor: isActive ? 'red' : item.backgroundColor,
-              width: 200,
-              display: 'flex',
-              flexDirection: 'row',
-              justifyContent: 'center',
-            },
-          ]}>
-          <Text style={styles.text}>{item.label}</Text>
-        </TouchableOpacity>
+        <EachTodo
+          id={item.id}
+          key={item.index}
+          index={item.index}
+          priority={item.priority}
+          taskName={item.taskName}
+          taskDesc={item.taskDesc}
+          finished={item.finished}
+          time={item.time}
+          timeType={item.timeType}
+          timesPostponed={item.timesPostponed}
+          reloadTodos={loadData}
+          allTodos={allTodos}
+          sidebarTodo={false}
+          drag={drag}
+          isActive={isActive}
+        />
       </ScaleDecorator>
     );
   };
@@ -262,10 +245,11 @@ const Todos = ({navigation, route, year, longTerm}) => {
                   ))}
                 </ScrollView> */}
                 <DraggableFlatList
-                  data={data}
-                  onDragEnd={({data}) => setData(data)}
-                  keyExtractor={item => item.key}
-                  renderItem={renderItem}
+                  data={unfinishedTodos}
+                  style={styles.unfinishedTodosList}
+                  onDragEnd={({data}) => setUnfinishedTodos(data)}
+                  keyExtractor={item => item.index}
+                  renderItem={renderUnfinishedTodo}
                 />
               </View>
             ) : (
@@ -353,15 +337,18 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins-Medium',
   },
   mainTodos: {
-    display: 'flex',
     marginTop: 10,
     flex: 1,
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-between',
   },
   unfinishedTodos: {
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
     flex: 1,
+    marginBottom:50,
   },
   unfinishedTodosList: {
     display: 'flex',
