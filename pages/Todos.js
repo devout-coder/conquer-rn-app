@@ -27,32 +27,9 @@ import {months} from '../Components/Calendar';
 import DraggableFlatList, {
   ScaleDecorator,
 } from 'react-native-draggable-flatlist';
+import Toast from '../Components/Toast';
 
 const Todos = ({navigation, route, year, longTerm}) => {
-  const renderUnfinishedTodo = ({item, drag, isActive}) => {
-    return (
-      <ScaleDecorator>
-        <EachTodo
-          id={item.id}
-          key={item.index}
-          index={item.index}
-          priority={item.priority}
-          taskName={item.taskName}
-          taskDesc={item.taskDesc}
-          finished={item.finished}
-          time={item.time}
-          timeType={item.timeType}
-          timesPostponed={item.timesPostponed}
-          reloadTodos={loadData}
-          allTodos={allTodos}
-          sidebarTodo={false}
-          drag={drag}
-          isActive={isActive}
-        />
-      </ScaleDecorator>
-    );
-  };
-
   let user = useContext(userContext);
   let {tabNav, setTabNav} = useContext(tabNavbarContext);
 
@@ -180,12 +157,94 @@ const Todos = ({navigation, route, year, longTerm}) => {
     }
   }
 
-  const Toast = message => {
-    console.log('toast');
-    ToastAndroid.show(message, ToastAndroid.SHORT);
+  function rearrangeTodos(data, from, to) {
+    let initialPos;
+    let finalPos;
+    if (from != to) {
+      allTodos.forEach((each, index) => {
+        if (each.id == unfinishedTodos[to].id) {
+          finalPos = each.index;
+        } else if (each.id == unfinishedTodos[from].id) {
+          initialPos = each.index;
+        }
+      });
+      console.log(initialPos, finalPos);
+      let initialPri = allTodos[initialPos].priority;
+      let finalPri = allTodos[finalPos].priority;
+      if (initialPri == finalPri) {
+        setUnfinishedTodos(data);
+        if (initialPos < finalPos) {
+          allTodos.forEach((each, index) => {
+            if (index == initialPos) {
+              firestore()
+                .collection('todos')
+                .doc(each.id)
+                .update({
+                  index: finalPos,
+                })
+                .catch(error => console.error(error));
+            }
+            if (index > initialPos && index <= finalPos) {
+              firestore()
+                .collection('todos')
+                .doc(each.id)
+                .update({
+                  index: index - 1,
+                })
+                .catch(error => console.error(error));
+            }
+          });
+        } else if (initialPos > finalPos) {
+          allTodos.forEach((each, index) => {
+            if (index == initialPos) {
+              firestore()
+                .collection('todos')
+                .doc(each.id)
+                .update({
+                  index: finalPos,
+                })
+                .catch(error => console.error(error));
+            }
+            if (index < initialPos && index >= finalPos) {
+              firestore()
+                .collection('todos')
+                .doc(each.id)
+                .update({
+                  index: index + 1,
+                })
+                .catch(error => console.error(error));
+            }
+          });
+        }
+        loadData();
+      }
+    }
+  }
+
+  const unfinishedTodo = ({item, drag, isActive}) => {
+    return (
+      <ScaleDecorator>
+        <EachTodo
+          id={item.id}
+          key={item.index}
+          index={item.index}
+          priority={item.priority}
+          taskName={item.taskName}
+          taskDesc={item.taskDesc}
+          finished={item.finished}
+          time={item.time}
+          timeType={item.timeType}
+          timesPostponed={item.timesPostponed}
+          reloadTodos={loadData}
+          allTodos={allTodos}
+          sidebarTodo={false}
+          drag={drag}
+          isActive={isActive}
+        />
+      </ScaleDecorator>
+    );
   };
 
-  // console.log(allTodos);
   return (
     <View style={globalStyles.overallBackground}>
       <Navbar page={navbarName()} />
@@ -223,33 +282,14 @@ const Todos = ({navigation, route, year, longTerm}) => {
                 <Text style={styles.numTodos}>
                   {unfinishedTodos.length} unfinished
                 </Text>
-                {/* <ScrollView
-                  style={styles.unfinishedTodosList}
-                  indicatorStyle={{color: '#ffffff'}}>
-                  {unfinishedTodos.map((each, index) => (
-                    <EachTodo
-                      id={each.id}
-                      key={index}
-                      index={each.index}
-                      priority={each.priority}
-                      taskName={each.taskName}
-                      taskDesc={each.taskDesc}
-                      finished={each.finished}
-                      time={each.time}
-                      timeType={each.timeType}
-                      timesPostponed={each.timesPostponed}
-                      reloadTodos={loadData}
-                      allTodos={allTodos}
-                      sidebarTodo={false}
-                    />
-                  ))}
-                </ScrollView> */}
                 <DraggableFlatList
                   data={unfinishedTodos}
                   style={styles.unfinishedTodosList}
-                  onDragEnd={({data}) => setUnfinishedTodos(data)}
+                  onDragEnd={({data, to, from}) =>
+                    rearrangeTodos(data, from, to)
+                  }
                   keyExtractor={item => item.index}
-                  renderItem={renderUnfinishedTodo}
+                  renderItem={unfinishedTodo}
                 />
               </View>
             ) : (
@@ -348,7 +388,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     alignItems: 'center',
     flex: 1,
-    marginBottom:50,
+    marginBottom: 50,
   },
   unfinishedTodosList: {
     display: 'flex',

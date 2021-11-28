@@ -20,6 +20,7 @@ import auth from '@react-native-firebase/auth';
 import {fullMonths} from '../Components/IncompleteTodosSidebar';
 import {months} from '../Components/Calendar';
 import {weekMonths} from './WeekCalendar';
+import Toast from './Toast';
 
 const TodoModal = ({
   modalOpen,
@@ -265,7 +266,7 @@ const TodoModal = ({
     let finalPos = decidePosition(todos, todoTaskPriority);
     if (initialPos < finalPos) {
       todos.forEach((each, index) => {
-        if (index > initialPos && index < finalPos) {
+        if (index > initialPos && index <= finalPos) {
           // this reduces index of all items in between initial and final position by 1
           firestore()
             .collection('todos')
@@ -316,10 +317,6 @@ const TodoModal = ({
       }
     });
   }
-
-  const Toast = message => {
-    ToastAndroid.show(message, ToastAndroid.SHORT);
-  };
 
   function closeModal() {
     setModalOpen(false);

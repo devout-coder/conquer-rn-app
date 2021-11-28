@@ -83,9 +83,7 @@ const EachTodo = ({
         <View></View>
       )}
       {!finished && !sidebarTodo ? (
-        <TouchableOpacity>
-          <Icon name="drag-indicator" style={styles.dragIcon} size={26} />
-        </TouchableOpacity>
+        <Icon name="drag-indicator" style={styles.dragIcon} size={26} />
       ) : (
         <View></View>
       )}
