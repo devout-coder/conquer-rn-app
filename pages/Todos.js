@@ -161,14 +161,14 @@ const Todos = ({navigation, route, year, longTerm}) => {
     let initialPos;
     let finalPos;
     if (from != to) {
-      allTodos.forEach((each, index) => {
+      allTodos.forEach((each) => {
         if (each.id == unfinishedTodos[to].id) {
           finalPos = each.index;
         } else if (each.id == unfinishedTodos[from].id) {
           initialPos = each.index;
         }
       });
-      console.log(initialPos, finalPos);
+
       let initialPri = allTodos[initialPos].priority;
       let finalPri = allTodos[finalPos].priority;
       if (initialPri == finalPri) {
@@ -220,6 +220,9 @@ const Todos = ({navigation, route, year, longTerm}) => {
       }
     }
   }
+  // allTodos.forEach(each => {
+  //   console.log(each.taskName, each.index);
+  // });
 
   const unfinishedTodo = ({item, drag, isActive}) => {
     return (
