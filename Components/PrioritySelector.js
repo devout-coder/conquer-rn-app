@@ -1,7 +1,7 @@
+import MaterialIcon from '../customIcons/MaterialIcon';
 import React, {useState} from 'react';
 import {StyleSheet} from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
-import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const PrioritySelector = ({priority, changePriority}) => {
   const [open, setOpen] = useState(false);
@@ -9,22 +9,46 @@ const PrioritySelector = ({priority, changePriority}) => {
     {
       label: 'High',
       value: '3',
-      icon: () => <Icon name="priority-high" color="#FF3131" size={24} />,
+      icon: () => (
+        <MaterialIcon
+          iconName="priority-high"
+          iconColor="#FF3131"
+          iconSize={24}
+        />
+      ),
     },
     {
       label: 'Medium',
       value: '2',
-      icon: () => <Icon name="priority-high" color="#464D8E" size={24} />,
+      icon: () => (
+        <MaterialIcon
+          iconName="priority-high"
+          iconColor="#464D8E"
+          iconSize={24}
+        />
+      ),
     },
     {
       label: 'Low',
       value: '1',
-      icon: () => <Icon name="priority-high" color="#11B421" size={24} />,
+      icon: () => (
+        <MaterialIcon
+          iconName="priority-high"
+          iconColor="#11B421"
+          iconSize={24}
+        />
+      ),
     },
     {
       label: 'No Priority',
       value: '0',
-      icon: () => <Icon name="priority-high" color="#414141" size={24} />,
+      icon: () => (
+        <MaterialIcon
+          iconName="priority-high"
+          iconColor="#414141"
+          iconSize={24}
+        />
+      ),
     },
   ]);
 

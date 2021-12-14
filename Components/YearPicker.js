@@ -2,7 +2,7 @@ import React, {useState, useEffect} from 'react';
 import {StyleSheet, View} from 'react-native';
 import {Picker} from '@react-native-picker/picker';
 import DropDownPicker from 'react-native-dropdown-picker';
-import Icon from 'react-native-vector-icons/AntDesign';
+import AntDesignIcon from '../customIcons/AntDesignIcon';
 
 const YearPicker = ({year, changeYear}) => {
   const [open, setOpen] = useState(false);
@@ -33,15 +33,15 @@ const YearPicker = ({year, changeYear}) => {
         fontFamily: 'Poppins-Medium',
       }}
       ArrowDownIconComponent={() => (
-        <Icon
-          name="caretdown"
-          color="#ffffff"
+        <AntDesignIcon
+          iconName="caretdown"
+          iconColor="#ffffff"
           style={{position: 'relative', bottom: 2}}
-          size={13}
+          iconSize={13}
         />
       )}
       ArrowUpIconComponent={() => (
-        <Icon name="caretup" color="#ffffff" size={13} />
+        <AntDesignIcon iconName="caretup" iconColor="#ffffff" iconSize={13} />
       )}
       placeholder="Select Year"
     />

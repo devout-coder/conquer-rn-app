@@ -2,9 +2,9 @@ import React, {useEffect, useState} from 'react';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import CheckBox from '@react-native-community/checkbox';
 import firestore from '@react-native-firebase/firestore';
-import Icon from 'react-native-vector-icons/MaterialIcons';
 import TodoModal from './TodoModal';
 import auth from '@react-native-firebase/auth';
+import MaterialIcon from '../customIcons/MaterialIcon';
 
 const EachTodo = ({
   id,
@@ -83,7 +83,11 @@ const EachTodo = ({
         <View></View>
       )}
       {!finished && !sidebarTodo ? (
-        <Icon name="drag-indicator" style={styles.dragIcon} size={26} />
+        <MaterialIcon
+          iconName="drag-indicator"
+          iconColor="#c6c4c4"
+          iconSize={26}
+        />
       ) : (
         <View></View>
       )}
@@ -148,9 +152,6 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     // backgroundColor:"#ffffff",
     width: 320,
-  },
-  dragIcon: {
-    color: '#c6c4c4',
   },
   taskName: {
     color: '#ffffff',

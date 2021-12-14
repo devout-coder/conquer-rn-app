@@ -1,7 +1,7 @@
 import {NavigationContainer} from '@react-navigation/native';
+import AntDesignIcon from '../customIcons/AntDesignIcon';
 import React, {useState} from 'react';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import Icon from 'react-native-vector-icons/AntDesign';
 import {months} from './Calendar';
 
 export const weekMonths = {
@@ -189,7 +189,7 @@ const WeekCalendar = ({navigation}) => {
     <View style={styles.weekCalendar}>
       <View style={styles.topbar}>
         <TouchableOpacity onPress={decreaseMonth}>
-          <Icon name="caretleft" color="#ffffff" size={20} />
+          <AntDesignIcon iconName="caretleft" iconColor="#ffffff" iconSize={20} />
         </TouchableOpacity>
         <View style={styles.topbarMonthContainer}>
           <Text style={styles.topbarMonth}>
@@ -197,7 +197,7 @@ const WeekCalendar = ({navigation}) => {
           </Text>
         </View>
         <TouchableOpacity onPress={increaseMonth}>
-          <Icon name="caretright" color="#ffffff" size={20} />
+          <AntDesignIcon iconName="caretright" iconColor="#ffffff" iconSize={20} />
         </TouchableOpacity>
       </View>
       <View style={styles.allWeeks}>

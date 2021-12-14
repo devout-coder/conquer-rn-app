@@ -1,6 +1,5 @@
 import React, {useContext, useEffect, useState} from 'react';
 import {StyleSheet, Text, View, Image, TouchableOpacity} from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialIcons';
 import auth from '@react-native-firebase/auth';
 import {
   loginContext,
@@ -8,6 +7,7 @@ import {
   tabNavbarContext,
   userContext,
 } from '../context';
+import MaterialIcon from '../customIcons/MaterialIcon';
 
 const Navbar = ({page}) => {
   let user = useContext(userContext);
@@ -39,7 +39,7 @@ const Navbar = ({page}) => {
       )}
       {user != null ? (
         <TouchableOpacity onPress={logout}>
-          <Icon name="logout" color="#ffffff" size={28} />
+          <MaterialIcon iconName="logout" iconColor="#ffffff" iconSize={28} />
         </TouchableOpacity>
       ) : (
         <View></View>

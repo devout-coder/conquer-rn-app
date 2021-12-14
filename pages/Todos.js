@@ -14,7 +14,6 @@ import {
 import Navbar from '../Components/Navbar';
 import globalStyles from '../globalStyles';
 import {weekMonths} from '../Components/WeekCalendar';
-import Icon from 'react-native-vector-icons/MaterialIcons';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import EachTodo from '../Components/EachTodo';
@@ -28,6 +27,7 @@ import DraggableFlatList, {
   ScaleDecorator,
 } from 'react-native-draggable-flatlist';
 import Toast from '../Components/Toast';
+import MaterialIcon from '../customIcons/MaterialIcon';
 
 const Todos = ({navigation, route, year, longTerm}) => {
   let user = useContext(userContext);
@@ -262,7 +262,7 @@ const Todos = ({navigation, route, year, longTerm}) => {
             style={styles.addIcon}
             onPress={() => setModalOpen(true)}
             onLongPress={() => Toast('Add Todo')}>
-            <Icon name="my-library-add" color="#ffffff" size={28} />
+            <MaterialIcon iconName="my-library-add" iconColor="#ffffff" iconSize={28} />
           </TouchableOpacity>
         </View>
         <TodoModal

@@ -11,7 +11,6 @@ import {
   View,
   ToastAndroid,
 } from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialIcons';
 import Modal from 'react-native-modal';
 import PrioritySelector from './PrioritySelector';
 import DeleteModal from './DeleteModal';
@@ -21,7 +20,9 @@ import {fullMonths} from '../Components/IncompleteTodosSidebar';
 import {months} from '../Components/Calendar';
 import {weekMonths} from './WeekCalendar';
 import Toast from './Toast';
-import ClockIcon from './ClockIcon';
+import FeatherIcon from '../customIcons/FeatherIcon';
+import AntDesignIcon from '../customIcons/AntDesignIcon';
+import MaterialIcon from '../customIcons/MaterialIcon';
 
 const TodoModal = ({
   modalOpen,
@@ -406,7 +407,7 @@ const TodoModal = ({
             style={styles.closeButton}
             onLongPress={() => Toast('Close without saving')}
             onPress={() => closeModal()}>
-            <Icon name="close" color="#ffffff" size={30} />
+            <MaterialIcon iconName="close" iconColor="#ffffff" iconSize={30} />
           </TouchableOpacity>
         </View>
         <View style={styles.lowerModal}>
@@ -441,38 +442,55 @@ const TodoModal = ({
               priority={todoTaskPriority}
               changePriority={setTodoTaskPriority}
             />
+            <TouchableOpacity
+              style={styles.reminderIcon}
+              onLongPress={() => Toast('Share this task with friends')}>
+              <AntDesignIcon
+                iconSize={28}
+                iconColor="#ffffff"
+                iconName="addusergroup"
+              />
+            </TouchableOpacity>
             {timeType != 'longTerm' ? (
               <TouchableOpacity
                 style={styles.reminderIcon}
                 onLongPress={() => Toast('Reminders')}>
-                <ClockIcon />
+                <FeatherIcon
+                  iconName="clock"
+                  iconSize={28}
+                  iconColor="#ffffff"
+                />
               </TouchableOpacity>
             ) : (
-              <View></View>
+              <></>
             )}
             {id != undefined && timeType != 'longTerm' ? (
               <TouchableOpacity
                 style={styles.postponeIcon}
                 onPress={postponeTodo}
                 onLongPress={() => Toast('Postpone')}>
-                <Icon
-                  name="subdirectory-arrow-right"
-                  color="#ffffff"
-                  size={28}
+                <MaterialIcon
+                  iconName="subdirectory-arrow-right"
+                  iconColor="#ffffff"
+                  iconSize={28}
                 />
               </TouchableOpacity>
             ) : (
-              <View></View>
+              <></>
             )}
             {id != undefined ? (
               <TouchableOpacity
                 style={styles.deleteIcon}
                 onLongPress={() => Toast('Delete')}
                 onPress={toggleModal}>
-                <Icon name="delete" size={32} color="#ffffff" />
+                <MaterialIcon
+                  iconName="delete"
+                  iconSize={32}
+                  iconColor="#ffffff"
+                />
               </TouchableOpacity>
             ) : (
-              <View></View>
+              <></>
             )}
             <DeleteModal
               modalVisible={deleteModalVisible}
@@ -486,7 +504,7 @@ const TodoModal = ({
               style={styles.saveIcon}
               onPress={saveTodo}
               onLongPress={() => Toast('Save')}>
-              <Icon name="save" size={32} color="#ffffff" />
+              <MaterialIcon iconName="save" iconSize={32} iconColor="#ffffff" />
             </TouchableOpacity>
           </View>
         </View>
@@ -520,6 +538,8 @@ const styles = StyleSheet.create({
   },
   lowerModal: {
     flex: 1,
+    display: 'flex',
+    flexDirection: 'column',
   },
   taskName: {
     color: '#ffffff',
@@ -549,24 +569,12 @@ const styles = StyleSheet.create({
   },
   bottomBar: {
     display: 'flex',
+    width: '105%',
     position: 'relative',
     flexDirection: 'row',
     alignItems: 'center',
-  },
-  postponeIcon: {
-    position: 'absolute',
-    right: 110,
-  },
-  deleteIcon: {
-    position: 'absolute',
-    right: 55,
-  },
-  saveIcon: {
-    position: 'absolute',
-    right: 0,
-  },
-  reminderIcon: {
-    position: 'absolute',
-    right:160,
+    alignSelf: 'center',
+    justifyContent: 'space-between',
+    // backgroundColor: '#ffffff',
   },
 });

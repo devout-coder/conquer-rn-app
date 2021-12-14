@@ -12,8 +12,8 @@ import {
 import {userContext} from '../context';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
-import Icon from 'react-native-vector-icons/MaterialIcons';
 import EachTodo from './EachTodo';
+import MaterialIcon from '../customIcons/MaterialIcon';
 
 export const fullMonths = [
   'January',
@@ -253,7 +253,7 @@ const IncompleteTodosSidebar = ({timeType, navigation, year, changeYear}) => {
               </Text>
               <Animated.View
                 style={[styles.expandButton, {transform: [{rotateX: spin}]}]}>
-                <Icon name="expand-less" color="#ffffff" size={28} />
+                <MaterialIcon iconName="expand-less" iconColor="#ffffff" iconSize={28} />
               </Animated.View>
             </View>
           </TouchableWithoutFeedback>

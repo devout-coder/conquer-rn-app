@@ -4,24 +4,9 @@ import React, {useEffect, useState} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import Todos from './Todos';
 
-// const Stack = createNativeStackNavigator();
 
 const YearlyTab = () => {
   return (
-    // <NavigationContainer independent={true}>
-    //   <Stack.Navigator initialRouteName="Yearly">
-    //     <Stack.Screen
-    //       name="Yearly"
-    //       component={Yearly}
-    //       options={{headerShown: false}}
-    //     />
-    //     <Stack.Screen
-    //       name="Todos"
-    //       component={Todos}
-    //       options={{headerShown: false}}
-    //     />
-    //   </Stack.Navigator>
-    // </NavigationContainer>
     <Todos year={new Date().getFullYear()} />
   );
 };

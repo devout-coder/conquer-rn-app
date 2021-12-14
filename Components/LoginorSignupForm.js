@@ -13,10 +13,10 @@ import {
 } from 'react-native';
 import Navbar from '../Components/Navbar';
 import globalStyles from '../globalStyles';
-import Icon from 'react-native-vector-icons/Entypo';
 import auth from '@react-native-firebase/auth';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import {navbarContext} from '../context';
+import EntypoIcon from '../customIcons/EntypoIcon';
 
 GoogleSignin.configure({
   webClientId:
@@ -168,12 +168,16 @@ const LoginorSignupForm = ({loginorSignup}) => {
           <TouchableOpacity
             style={[styles.eyeIcon, openEyeStyles]}
             onPress={() => toggleVisibility('openEye')}>
-            <Icon name="eye" size={25} color="#000000" />
+            <EntypoIcon iconName="eye" iconSize={25} iconColor="#000000" />
           </TouchableOpacity>
           <TouchableOpacity
             style={[styles.eyeIcon, closedEyeStyles]}
             onPress={() => toggleVisibility('closedEye')}>
-            <Icon name="eye-with-line" size={25} color="#000000" />
+            <EntypoIcon
+              iconName="eye-with-line"
+              iconSize={25}
+              iconColor="#000000"
+            />
           </TouchableOpacity>
         </View>
         <TouchableOpacity
