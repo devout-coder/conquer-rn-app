@@ -16,11 +16,17 @@ import Main from './pages/Main';
 
 const Stack = createNativeStackNavigator();
 
-const App: React.FC = () => {
-  const [user, setUser] = useState<any>(false);
+const App = () => {
+  const [user, setUser] = useState(false);
+  //null if not logged in, false if info is loading, object containing user info if logged in
+
   const [justLoggedOut, setJustLoggedOut] = useState(false);
+
   const [nav, setNav] = useState(null);
+  //holds the navigation prop for stack navigator created in this file
+
   const [tabNav, setTabNav] = useState(null);
+  //tabNav holds the navigation prop for the tab navigator created in Main.js file
 
   function toggleJustLoggedOut() {
     setJustLoggedOut(!justLoggedOut);
@@ -28,7 +34,7 @@ const App: React.FC = () => {
 
   useEffect(() => {
     auth().onAuthStateChanged(user => {
-      //this function observes the state of authentication...returns none if user doesnt exist..returns true if the user exist..and returns false if the user is being created or loaded..
+      //this function observes the state of authentication...returns null if user doesnt exist..returns the user details if the user exists..and returns false if the user is being created or loaded..
       setUser(user); //setting that user to predefined state
     });
   }, [user]);

@@ -21,6 +21,7 @@ import {fullMonths} from '../Components/IncompleteTodosSidebar';
 import {months} from '../Components/Calendar';
 import {weekMonths} from './WeekCalendar';
 import Toast from './Toast';
+import ClockIcon from './ClockIcon';
 
 const TodoModal = ({
   modalOpen,
@@ -440,6 +441,15 @@ const TodoModal = ({
               priority={todoTaskPriority}
               changePriority={setTodoTaskPriority}
             />
+            {timeType != 'longTerm' ? (
+              <TouchableOpacity
+                style={styles.reminderIcon}
+                onLongPress={() => Toast('Reminders')}>
+                <ClockIcon />
+              </TouchableOpacity>
+            ) : (
+              <View></View>
+            )}
             {id != undefined && timeType != 'longTerm' ? (
               <TouchableOpacity
                 style={styles.postponeIcon}
@@ -554,5 +564,9 @@ const styles = StyleSheet.create({
   saveIcon: {
     position: 'absolute',
     right: 0,
+  },
+  reminderIcon: {
+    position: 'absolute',
+    right:160,
   },
 });
