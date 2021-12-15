@@ -17,6 +17,7 @@ import java.util.List;
 import io.invertase.firebase.auth.ReactNativeFirebaseAuthPackage;
 import com.facebook.react.bridge.JSIModulePackage; // <- add
 import com.swmansion.reanimated.ReanimatedJSIModulePackage; // <- add
+import com.wix.reactnativenotifications.RNNotificationsPackage;
 
 public class MainApplication extends Application implements ReactApplication {
 

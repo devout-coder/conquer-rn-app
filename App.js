@@ -13,6 +13,7 @@ import {
 } from './context';
 import auth from '@react-native-firebase/auth';
 import Main from './pages/Main';
+import {Notifications} from 'react-native-notifications';
 
 const Stack = createNativeStackNavigator();
 
@@ -38,6 +39,29 @@ const App = () => {
       setUser(user); //setting that user to predefined state
     });
   }, [user]);
+
+  Notifications.registerRemoteNotifications();
+
+  Notifications.events().registerNotificationReceivedForeground(
+    (notification, completion) => {
+      console.log(
+        `Notification received in foreground: ${notification.title} : ${notification.body}`,
+      );
+      completion({alert: false, sound: false, badge: false});
+    },
+  );
+
+  Notifications.events().registerNotificationOpened(
+    (notification, completion) => {
+      console.log(`Notification opened: ${notification.payload}`);
+      completion();
+    },
+  );
+  // Notifications.postLocalNotification({
+  //   title: 'Fuck all the other productivity apps',
+  //   body: 'Conquer is gonna be the best productivity app on play store!',
+  //   extra: 'data',
+  // });
 
   return (
     <userContext.Provider value={user}>
