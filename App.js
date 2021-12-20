@@ -14,6 +14,7 @@ import {
 import auth from '@react-native-firebase/auth';
 import Main from './pages/Main';
 import {Notifications} from 'react-native-notifications';
+import {MenuContext} from 'react-native-menu';
 
 const Stack = createNativeStackNavigator();
 
@@ -64,43 +65,45 @@ const App = () => {
   // });
 
   return (
-    <userContext.Provider value={user}>
-      <loginContext.Provider value={{justLoggedOut, toggleJustLoggedOut}}>
-        <navbarContext.Provider value={{nav, setNav}}>
-          <tabNavbarContext.Provider value={{tabNav, setTabNav}}>
-            <NavigationContainer>
-              <Stack.Navigator initialRouteName="Loading">
-                <Stack.Screen
-                  name="Landing"
-                  component={Landing}
-                  options={{headerShown: false}}
-                />
-                <Stack.Screen
-                  name="Signup"
-                  component={Signup}
-                  options={{headerShown: false}}
-                />
-                <Stack.Screen
-                  name="Login"
-                  component={Login}
-                  options={{headerShown: false}}
-                />
-                <Stack.Screen
-                  name="Loading"
-                  component={Loading}
-                  options={{headerShown: false}}
-                />
-                <Stack.Screen
-                  name="Main"
-                  component={Main}
-                  options={{headerShown: false}}
-                />
-              </Stack.Navigator>
-            </NavigationContainer>
-          </tabNavbarContext.Provider>
-        </navbarContext.Provider>
-      </loginContext.Provider>
-    </userContext.Provider>
+    <MenuContext style={{flex: 1}}>
+      <userContext.Provider value={user}>
+        <loginContext.Provider value={{justLoggedOut, toggleJustLoggedOut}}>
+          <navbarContext.Provider value={{nav, setNav}}>
+            <tabNavbarContext.Provider value={{tabNav, setTabNav}}>
+              <NavigationContainer>
+                <Stack.Navigator initialRouteName="Loading">
+                  <Stack.Screen
+                    name="Landing"
+                    component={Landing}
+                    options={{headerShown: false}}
+                  />
+                  <Stack.Screen
+                    name="Signup"
+                    component={Signup}
+                    options={{headerShown: false}}
+                  />
+                  <Stack.Screen
+                    name="Login"
+                    component={Login}
+                    options={{headerShown: false}}
+                  />
+                  <Stack.Screen
+                    name="Loading"
+                    component={Loading}
+                    options={{headerShown: false}}
+                  />
+                  <Stack.Screen
+                    name="Main"
+                    component={Main}
+                    options={{headerShown: false}}
+                  />
+                </Stack.Navigator>
+              </NavigationContainer>
+            </tabNavbarContext.Provider>
+          </navbarContext.Provider>
+        </loginContext.Provider>
+      </userContext.Provider>
+    </MenuContext>
   );
 };
 

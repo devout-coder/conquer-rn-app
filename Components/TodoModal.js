@@ -23,6 +23,7 @@ import Toast from './Toast';
 import FeatherIcon from '../customIcons/FeatherIcon';
 import AntDesignIcon from '../customIcons/AntDesignIcon';
 import MaterialIcon from '../customIcons/MaterialIcon';
+import {Menu, MenuItem, MenuDivider} from 'react-native-material-menu';
 
 const TodoModal = ({
   modalOpen,
@@ -394,6 +395,12 @@ const TodoModal = ({
     reloadTodos();
   }
 
+  const [visible, setVisible] = useState(false);
+
+  const hideMenu = () => setVisible(false);
+
+  const showMenu = () => setVisible(true);
+
   return (
     <Modal isVisible={modalOpen} style={styles.modal}>
       <View style={{flex: 1}}>
@@ -452,15 +459,25 @@ const TodoModal = ({
               />
             </TouchableOpacity>
             {timeType != 'longTerm' ? (
-              <TouchableOpacity
-                style={styles.reminderIcon}
-                onLongPress={() => Toast('Reminders')}>
-                <FeatherIcon
-                  iconName="clock"
-                  iconSize={28}
-                  iconColor="#ffffff"
-                />
-              </TouchableOpacity>
+              <Menu
+                visible={visible}
+                anchor={
+                  <TouchableOpacity
+                    style={styles.reminderIcon}
+                    onPress={showMenu}
+                    onLongPress={() => Toast('Reminders')}>
+                    <FeatherIcon
+                      iconName="clock"
+                      iconSize={28}
+                      iconColor="#ffffff"
+                    />
+                  </TouchableOpacity>
+                }
+                onRequestClose={hideMenu}>
+                <MenuItem onPress={hideMenu}>
+                  <Text>Add a reminder</Text>
+                </MenuItem>
+              </Menu>
             ) : (
               <></>
             )}
