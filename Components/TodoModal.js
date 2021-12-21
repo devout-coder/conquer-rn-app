@@ -402,19 +402,77 @@ const TodoModal = ({
   const [reminderDate, setReminderDate] = useState(new Date());
   const [reminderMode, setReminderMode] = useState('date');
   const [reminderSelectorVisible, setReminderSelectorVisible] = useState(false);
+  const [maxAllowedDate, setMaxAllowedDate] = useState(null);
+  const [minAllowedDate, setMinAllowedDate] = useState(null);
+
+  const convertWeekDay = weekDay => {
+    // converts date in the form 20 Dec 2021 to 2021-12-20
+
+    let [day, month, year] = weekDay.split(' ');
+    month = parseInt(reverseObject(weekMonths)[month]) + 1;
+    month = month.toString();
+    if (day.length == 1) {
+      day = '0' + day;
+    }
+    if (month.length == 1) {
+      month = '0' + month;
+    }
+    return new Date(`${year}-${month}-${day}`);
+  };
 
   const addReminder = () => {
-    setReminderSelectorVisible(true);
     setReminderMenuVisible(false);
+
+    if (timeType == 'daily') {
+      setReminderMode('time');
+      let [day, month, year] = time.split('/');
+      if (day.length == 1) {
+        day = '0' + day;
+      }
+      if (month.length == 1) {
+        month = '0' + month;
+      }
+      let thisDay = new Date(`${year}-${month}-${day}`);
+      setReminderDate(thisDay);
+    } else if (timeType == 'week') {
+      let firstDay = convertWeekDay(time.split('-')[0]);
+      let lastDay = convertWeekDay(time.split('-')[1]);
+      setMinAllowedDate(firstDay);
+      setMaxAllowedDate(lastDay);
+    } else if (timeType == 'month') {
+      let [month, year] = time.split(' ');
+      month = fullMonths.indexOf(month);
+      let firstDay = new Date(year, month, 1);
+      let lastDay = new Date(year, month + 1, 0);
+      setMinAllowedDate(firstDay);
+      setMaxAllowedDate(lastDay);
+    } else if (timeType == 'year') {
+      let firstDay = new Date(time, 0, 1);
+      let lastDay = new Date(time, 11, 31);
+      setMinAllowedDate(firstDay);
+      setMaxAllowedDate(lastDay);
+    }
+    setReminderSelectorVisible(true);
   };
 
   const onReminderSet = (event, selectedDate) => {
     const currentDate = selectedDate || reminderDate;
-    setReminderSelectorVisible(false);
     setReminderDate(currentDate);
+    if (timeType != 'daily' && reminderMode == 'date') {
+      setReminderMode('time');
+    } else {
+      setReminderSelectorVisible(false);
+      setReminderMode('date');
+    }
   };
 
-  console.log(reminderDate);
+  console.log(
+    reminderDate.getDate(),
+    reminderDate.getMonth(),
+    reminderDate.getFullYear(),
+    reminderDate.getHours(),
+    reminderDate.getMinutes(),
+  );
 
   return (
     <Modal isVisible={modalOpen} style={styles.modal}>
@@ -500,8 +558,8 @@ const TodoModal = ({
                     value={reminderDate}
                     mode={reminderMode}
                     is24Hour={true}
-                    minimumDate={new Date(2021, 11, 20)}
-                    maximumDate={new Date(2021, 11, 26)}
+                    minimumDate={minAllowedDate}
+                    maximumDate={maxAllowedDate}
                     display="default"
                     onChange={onReminderSet}
                   />
