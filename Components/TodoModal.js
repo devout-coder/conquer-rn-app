@@ -24,6 +24,8 @@ import FeatherIcon from '../customIcons/FeatherIcon';
 import AntDesignIcon from '../customIcons/AntDesignIcon';
 import MaterialIcon from '../customIcons/MaterialIcon';
 import {Menu, MenuItem, MenuDivider} from 'react-native-material-menu';
+import DateTimePicker from '@react-native-community/datetimepicker';
+import RNDateTimePicker from '@react-native-community/datetimepicker';
 
 const TodoModal = ({
   modalOpen,
@@ -395,11 +397,24 @@ const TodoModal = ({
     reloadTodos();
   }
 
-  const [visible, setVisible] = useState(false);
+  const [reminderMenuVisible, setReminderMenuVisible] = useState(false);
 
-  const hideMenu = () => setVisible(false);
+  const [reminderDate, setReminderDate] = useState(new Date());
+  const [reminderMode, setReminderMode] = useState('date');
+  const [reminderSelectorVisible, setReminderSelectorVisible] = useState(false);
 
-  const showMenu = () => setVisible(true);
+  const addReminder = () => {
+    setReminderSelectorVisible(true);
+    setReminderMenuVisible(false);
+  };
+
+  const onReminderSet = (event, selectedDate) => {
+    const currentDate = selectedDate || reminderDate;
+    setReminderSelectorVisible(false);
+    setReminderDate(currentDate);
+  };
+
+  console.log(reminderDate);
 
   return (
     <Modal isVisible={modalOpen} style={styles.modal}>
@@ -450,7 +465,7 @@ const TodoModal = ({
               changePriority={setTodoTaskPriority}
             />
             <TouchableOpacity
-              style={styles.reminderIcon}
+              style={styles.shareIcon}
               onLongPress={() => Toast('Share this task with friends')}>
               <AntDesignIcon
                 iconSize={28}
@@ -459,25 +474,39 @@ const TodoModal = ({
               />
             </TouchableOpacity>
             {timeType != 'longTerm' ? (
-              <Menu
-                visible={visible}
-                anchor={
-                  <TouchableOpacity
-                    style={styles.reminderIcon}
-                    onPress={showMenu}
-                    onLongPress={() => Toast('Reminders')}>
-                    <FeatherIcon
-                      iconName="clock"
-                      iconSize={28}
-                      iconColor="#ffffff"
-                    />
-                  </TouchableOpacity>
-                }
-                onRequestClose={hideMenu}>
-                <MenuItem onPress={hideMenu}>
-                  <Text>Add a reminder</Text>
-                </MenuItem>
-              </Menu>
+              <>
+                <Menu
+                  visible={reminderMenuVisible}
+                  anchor={
+                    <TouchableOpacity
+                      style={styles.reminderIcon}
+                      onPress={() => setReminderMenuVisible(true)}
+                      onLongPress={() => Toast('Reminders')}>
+                      <FeatherIcon
+                        iconName="clock"
+                        iconSize={28}
+                        iconColor="#ffffff"
+                      />
+                    </TouchableOpacity>
+                  }
+                  onRequestClose={() => setReminderMenuVisible(false)}>
+                  <MenuItem onPress={addReminder}>
+                    <Text>Add a reminder</Text>
+                  </MenuItem>
+                </Menu>
+                {reminderSelectorVisible && (
+                  <RNDateTimePicker
+                    testID="dateTimePicker"
+                    value={reminderDate}
+                    mode={reminderMode}
+                    is24Hour={true}
+                    minimumDate={new Date(2021, 11, 20)}
+                    maximumDate={new Date(2021, 11, 26)}
+                    display="default"
+                    onChange={onReminderSet}
+                  />
+                )}
+              </>
             ) : (
               <></>
             )}
