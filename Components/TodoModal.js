@@ -26,6 +26,8 @@ import MaterialIcon from '../customIcons/MaterialIcon';
 import {Menu, MenuItem, MenuDivider} from 'react-native-material-menu';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import RNDateTimePicker from '@react-native-community/datetimepicker';
+import {NativeModules} from 'react-native';
+const {TaskReminder} = NativeModules;
 
 const TodoModal = ({
   modalOpen,
@@ -464,15 +466,17 @@ const TodoModal = ({
       setReminderSelectorVisible(false);
       setReminderMode('date');
     }
+    console.log(currentDate.toString());
+    TaskReminder.saveReminder(currentDate.toString());
   };
 
-  console.log(
-    reminderDate.getDate(),
-    reminderDate.getMonth(),
-    reminderDate.getFullYear(),
-    reminderDate.getHours(),
-    reminderDate.getMinutes(),
-  );
+  // console.log(
+  //   reminderDate.getDate(),
+  //   reminderDate.getMonth(),
+  //   reminderDate.getFullYear(),
+  //   reminderDate.getHours(),
+  //   reminderDate.getMinutes(),
+  // );
 
   return (
     <Modal isVisible={modalOpen} style={styles.modal}>
