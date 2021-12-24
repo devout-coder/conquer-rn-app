@@ -10,6 +10,9 @@ import com.facebook.react.bridge.ReactMethod;
 
 import android.util.Log;
 
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
+
 import java.util.Date;
 import java.util.Map;
 import java.util.HashMap;
@@ -25,7 +28,16 @@ public class TaskReminder extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void saveReminder(String reminderDate) {
-        Log.d("Tag", reminderDate);
+    public void saveReminder(String taskName, String reminderDate) {
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(getReactApplicationContext(), "task_reminders")
+                .setSmallIcon(R.drawable.notification_icon)
+                .setContentTitle(taskName)
+                .setContentText("task is incomplete!")
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(getReactApplicationContext());
+
+// notificationId is a unique int for each notification that you must define
+        notificationManager.notify(0, builder.build());
     }
 }
