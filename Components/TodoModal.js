@@ -466,7 +466,7 @@ const TodoModal = ({
       setReminderSelectorVisible(false);
       setReminderMode('date');
     }
-    TaskReminder.saveReminder(taskName, currentDate.toString());
+    TaskReminder.saveReminder(todoTaskName, currentDate.toString());
   };
 
   // console.log(

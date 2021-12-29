@@ -2,7 +2,8 @@
   package="com.conquer_app">
 
     <uses-permission android:name="android.permission.INTERNET" />
-
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <application
       android:name=".MainApplication"
       android:label="@string/app_name"
@@ -16,6 +17,18 @@
       <meta-data
         android:name="com.google.firebase.messaging.default_notification_color"
         android:resource="@color/conquerBackgroundColor" />
+      <receiver
+          android:name=".AutoStartReceiver"
+          android:enabled="true"
+          android:exported="true">
+          <intent-filter>
+            <action android:name="android.intent.action.BOOT_COMPLETED" />
+          </intent-filter>
+      </receiver>
+      <service
+        android:name=".AutoStartService"
+        android:enabled="true"
+        android:exported="true" />
       <activity
         android:name=".MainActivity"
         android:label="@string/app_name"
