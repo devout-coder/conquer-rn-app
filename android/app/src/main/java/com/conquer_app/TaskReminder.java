@@ -3,6 +3,7 @@ package com.conquer_app;
 import static android.content.Context.ALARM_SERVICE;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Build;
 import android.util.Log;
 
@@ -17,6 +18,7 @@ import android.util.Log;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
+import androidx.core.content.ContextCompat;
 
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
@@ -66,12 +68,12 @@ public class TaskReminder extends ReactContextBaseJavaModule {
 //            notificationManager.notify(0, createNotification("no this shouldn't be activated", e.toString()).build());
         }
         long millis = date.getTime();
-        AlarmManager alarmManager = (AlarmManager) getReactApplicationContext().getSystemService(Context.ALARM_SERVICE);
-        alarmManager.setExact(AlarmManager.RTC, millis, "reminders", new AlarmManager.OnAlarmListener() {
-            @Override
-            public void onAlarm() {
-                notificationManager.notify(0, createNotification(taskName, "this task is incomplete").build());
-            }
-        }, null);
+
+
+        Intent serviceIntent = new Intent(getReactApplicationContext(), StarterService.class);
+        serviceIntent.putExtra("taskName", taskName);
+        serviceIntent.putExtra("reminderTime", millis);
+        ContextCompat.startForegroundService(getReactApplicationContext(), serviceIntent);
+
     }
 }
