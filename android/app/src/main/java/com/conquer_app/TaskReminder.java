@@ -73,6 +73,7 @@ public class TaskReminder extends ReactContextBaseJavaModule {
         Intent serviceIntent = new Intent(getReactApplicationContext(), StarterService.class);
         serviceIntent.putExtra("taskName", taskName);
         serviceIntent.putExtra("reminderTime", millis);
+        serviceIntent.setFlags(Intent.FLAG_EXCLUDE_STOPPED_PACKAGES);
         ContextCompat.startForegroundService(getReactApplicationContext(), serviceIntent);
 
     }
