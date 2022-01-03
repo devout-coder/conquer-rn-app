@@ -59,18 +59,16 @@ public class TaskReminder extends ReactContextBaseJavaModule {
         String[] parts = reminderDate.split(" GMT");
         reminderDate = parts[0];
         SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM dd yyyy HH:mm:ss");
-//        notificationManager.notify(0, createNotification(taskName, reminderDate).build());
         Date date;
         try {
             date = sdf.parse(reminderDate);
         } catch (java.text.ParseException e) {
             date = new Date();
-//            notificationManager.notify(0, createNotification("no this shouldn't be activated", e.toString()).build());
         }
         long millis = date.getTime();
 
 
-        Intent serviceIntent = new Intent(getReactApplicationContext(), StarterService.class);
+        Intent serviceIntent = new Intent(getReactApplicationContext(), AlarmHandlerService.class);
         serviceIntent.putExtra("taskName", taskName);
         serviceIntent.putExtra("reminderTime", millis);
         serviceIntent.setFlags(Intent.FLAG_EXCLUDE_STOPPED_PACKAGES);

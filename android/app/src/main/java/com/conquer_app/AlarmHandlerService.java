@@ -12,33 +12,46 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.PowerManager;
+import android.provider.Settings;
 import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
-public class StarterService extends Service {
+public class AlarmHandlerService extends Service {
     private static final String TAG = "MyService";
     private PowerManager.WakeLock wakeLock;
 
-    /**
-     * starts the AlarmManager.
-     */
     public NotificationCompat.Builder createNotification(String title, String content, String channel_id, int priority) {
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), channel_id)
                 .setSmallIcon(R.drawable.notification_icon)
                 .setContentTitle(title)
                 .setContentText(content)
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+                .setPriority(priority);
         return builder;
     }
 
     @Override
     public void onCreate() {
         super.onCreate();
-        startForeground(1, createNotification("Foreground Service", "Fuck this foreground service", "foreground_services", NotificationCompat.PRIORITY_DEFAULT).build());
-        //TODO: Start ongoing notification here to make service foreground
+        Intent i = new Intent(Settings
+                .ACTION_CHANNEL_NOTIFICATION_SETTINGS)
+                .putExtra(Settings.EXTRA_APP_PACKAGE, AlarmHandlerService.class)
+                .putExtra(Settings.EXTRA_CHANNEL_ID, "foreground_services")
+                .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        Intent intent = new Intent(Settings.ACTION_CHANNEL_NOTIFICATION_SETTINGS);
+        intent.putExtra(Settings.EXTRA_APP_PACKAGE, getPackageName());
+        intent.putExtra(Settings.EXTRA_CHANNEL_ID, "foreground_services");
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        PendingIntent pendingIntent = PendingIntent.getActivity(
+                this,
+                1,
+                intent,
+                PendingIntent.FLAG_UPDATE_CURRENT
+        );
+
+        startForeground(1, createNotification("Click me and turn me off", "I keep track off background tasks like reminders which you set in conquer", "foreground_services", NotificationCompat.PRIORITY_DEFAULT).setContentIntent(pendingIntent).build());
 
         PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
         wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
@@ -50,7 +63,6 @@ public class StarterService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
 
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
-        //TODO: Put your AlarmManager code here
         Bundle extras = intent.getExtras();
         String taskName = extras.getString("taskName");
         Long reminderTime = extras.getLong("reminderTime");

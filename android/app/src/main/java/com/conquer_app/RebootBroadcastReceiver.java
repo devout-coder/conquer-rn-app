@@ -6,7 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
-public class Autostart extends BroadcastReceiver {
+public class RebootBroadcastReceiver extends BroadcastReceiver {
 
     /**
      * Listens for Android's BOOT_COMPLETED broadcast and then executes
@@ -16,7 +16,7 @@ public class Autostart extends BroadcastReceiver {
     public void onReceive(Context context, Intent arg1) {
         Log.d("Autostart", "BOOT_COMPLETED broadcast received. Executing starter service.");
 
-        Intent intent = new Intent(context, StarterService.class);
+        Intent intent = new Intent(context, AlarmHandlerService.class);
         context.startService(intent);
     }
 }
