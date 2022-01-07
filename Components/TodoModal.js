@@ -525,7 +525,7 @@ const TodoModal = ({
               priority={todoTaskPriority}
               changePriority={setTodoTaskPriority}
             />
-            <TouchableOpacity
+            {/* <TouchableOpacity
               style={styles.shareIcon}
               onLongPress={() => Toast('Share this task with friends')}>
               <AntDesignIcon
@@ -533,8 +533,8 @@ const TodoModal = ({
                 iconColor="#ffffff"
                 iconName="addusergroup"
               />
-            </TouchableOpacity>
-            {timeType != 'longTerm' ? (
+            </TouchableOpacity> */}
+            {/* {timeType != 'longTerm' ? (
               <>
                 <Menu
                   visible={reminderMenuVisible}
@@ -570,7 +570,7 @@ const TodoModal = ({
               </>
             ) : (
               <></>
-            )}
+            )} */}
             {id != undefined && timeType != 'longTerm' ? (
               <TouchableOpacity
                 style={styles.postponeIcon}
