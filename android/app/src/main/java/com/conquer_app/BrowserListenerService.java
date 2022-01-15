@@ -10,12 +10,15 @@ import android.view.accessibility.AccessibilityNodeInfo;
 import androidx.annotation.NonNull;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
 public class BrowserListenerService extends AccessibilityService {
 
     private HashMap<String, Long> previousUrlDetections = new HashMap<>();
+
+    ArrayList<String> blacklistedPackages = new ArrayList<String>(Arrays.asList("youtube.com", "instagram.com", "reddit.com", "twitter.com", "quora.com"));
 
     @Override
     public void onAccessibilityEvent(@NonNull AccessibilityEvent event) {
@@ -95,7 +98,7 @@ public class BrowserListenerService extends AccessibilityService {
     }
 
     private void analyzeCapturedUrl(@NonNull String capturedUrl, @NonNull String browserPackage) {
-//        String redirectUrl = "your redirect url is here";
+
         if (capturedUrl.contains("youtube.com")) {
 //            performRedirect(redirectUrl, browserPackage);
             Log.d("obscure_tag", "youtube is opened!!");
