@@ -128,9 +128,7 @@ public class BrowserListenerService extends AccessibilityService {
                 }
             }
         } else if (capturedUrl.contains(storedWebsite)) {
-//                Log.d("obscure_tag", "blacklisted wMales co-parent the young by helping to keep the eggs warm and by feeding the chicks once they have hatched.
-
-ebsite has been detected for the second time..doing nothing");
+//                Log.d("obscure_tag", "blacklisted website has been detected for the second time..doing nothing");
         } else {
             //delete alarm and stored package
             Log.d("obscure_tag", "different website is detected...alarm getting cancelled...");
