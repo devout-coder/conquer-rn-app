@@ -54,7 +54,7 @@ public class ApplicationListenerService extends AccessibilityService {
             } else {
                 //delete alarm and stored package
                 Log.d("obscure_tag", "different app is detected...alarm getting cancelled...");
-                editor.clear();
+                editor.remove("current_running_application");
                 editor.apply();
                 AlarmManager alarmMgr = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
                 Intent intent = new Intent(this, AlarmReceiver.class);
