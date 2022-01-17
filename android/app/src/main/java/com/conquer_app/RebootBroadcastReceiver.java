@@ -8,15 +8,13 @@ import android.util.Log;
 
 public class RebootBroadcastReceiver extends BroadcastReceiver {
 
-    /**
-     * Listens for Android's BOOT_COMPLETED broadcast and then executes
-     * the onReceive() method.
-     */
     @Override
     public void onReceive(Context context, Intent arg1) {
-        Log.d("Autostart", "BOOT_COMPLETED broadcast received. Executing starter service.");
+        Log.d("Autostart", "boot has completed. Starting application listener");
 
-        Intent intent = new Intent(context, AlarmHandlerService.class);
-        context.startService(intent);
+        if (arg1.getAction().equals("android.intent.action.BOOT_COMPLETED")) {
+            Intent intent = new Intent(context, ApplicationListenerService.class);
+            context.startService(intent);
+        }
     }
 }

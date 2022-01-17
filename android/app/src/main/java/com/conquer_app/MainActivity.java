@@ -2,13 +2,16 @@ package com.conquer_app;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 
 import com.facebook.react.ReactActivity;
 
 import android.os.Bundle;
+import android.os.PowerManager;
 import android.provider.Settings;
 import android.util.Log;
 import android.widget.Toast;
@@ -32,30 +35,36 @@ public class MainActivity extends ReactActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(null);
         createNotificationChannel("task_reminders", "Task Reminders", "This channel handles all notifications regarding task reminders", NotificationManager.IMPORTANCE_MAX);
-        createNotificationChannel("foreground_services", "Foreground Service", "This channel handles that annoying notification which can't be turned off due to some fucking Android Policy", NotificationManager.IMPORTANCE_NONE);
-        if (!checkAccessibilityPermission()) {
-            Toast.makeText(MainActivity.this, "Permission denied", Toast.LENGTH_SHORT).show();
+        createNotificationChannel("foreground_services", "Foreground Service", "This channel handles that annoying notifications which can't be turned off due to some fucking Android Policy", NotificationManager.IMPORTANCE_NONE);
+        if (checkAccessibilityPermission() == 0) {
+            Toast.makeText(MainActivity.this, "Permission denied..Redirecting to accessibility service", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
+            startActivity(intent);
+        } else if (checkAccessibilityPermission() == 1) {
+            Toast.makeText(MainActivity.this, "Permission is granted", Toast.LENGTH_SHORT).show();
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            Intent intent = new Intent();
+            String packageName = getPackageName();
+            PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+            if (!pm.isIgnoringBatteryOptimizations(packageName)) {
+                intent.setAction(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
+                intent.setData(Uri.parse("package:" + packageName));
+                startActivity(intent);
+            }
         }
         Log.d("obscure_tag", "application has started!");
     }
 
-    public boolean checkAccessibilityPermission() {
-        int accessEnabled = 0;
+    public int checkAccessibilityPermission() {
+        int accessEnabled = -1;
         try {
             accessEnabled = Settings.Secure.getInt(this.getContentResolver(), Settings.Secure.ACCESSIBILITY_ENABLED);
         } catch (Settings.SettingNotFoundException e) {
             e.printStackTrace();
         }
-        if (accessEnabled == 0) {
-            // if not construct intent to request permission
-            Intent intent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            // request permission via start activity for result
-            startActivity(intent);
-            return false;
-        } else {
-            return true;
-        }
+        return accessEnabled;
     }
 
     private void createNotificationChannel(String channel_id, String channel_name, String channel_description, int channel_importance) {

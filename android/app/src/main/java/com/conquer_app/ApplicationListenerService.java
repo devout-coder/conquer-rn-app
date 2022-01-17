@@ -8,8 +8,10 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.PowerManager;
 import android.util.Log;
 import android.view.accessibility.AccessibilityEvent;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -44,7 +46,7 @@ public class ApplicationListenerService extends AccessibilityService {
                     Intent intent = new Intent(this, AlarmReceiver.class);
                     PendingIntent alarmIntent = PendingIntent.getBroadcast(this, 1, intent, 0);
                     long timeMilli = new Date().getTime();
-                    alarmMgr.setRepeating(AlarmManager.RTC,
+                    alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP,
                             timeMilli, 60000 * 10,
                             alarmIntent);
 
@@ -78,6 +80,11 @@ public class ApplicationListenerService extends AccessibilityService {
         info.feedbackType = AccessibilityServiceInfo.FEEDBACK_SPOKEN;
 
         info.notificationTimeout = 100;
+
+//        PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
+//        PowerManager.WakeLock wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
+//                "MyApp::MyWakelockTag");
+//        wakeLock.acquire();
 
         this.setServiceInfo(info);
     }
