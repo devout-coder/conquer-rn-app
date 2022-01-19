@@ -4,11 +4,15 @@ package com.conquer_app;
 import android.accessibilityservice.AccessibilityService;
 import android.accessibilityservice.AccessibilityServiceInfo;
 import android.app.AlarmManager;
+import android.app.KeyguardManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
+import android.os.Build;
 import android.os.PowerManager;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
@@ -35,8 +39,14 @@ public class ApplicationListenerService extends AccessibilityService {
 
         String currentPackage = accessibilityEvent.getPackageName().toString();
 
-
-        if (!currentPackage.equals("com.android.systemui")) {
+//        PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+//        String packageName = getPackageName();
+//        if (!pm.isIgnoringBatteryOptimizations(packageName)) {
+//            Log.d("obscure_tag", "battery optimization permission is stopping my app");
+//        } else {
+//            Log.d("obscure_tag", "battery optimization permission is not a problem");
+//        }
+        if (!currentPackage.equals("com.android.systemui") && !isDeviceLocked()) {
 
             if (isBrowserRunning(currentPackage)) {
 
@@ -86,8 +96,8 @@ public class ApplicationListenerService extends AccessibilityService {
                         Intent intent = new Intent(this, AlarmReceiver.class);
                         PendingIntent alarmIntent = PendingIntent.getBroadcast(this, 1, intent, 0);
                         long timeMilli = new Date().getTime();
-                        alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP,
-                                timeMilli, 60000 * 10,
+                        alarmMgr.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP,
+                                timeMilli,
                                 alarmIntent);
 
                     }
@@ -98,12 +108,21 @@ public class ApplicationListenerService extends AccessibilityService {
                     Log.d("obscure_tag", "different app is detected...alarm getting cancelled...");
                     editor.remove("current_running_application");
                     editor.apply();
-                    AlarmManager alarmMgr = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
-                    Intent intent = new Intent(this, AlarmReceiver.class);
-                    PendingIntent alarmIntent = PendingIntent.getBroadcast(this, 1, intent, 0);
-                    alarmMgr.cancel(alarmIntent);
+//                    AlarmManager alarmMgr = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
+//                    Intent intent = new Intent(this, AlarmReceiver.class);
+//                    PendingIntent alarmIntent = PendingIntent.getBroadcast(this, 1, intent, 0);
+//                    alarmMgr.cancel(alarmIntent);
                 }
             }
+        }
+    }
+
+    private boolean isDeviceLocked() {
+        KeyguardManager myKM = (KeyguardManager) getApplicationContext().getSystemService(Context.KEYGUARD_SERVICE);
+        if (myKM.inKeyguardRestrictedInputMode()) {
+            return true;
+        } else {
+            return false;
         }
     }
 
@@ -138,7 +157,12 @@ public class ApplicationListenerService extends AccessibilityService {
             url = addressBarNodeInfo.getText().toString();
         }
         addressBarNodeInfo.recycle();
-        url = url.split("/")[0];
+        if (url.contains("http")) {
+            url = url.split("//")[1];
+            url = url.split("/")[0];
+        } else {
+            url = url.split("/")[0];
+        }
         return url;
     }
 

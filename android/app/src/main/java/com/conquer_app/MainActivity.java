@@ -36,6 +36,22 @@ public class MainActivity extends ReactActivity {
         super.onCreate(null);
         createNotificationChannel("task_reminders", "Task Reminders", "This channel handles all notifications regarding task reminders", NotificationManager.IMPORTANCE_MAX);
         createNotificationChannel("foreground_services", "Foreground Service", "This channel handles that annoying notifications which can't be turned off due to some fucking Android Policy", NotificationManager.IMPORTANCE_NONE);
+
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+//            Intent intent = new Intent();
+//            String packageName = getPackageName();
+//            PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+//            if (!pm.isIgnoringBatteryOptimizations(packageName)) {
+//                Toast.makeText(MainActivity.this, "battery optimization permission is stopping my app", Toast.LENGTH_LONG).show();
+//                intent.setAction(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS);
+////                intent.setData(Uri.parse("package:" + packageName));
+//                startActivity(intent);
+//            } else {
+//
+//                Toast.makeText(MainActivity.this, "battery optimization permission is not a problem", Toast.LENGTH_LONG).show();
+//            }
+//        }
+
         if (checkAccessibilityPermission() == 0) {
             Toast.makeText(MainActivity.this, "Permission denied..Redirecting to accessibility service", Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
@@ -44,16 +60,6 @@ public class MainActivity extends ReactActivity {
             Toast.makeText(MainActivity.this, "Permission is granted", Toast.LENGTH_SHORT).show();
         }
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            Intent intent = new Intent();
-            String packageName = getPackageName();
-            PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
-            if (!pm.isIgnoringBatteryOptimizations(packageName)) {
-                intent.setAction(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
-                intent.setData(Uri.parse("package:" + packageName));
-                startActivity(intent);
-            }
-        }
         Log.d("obscure_tag", "application has started!");
     }
 
