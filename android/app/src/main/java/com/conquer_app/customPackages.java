@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class TaskReminderPackage implements ReactPackage {
+public class customPackages implements ReactPackage {
 
     @Override
     public List<ViewManager> createViewManagers(ReactApplicationContext reactContext) {
@@ -21,7 +21,7 @@ public class TaskReminderPackage implements ReactPackage {
             ReactApplicationContext reactContext) {
         List<NativeModule> modules = new ArrayList<>();
 
-        modules.add(new TaskReminder(reactContext));
+        modules.add(new AcessibilityPermissionHandler(reactContext));
 
         return modules;
     }

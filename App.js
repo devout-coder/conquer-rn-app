@@ -15,6 +15,8 @@ import auth from '@react-native-firebase/auth';
 import Main from './pages/Main';
 import {Notifications} from 'react-native-notifications';
 import {MenuContext} from 'react-native-menu';
+import Nudger from './pages/Nudger';
+import NudgerToggleSwitch from './Components/NudgerToggleSwitch';
 
 const Stack = createNativeStackNavigator();
 
@@ -96,6 +98,21 @@ const App = () => {
                     name="Main"
                     component={Main}
                     options={{headerShown: false}}
+                  />
+                  <Stack.Screen
+                    name="Nudger"
+                    component={Nudger}
+                    options={{
+                      headerStyle: {backgroundColor: '#262647'},
+                      headerTitleStyle: {
+                        fontFamily: 'Poppins-SemiBold',
+                        fontSize: 24,
+                        position: 'relative',
+                      },
+                      headerTintColor: '#ffffff',
+                      headerShadowVisible: false,
+                      headerRight: () => <NudgerToggleSwitch />,
+                    }}
                   />
                 </Stack.Navigator>
               </NavigationContainer>

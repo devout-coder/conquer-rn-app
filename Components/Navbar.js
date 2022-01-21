@@ -1,5 +1,12 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {StyleSheet, Text, View, Image, TouchableOpacity} from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  TouchableOpacity,
+  Pressable,
+} from 'react-native';
 import auth from '@react-native-firebase/auth';
 import {
   loginContext,
@@ -8,6 +15,8 @@ import {
   userContext,
 } from '../context';
 import MaterialIcon from '../customIcons/MaterialIcon';
+import MaterialCommunityIcon from '../customIcons/MaterialCommunityIcon';
+import Toast from './Toast';
 
 const Navbar = ({page}) => {
   let user = useContext(userContext);
@@ -25,6 +34,10 @@ const Navbar = ({page}) => {
       .catch(error => console.log(error));
   }
 
+  const navigateToNudger = () => {
+    nav.navigate('Nudger');
+  };
+
   return (
     <View style={styles.navbar}>
       {page == 'Landing' ? (
@@ -38,9 +51,23 @@ const Navbar = ({page}) => {
         </View>
       )}
       {user != null ? (
-        <TouchableOpacity onPress={logout}>
-          <MaterialIcon iconName="logout" iconColor="#ffffff" iconSize={28} />
-        </TouchableOpacity>
+        <View style={styles.rightIcons}>
+          <TouchableOpacity
+            onPress={navigateToNudger}
+            onLongPress={() => Toast('Nudger')}>
+            <MaterialCommunityIcon
+              iconName="calendar-alert"
+              iconColor="#ffffff"
+              iconSize={28}
+            />
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            onPress={logout}
+            onLongPress={() => Toast('Logout')}>
+            <MaterialIcon iconName="logout" iconColor="#ffffff" iconSize={28} />
+          </TouchableOpacity>
+        </View>
       ) : (
         <View></View>
       )}
@@ -72,5 +99,11 @@ const styles = StyleSheet.create({
     color: '#ffffff',
     fontFamily: 'Poppins-SemiBold',
     fontSize: 28,
+  },
+  rightIcons: {
+    display: 'flex',
+    flexDirection: 'row',
+    width: 95,
+    justifyContent: 'space-between',
   },
 });
