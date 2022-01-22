@@ -21,7 +21,7 @@ public class customPackages implements ReactPackage {
             ReactApplicationContext reactContext) {
         List<NativeModule> modules = new ArrayList<>();
 
-        modules.add(new AcessibilityPermissionHandler(reactContext));
+        modules.add(new AccessibilityPermissionHandler(reactContext));
 
         return modules;
     }

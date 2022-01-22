@@ -8,6 +8,7 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {
   loginContext,
   navbarContext,
+  nudgerSwitchContext,
   tabNavbarContext,
   userContext,
 } from './context';
@@ -32,6 +33,8 @@ const App = () => {
   const [tabNav, setTabNav] = useState(null);
   //tabNav holds the navigation prop for the tab navigator created in Main.js file
 
+  const [nudgerSwitch, setNudgerSwitch] = useState(false);
+
   function toggleJustLoggedOut() {
     setJustLoggedOut(!justLoggedOut);
   }
@@ -43,23 +46,23 @@ const App = () => {
     });
   }, [user]);
 
-  Notifications.registerRemoteNotifications();
+  // Notifications.registerRemoteNotifications();
 
-  Notifications.events().registerNotificationReceivedForeground(
-    (notification, completion) => {
-      console.log(
-        `Notification received in foreground: ${notification.title} : ${notification.body}`,
-      );
-      completion({alert: false, sound: false, badge: false});
-    },
-  );
+  // Notifications.events().registerNotificationReceivedForeground(
+  //   (notification, completion) => {
+  //     console.log(
+  //       `Notification received in foreground: ${notification.title} : ${notification.body}`,
+  //     );
+  //     completion({alert: false, sound: false, badge: false});
+  //   },
+  // );
 
-  Notifications.events().registerNotificationOpened(
-    (notification, completion) => {
-      console.log(`Notification opened: ${notification.payload}`);
-      completion();
-    },
-  );
+  // Notifications.events().registerNotificationOpened(
+  //   (notification, completion) => {
+  //     console.log(`Notification opened: ${notification.payload}`);
+  //     completion();
+  //   },
+  // );
   // Notifications.postLocalNotification({
   //   title: 'Fuck all the other productivity apps',
   //   body: 'Conquer is gonna be the best productivity app on play store!',
@@ -67,8 +70,9 @@ const App = () => {
   // });
 
   return (
-    <MenuContext style={{flex: 1}}>
-      <userContext.Provider value={user}>
+    // <MenuContext style={{flex: 1}}>
+    <userContext.Provider value={user}>
+      <nudgerSwitchContext.Provider value={{nudgerSwitch, setNudgerSwitch}}>
         <loginContext.Provider value={{justLoggedOut, toggleJustLoggedOut}}>
           <navbarContext.Provider value={{nav, setNav}}>
             <tabNavbarContext.Provider value={{tabNav, setTabNav}}>
@@ -119,8 +123,9 @@ const App = () => {
             </tabNavbarContext.Provider>
           </navbarContext.Provider>
         </loginContext.Provider>
-      </userContext.Provider>
-    </MenuContext>
+      </nudgerSwitchContext.Provider>
+    </userContext.Provider>
+    // </MenuContext>
   );
 };
 
