@@ -34,7 +34,7 @@ const NudgerToggleSwitch = () => {
     <>
       <ToggleSwitch
         isOn={nudgerSwitch}
-        onColor="lightgreen"
+        onColor="#00ff00"
         offColor="red"
         animationSpeed={100}
         labelStyle={{color: 'black', fontWeight: '900'}}

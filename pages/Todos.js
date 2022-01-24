@@ -161,7 +161,7 @@ const Todos = ({navigation, route, year, longTerm}) => {
     let initialPos;
     let finalPos;
     if (from != to) {
-      allTodos.forEach((each) => {
+      allTodos.forEach(each => {
         if (each.id == unfinishedTodos[to].id) {
           finalPos = each.index;
         } else if (each.id == unfinishedTodos[from].id) {
@@ -262,7 +262,11 @@ const Todos = ({navigation, route, year, longTerm}) => {
             style={styles.addIcon}
             onPress={() => setModalOpen(true)}
             onLongPress={() => Toast('Add Todo')}>
-            <MaterialIcon iconName="my-library-add" iconColor="#ffffff" iconSize={28} />
+            <MaterialIcon
+              iconName="my-library-add"
+              iconColor="#ffffff"
+              iconSize={28}
+            />
           </TouchableOpacity>
         </View>
         <TodoModal
