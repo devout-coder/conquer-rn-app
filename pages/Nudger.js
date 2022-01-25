@@ -7,6 +7,9 @@ import Ripple from 'react-native-material-ripple';
 import DropDownPicker from 'react-native-dropdown-picker';
 import AntDesignIcon from '../customIcons/AntDesignIcon';
 import RadioButtonRN from 'radio-buttons-react-native';
+import RNAndroidInstalledApps from 'react-native-android-installed-apps-unblocking';
+import {NativeModules} from 'react-native';
+const {InstalledApplicationsFetcher} = NativeModules;
 
 const Nudger = () => {
   let {nudgerSwitch, setNudgerSwitch} = useContext(nudgerSwitchContext);
@@ -24,7 +27,24 @@ const Nudger = () => {
     {label: 'yearly'},
     {label: 'longTerm'},
   ];
+
   const [timeTypeRadio, setTimeTypeRadio] = useState('daily');
+
+  // RNAndroidInstalledApps.getApps()
+  //   .then(apps => {
+  //     console.log('+++++');
+  //     apps.forEach(app => {
+  //       console.log(app.appName);
+  //     });
+  //   })
+  //   .catch(error => {
+  //     alert(error);
+  //   });
+  InstalledApplicationsFetcher.getInstalledApps(allApps => {
+    allApps.forEach(app => {
+      console.log(app);
+    });
+  });
 
   return (
     <View style={globalStyles.overallBackground}>
