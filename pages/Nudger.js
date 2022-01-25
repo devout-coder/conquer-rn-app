@@ -50,6 +50,11 @@ const Nudger = () => {
               rippleContainerBorderRadius={5}>
               <View style={styles.blackListedContainer}>
                 <Text style={styles.blackListedText}>Blacklisted Apps</Text>
+                <AntDesignIcon
+                  iconName="caretdown"
+                  iconColor="#ffffff"
+                  iconSize={13}
+                />
               </View>
             </Ripple>
             <Ripple
@@ -58,6 +63,11 @@ const Nudger = () => {
               rippleContainerBorderRadius={5}>
               <View style={styles.blackListedContainer}>
                 <Text style={styles.blackListedText}>Blacklisted Websites</Text>
+                <AntDesignIcon
+                  iconName="caretdown"
+                  iconColor="#ffffff"
+                  iconSize={13}
+                />
               </View>
             </Ripple>
             <View
@@ -191,11 +201,15 @@ const styles = StyleSheet.create({
   },
   blackListedContainer: {
     padding: 10,
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   blackListedText: {
     fontFamily: 'Poppins-Regular',
     fontSize: 22,
     color: '#ffffff',
+    marginRight: 10,
   },
   nudgerNormalText: {
     fontFamily: 'Poppins-Regular',
