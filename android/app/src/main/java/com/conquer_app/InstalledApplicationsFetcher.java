@@ -2,7 +2,12 @@ package com.conquer_app;
 
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.provider.Settings;
+import android.util.Base64;
 import android.widget.Toast;
 
 import com.facebook.react.bridge.Arguments;
@@ -13,6 +18,7 @@ import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableMap;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -39,6 +45,46 @@ public class InstalledApplicationsFetcher extends ReactContextBaseJavaModule {
         return appName;
     }
 
+    public static Bitmap drawableToBitmap(Drawable drawable) {
+        Bitmap bitmap = null;
+
+        if (drawable instanceof BitmapDrawable) {
+            BitmapDrawable bitmapDrawable = (BitmapDrawable) drawable;
+            if (bitmapDrawable.getBitmap() != null) {
+                return bitmapDrawable.getBitmap();
+            }
+        }
+
+        if (drawable.getIntrinsicWidth() == 0 || drawable.getIntrinsicHeight() == 0) {
+            bitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888); // Single color bitmap will be created of 1x1
+            // pixel
+        } else {
+            bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(),
+                    Bitmap.Config.ARGB_8888);
+        }
+
+        Canvas canvas = new Canvas(bitmap);
+        drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+        drawable.draw(canvas);
+        return bitmap;
+    }
+
+    public static String convertBitmapToString(Bitmap bitmap) {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
+
+        return Base64.encodeToString(outputStream.toByteArray(), Base64.DEFAULT);
+    }
+
+    public static String convertDrawableToString(Drawable drawable) {
+        try {
+            return convertBitmapToString(drawableToBitmap(drawable));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
+
     @ReactMethod
     public void getInstalledApps(Callback callBack) {
         final WritableArray allInstalledApps =
@@ -49,8 +95,16 @@ public class InstalledApplicationsFetcher extends ReactContextBaseJavaModule {
         for (ApplicationInfo app : apps) {
             if (pm.getLaunchIntentForPackage(app.packageName) != null) {
                 final WritableMap appInfo = Arguments.createMap();
-                appInfo.putString("packageName", app.packageName);
+                appInfo.putString("appPackageName", app.packageName);
                 appInfo.putString("appName", getApplicationName(pm, app.packageName));
+//                appInfo.putString("appIcon", );
+                Drawable appIcon;
+                try {
+                    appIcon = pm.getApplicationIcon(app.packageName);
+                    appInfo.putString("appIcon", convertDrawableToString(appIcon));
+                } catch (PackageManager.NameNotFoundException e) {
+                    return;
+                }
                 allInstalledApps.pushMap(appInfo);
             }
 

@@ -1,15 +1,15 @@
 import globalStyles from '../globalStyles';
 import React, {useContext, useEffect, useState} from 'react';
-import {StyleSheet, Text, TextInput, View} from 'react-native';
+import {Image, StyleSheet, Text, TextInput, View} from 'react-native';
 import IonIcon from '../customIcons/IonIcon';
 import {nudgerSwitchContext} from '../context';
 import Ripple from 'react-native-material-ripple';
 import DropDownPicker from 'react-native-dropdown-picker';
 import AntDesignIcon from '../customIcons/AntDesignIcon';
 import RadioButtonRN from 'radio-buttons-react-native';
-import RNAndroidInstalledApps from 'react-native-android-installed-apps-unblocking';
 import {NativeModules} from 'react-native';
 const {InstalledApplicationsFetcher} = NativeModules;
+import Clipboard from '@react-native-clipboard/clipboard';
 
 const Nudger = () => {
   let {nudgerSwitch, setNudgerSwitch} = useContext(nudgerSwitchContext);
@@ -29,14 +29,20 @@ const Nudger = () => {
   ];
 
   const [timeTypeRadio, setTimeTypeRadio] = useState('daily');
+  const [base64Image, setBase64Image] = useState('');
 
-  useEffect(() => {
-    InstalledApplicationsFetcher.getInstalledApps(allApps => {
-      allApps.forEach(app => {
-        console.log(app);
-      });
-    });
-  }, []);
+  // useEffect(() => {
+  //   InstalledApplicationsFetcher.getInstalledApps(allApps => {
+  //     allApps.forEach(app => {
+  //       // console.log(app.appName);
+  //       if (app.appName == 'YouTube') {
+  //         setBase64Image(app.appIcon);
+  //         Clipboard.setString(app.appIcon);
+  //         console.log(app.appIcon);
+  //       }
+  //     });
+  //   });
+  // }, []);
 
   return (
     <View style={globalStyles.overallBackground}>
@@ -56,6 +62,16 @@ const Nudger = () => {
           </View>
         ) : (
           <View style={styles.mainContainer}>
+            {/* <Image
+              style={{
+                width: 100,
+                height: 50,
+                borderWidth: 1,
+                borderColor: 'red',
+              }}
+              source={{uri: base64Image}}
+            /> */}
+
             <Ripple
               rippleDuration={300}
               rippleColor="#ffffff"
