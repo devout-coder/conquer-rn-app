@@ -5,10 +5,13 @@ import android.content.pm.PackageManager;
 import android.provider.Settings;
 import android.widget.Toast;
 
+import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.Callback;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
+import com.facebook.react.bridge.WritableArray;
+import com.facebook.react.bridge.WritableMap;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -38,16 +41,17 @@ public class InstalledApplicationsFetcher extends ReactContextBaseJavaModule {
 
     @ReactMethod
     public void getInstalledApps(Callback callBack) {
-        List<HashMap<String, String>> allInstalledApps = new ArrayList<>();
+        final WritableArray allInstalledApps =
+                Arguments.createArray();
         PackageManager pm = getReactApplicationContext().getPackageManager();
         List<ApplicationInfo> apps = pm.getInstalledApplications(PackageManager.GET_META_DATA);
 
         for (ApplicationInfo app : apps) {
             if (pm.getLaunchIntentForPackage(app.packageName) != null) {
-                HashMap<String, String> appHash = new HashMap<>();
-                appHash.put("packageName", app.packageName);
-                appHash.put("appName", getApplicationName(pm, app.packageName));
-                allInstalledApps.add(appHash);
+                final WritableMap appInfo = Arguments.createMap();
+                appInfo.putString("packageName", app.packageName);
+                appInfo.putString("appName", getApplicationName(pm, app.packageName));
+                allInstalledApps.pushMap(appInfo);
             }
 
         }

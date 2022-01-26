@@ -1,5 +1,5 @@
 import globalStyles from '../globalStyles';
-import React, {useContext, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {StyleSheet, Text, TextInput, View} from 'react-native';
 import IonIcon from '../customIcons/IonIcon';
 import {nudgerSwitchContext} from '../context';
@@ -30,21 +30,13 @@ const Nudger = () => {
 
   const [timeTypeRadio, setTimeTypeRadio] = useState('daily');
 
-  // RNAndroidInstalledApps.getApps()
-  //   .then(apps => {
-  //     console.log('+++++');
-  //     apps.forEach(app => {
-  //       console.log(app.appName);
-  //     });
-  //   })
-  //   .catch(error => {
-  //     alert(error);
-  //   });
-  InstalledApplicationsFetcher.getInstalledApps(allApps => {
-    allApps.forEach(app => {
-      console.log(app);
+  useEffect(() => {
+    InstalledApplicationsFetcher.getInstalledApps(allApps => {
+      allApps.forEach(app => {
+        console.log(app);
+      });
     });
-  });
+  }, []);
 
   return (
     <View style={globalStyles.overallBackground}>
