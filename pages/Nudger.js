@@ -1,17 +1,23 @@
 import globalStyles from '../globalStyles';
 import React, {useContext, useEffect, useState} from 'react';
-import {Image, StyleSheet, Text, TextInput, View} from 'react-native';
+import {
+  BackHandler,
+  Image,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from 'react-native';
 import IonIcon from '../customIcons/IonIcon';
 import {nudgerSwitchContext} from '../context';
 import Ripple from 'react-native-material-ripple';
 import DropDownPicker from 'react-native-dropdown-picker';
 import AntDesignIcon from '../customIcons/AntDesignIcon';
 import RadioButtonRN from 'radio-buttons-react-native';
-import {NativeModules} from 'react-native';
-const {InstalledApplicationsFetcher} = NativeModules;
 import Clipboard from '@react-native-clipboard/clipboard';
+import AppsSelectorModal from '../Components/AppsSelectorModal';
 
-const Nudger = () => {
+const Nudger = ({navigation}) => {
   let {nudgerSwitch, setNudgerSwitch} = useContext(nudgerSwitchContext);
   const [timeTypeDropdownOpen, setTimeTypeDropdownOpen] = useState(false);
   const [timeTypeDropdownValue, setTimeTypeDropdownValue] = useState('minutes');
@@ -29,20 +35,19 @@ const Nudger = () => {
   ];
 
   const [timeTypeRadio, setTimeTypeRadio] = useState('daily');
-  const [base64Image, setBase64Image] = useState('');
 
-  // useEffect(() => {
-  //   InstalledApplicationsFetcher.getInstalledApps(allApps => {
-  //     allApps.forEach(app => {
-  //       // console.log(app.appName);
-  //       if (app.appName == 'YouTube') {
-  //         setBase64Image(app.appIcon);
-  //         Clipboard.setString(app.appIcon);
-  //         console.log(app.appIcon);
-  //       }
-  //     });
-  //   });
-  // }, []);
+  const [appsSelectorModalVisible, setAppsSelectorModalVisible] =
+    useState(false);
+
+  useEffect(() => {
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      () => {
+        navigation.push("Main");
+      },
+    );
+    return () => backHandler.remove();
+  }, []);
 
   return (
     <View style={globalStyles.overallBackground}>
@@ -62,26 +67,21 @@ const Nudger = () => {
           </View>
         ) : (
           <View style={styles.mainContainer}>
-            {/* <Image
-              style={{
-                width: 100,
-                height: 50,
-                borderWidth: 1,
-                borderColor: 'red',
-              }}
-              source={{uri: base64Image}}
-            /> */}
-
             <Ripple
               rippleDuration={300}
               rippleColor="#ffffff"
-              rippleContainerBorderRadius={5}>
+              rippleContainerBorderRadius={5}
+              onPress={() => setAppsSelectorModalVisible(true)}>
               <View style={styles.blackListedContainer}>
                 <Text style={styles.blackListedText}>Blacklisted Apps</Text>
                 <AntDesignIcon
                   iconName="caretdown"
                   iconColor="#ffffff"
                   iconSize={13}
+                />
+                <AppsSelectorModal
+                  modalVisible={appsSelectorModalVisible}
+                  closeModal={() => setAppsSelectorModalVisible(false)}
                 />
               </View>
             </Ripple>

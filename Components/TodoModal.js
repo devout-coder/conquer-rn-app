@@ -478,7 +478,10 @@ const TodoModal = ({
   // );
 
   return (
-    <Modal isVisible={modalOpen} style={styles.modal}>
+    <Modal
+      isVisible={modalOpen}
+      style={styles.modal}
+      onBackButtonPress={() => closeModal()}>
       <View style={{flex: 1}}>
         <View style={styles.topbar}>
           {timesPostponed != undefined ? (

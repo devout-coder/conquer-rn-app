@@ -14,7 +14,8 @@ const NudgerConfirmationModal = ({
     <Modal
       isVisible={modalVisible}
       animationIn="fadeInUp"
-      animationOut="fadeOutDown">
+      animationOut="fadeOutDown"
+      onBackButtonPress={closeModal}>
       <View style={styles.modal}>
         <Text style={styles.deleteText}>
           You need to provide accessibility permission to Conquer to check if
