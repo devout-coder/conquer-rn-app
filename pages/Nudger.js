@@ -16,9 +16,14 @@ import AntDesignIcon from '../customIcons/AntDesignIcon';
 import RadioButtonRN from 'radio-buttons-react-native';
 import Clipboard from '@react-native-clipboard/clipboard';
 import AppsSelectorModal from '../Components/AppsSelectorModal';
+import WebsitesSelectorModal from '../Components/WebsitesSelectorModal';
 
 const Nudger = ({navigation}) => {
   let {nudgerSwitch, setNudgerSwitch} = useContext(nudgerSwitchContext);
+
+  const [blacklistedApps, setBlacklistedApps] = useState([]);
+  const [blacklistedWebsites, setBlacklistedWebsites] = useState([]);
+  const [timeDuration, setTimeDuration] = useState('15');
   const [timeTypeDropdownOpen, setTimeTypeDropdownOpen] = useState(false);
   const [timeTypeDropdownValue, setTimeTypeDropdownValue] = useState('minutes');
   const [timeTypeDropdownItems, setTimeTypeDropdownItems] = useState([
@@ -39,11 +44,14 @@ const Nudger = ({navigation}) => {
   const [appsSelectorModalVisible, setAppsSelectorModalVisible] =
     useState(false);
 
+  const [websitesSelectorModalVisible, setWebsitesSelectorModalVisible] =
+    useState(false);
+
   useEffect(() => {
     const backHandler = BackHandler.addEventListener(
       'hardwareBackPress',
       () => {
-        navigation.push("Main");
+        navigation.push('Main');
       },
     );
     return () => backHandler.remove();
@@ -82,12 +90,15 @@ const Nudger = ({navigation}) => {
                 <AppsSelectorModal
                   modalVisible={appsSelectorModalVisible}
                   closeModal={() => setAppsSelectorModalVisible(false)}
+                  selectedApps={blacklistedApps}
+                  setSelectedApps={setBlacklistedApps}
                 />
               </View>
             </Ripple>
             <Ripple
               rippleDuration={300}
               rippleColor="#ffffff"
+              onPress={() => setWebsitesSelectorModalVisible(true)}
               rippleContainerBorderRadius={5}>
               <View style={styles.blackListedContainer}>
                 <Text style={styles.blackListedText}>Blacklisted Websites</Text>
@@ -95,6 +106,12 @@ const Nudger = ({navigation}) => {
                   iconName="caretdown"
                   iconColor="#ffffff"
                   iconSize={13}
+                />
+                <WebsitesSelectorModal
+                  modalVisible={websitesSelectorModalVisible}
+                  closeModal={() => setWebsitesSelectorModalVisible(false)}
+                  selectedWebsites={blacklistedWebsites}
+                  setSelectedWebsites={setBlacklistedWebsites}
                 />
               </View>
             </Ripple>
@@ -113,7 +130,10 @@ const Nudger = ({navigation}) => {
                 <TextInput
                   style={styles.hoursOrMinutes}
                   keyboardType="number-pad"
-                  defaultValue="15"
+                  value={timeDuration}
+                  onChangeText={value => {
+                    setTimeDuration(value);
+                  }}
                 />
                 <DropDownPicker
                   open={timeTypeDropdownOpen}
@@ -166,10 +186,11 @@ const Nudger = ({navigation}) => {
               </Text>
               <RadioButtonRN
                 data={radio_props}
-                selectedBtn={e => console.log(e.label)}
+                selectedBtn={e => setTimeTypeRadio(e.label)}
                 box={false}
                 initial={1}
-                animationTypes={['pulse']}
+                duration={100}
+                animationTypes={['zoomIn']}
                 circleSize={12}
                 activeColor="#00ff00"
                 textStyle={{

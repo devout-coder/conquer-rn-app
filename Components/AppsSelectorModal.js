@@ -9,10 +9,14 @@ import IonIcon from '../customIcons/IonIcon';
 const {InstalledApplicationsFetcher} = NativeModules;
 
 const windowHeight = Dimensions.get('window').height;
-const AppsSelectorModal = ({modalVisible, closeModal}) => {
+const AppsSelectorModal = ({
+  modalVisible,
+  closeModal,
+  selectedApps,
+  setSelectedApps,
+}) => {
   const [installedApps, setInstalledApps] = useState([]);
   const [displayApps, setDisplayApps] = useState([]);
-  const [selectedApps, setSelectedApps] = useState([]);
   const [searchedApp, setSearchedApp] = useState('');
 
   useEffect(() => {
