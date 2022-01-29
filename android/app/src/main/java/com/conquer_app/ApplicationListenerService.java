@@ -28,15 +28,14 @@ import java.util.List;
 
 public class ApplicationListenerService extends AccessibilityService {
 
-    ArrayList<String> blacklistedPackages = new ArrayList<String>(Arrays.asList("com.mojang.minecraftpe", "com.twitter.android", "com.flippfly.racethesun", "com.yodo1.crossyroad", "com.reddit.frontpage", "com.whatsapp", "org.telegram.messenger", "com.google.android.youtube"));
-
-    ArrayList<String> blacklistedWebsites = new ArrayList<String>(Arrays.asList("youtube.com", "instagram.com", "reddit.com", "twitter.com", "quora.com"));
-
     private HashMap<String, Long> previousUrlDetections = new HashMap<>();
 
     @Override
     public void onAccessibilityEvent(AccessibilityEvent accessibilityEvent) {
 
+        SharedPreferences sharedPref = this.getSharedPreferences(
+                "ApplicationListener", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
         String currentPackage = accessibilityEvent.getPackageName().toString();
 
 //        PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
@@ -49,6 +48,7 @@ public class ApplicationListenerService extends AccessibilityService {
         if (!currentPackage.equals("com.android.systemui") && !isDeviceLocked()) {
 
             if (isBrowserRunning(currentPackage)) {
+                Log.d("obscure_tag", "browser is running");
 
                 AccessibilityNodeInfo parentNodeInfo = accessibilityEvent.getSource();
                 if (parentNodeInfo == null) {
@@ -79,9 +79,13 @@ public class ApplicationListenerService extends AccessibilityService {
                 }
             }
 
-            SharedPreferences sharedPref = this.getSharedPreferences(
-                    "ApplicationListener", Context.MODE_PRIVATE);
-            SharedPreferences.Editor editor = sharedPref.edit();
+            String blacklistedAppsString = sharedPref.getString("blacklistedApps", "none");
+
+            ArrayList<String> blacklistedPackages = new ArrayList<String>();
+            if (!blacklistedAppsString.equals("none")) {
+                String[] blacklistedAppsList = blacklistedAppsString.split(",");
+                blacklistedPackages = new ArrayList<String>(Arrays.asList(blacklistedAppsList));
+            }
 //            Log.d("obscure_tag", currentPackage);
             String storedPackage = sharedPref.getString("current_running_application", "none");
             if (!packageNames().contains(currentPackage)) {
@@ -135,6 +139,16 @@ public class ApplicationListenerService extends AccessibilityService {
     }
 
     private boolean blackListedWebsiteContainsPackage(String currentPackage) {
+        SharedPreferences sharedPref = this.getSharedPreferences(
+                "ApplicationListener", Context.MODE_PRIVATE);
+        String blacklistedWebsitesString = sharedPref.getString("blacklistedWebsites", "none");
+        ArrayList<String> blacklistedWebsites = new ArrayList<String>();
+
+        if (!blacklistedWebsitesString.equals("none")) {
+            String[] blacklistedAppsList = blacklistedWebsitesString.split(",");
+            blacklistedWebsites = new ArrayList<String>(Arrays.asList(blacklistedAppsList));
+        }
+
         boolean blackListedWebsiteContainsPackage = false;
         for (String blacklistedWebsite :
                 blacklistedWebsites) {

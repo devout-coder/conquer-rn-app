@@ -17,19 +17,21 @@ import RadioButtonRN from 'radio-buttons-react-native';
 import Clipboard from '@react-native-clipboard/clipboard';
 import AppsSelectorModal from '../Components/AppsSelectorModal';
 import WebsitesSelectorModal from '../Components/WebsitesSelectorModal';
+import {NativeModules} from 'react-native';
+const {InstalledApplicationsFetcher} = NativeModules;
 
 const Nudger = ({navigation}) => {
   let {nudgerSwitch, setNudgerSwitch} = useContext(nudgerSwitchContext);
 
   const [blacklistedApps, setBlacklistedApps] = useState([]);
   const [blacklistedWebsites, setBlacklistedWebsites] = useState([]);
-  const [timeDuration, setTimeDuration] = useState('15');
-  const [timeTypeDropdownOpen, setTimeTypeDropdownOpen] = useState(false);
-  const [timeTypeDropdownValue, setTimeTypeDropdownValue] = useState('minutes');
-  const [timeTypeDropdownItems, setTimeTypeDropdownItems] = useState([
-    {label: 'minutes', value: 'minutes'},
-    {label: 'hours', value: 'hours'},
-  ]);
+  // const [timeDuration, setTimeDuration] = useState('15');
+  // const [timeTypeDropdownOpen, setTimeTypeDropdownOpen] = useState(false);
+  // const [timeTypeDropdownValue, setTimeTypeDropdownValue] = useState('minutes');
+  // const [timeTypeDropdownItems, setTimeTypeDropdownItems] = useState([
+  //   {label: 'minutes', value: 'minutes'},
+  //   {label: 'hours', value: 'hours'},
+  // ]);
 
   let radio_props = [
     {label: 'daily'},
@@ -56,6 +58,16 @@ const Nudger = ({navigation}) => {
     );
     return () => backHandler.remove();
   }, []);
+
+  const saveNudgerDetails = () => {
+    InstalledApplicationsFetcher.saveNudgerDetails(
+      nudgerSwitch,
+      blacklistedApps.toString(),
+      blacklistedWebsites.toString(),
+      timeTypeRadio,
+    );
+    navigation.push('Main');
+  };
 
   return (
     <View style={globalStyles.overallBackground}>
@@ -122,7 +134,7 @@ const Nudger = ({navigation}) => {
                 opacity: 0.3,
               }}
             />
-            <View style={styles.durationSelectorView}>
+            {/* <View style={styles.durationSelectorView}>
               <Text style={styles.nudgerNormalText}>
                 You want to be notified every
               </Text>
@@ -172,14 +184,14 @@ const Nudger = ({navigation}) => {
               <Text style={styles.nudgerNormalText}>
                 of using the blacklisted stuff
               </Text>
-            </View>
-            <View
+            </View> */}
+            {/* <View
               style={{
                 borderBottomColor: '#acbbfc',
                 borderBottomWidth: 1,
                 opacity: 0.3,
               }}
-            />
+            /> */}
             <View style={styles.taskTypeSelector}>
               <Text style={styles.nudgerNormalText}>
                 Which tasks do you want to be notified about?
@@ -205,6 +217,7 @@ const Nudger = ({navigation}) => {
                 rippleDuration={300}
                 rippleColor="#000000"
                 width="100%"
+                onPress={() => saveNudgerDetails()}
                 rippleContainerBorderRadius={5}>
                 <Text style={styles.saveButtonText}>Save</Text>
               </Ripple>
@@ -231,8 +244,8 @@ const styles = StyleSheet.create({
   topInfo: {
     display: 'flex',
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    width: '85%',
+    justifyContent: 'space-around',
+    width: '87%',
     marginTop: 10,
   },
   topInfoText: {
@@ -243,7 +256,7 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'column',
     // backgroundColor: '#000000',
-    justifyContent: 'space-between',
+    justifyContent: 'space-around',
     padding: 10,
     width: '100%',
     height: '100%',
