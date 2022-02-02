@@ -91,8 +91,7 @@ public class InstalledApplicationsFetcher extends ReactContextBaseJavaModule {
 
     @ReactMethod
     public void getInstalledApps(Callback callBack) {
-        final WritableArray allInstalledApps =
-                Arguments.createArray();
+        final WritableArray allInstalledApps = Arguments.createArray();
         PackageManager pm = getReactApplicationContext().getPackageManager();
         List<ApplicationInfo> apps = pm.getInstalledApplications(PackageManager.GET_META_DATA);
 
@@ -101,7 +100,7 @@ public class InstalledApplicationsFetcher extends ReactContextBaseJavaModule {
                 final WritableMap appInfo = Arguments.createMap();
                 appInfo.putString("appPackageName", app.packageName);
                 appInfo.putString("appName", getApplicationName(pm, app.packageName));
-//                appInfo.putString("appIcon", );
+                // appInfo.putString("appIcon", );
                 Drawable appIcon;
                 try {
                     appIcon = pm.getApplicationIcon(app.packageName);
@@ -117,20 +116,35 @@ public class InstalledApplicationsFetcher extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void saveNudgerDetails(boolean isNudgerOn, String blacklistedApps, String blacklistedWebistes, String timeType) {
+    public void saveNudgerSwitchState(boolean newSwitchState) {
 
-        String nudgerOn = isNudgerOn ? "true" : "false";
+        String nudgerOn = newSwitchState ? "true" : "false";
 
         SharedPreferences sharedPref = getReactApplicationContext().getSharedPreferences(
                 "ApplicationListener", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
 
         editor.putString("isNudgerOn", nudgerOn);
-        editor.putString("blacklistedApps", blacklistedApps);
-        editor.putString("blacklistedWebsites", blacklistedWebistes);
-        editor.putString("timeType", timeType);
         editor.apply();
 
+    }
+    @ReactMethod
+    public void saveNudgerDetails(String blacklistedApps, String blacklistedWebistes,
+                                  String timeDuration, String timeTypeDropdownValue, String timeType) {
+
+//        String nudgerOn = isNudgerOn ? "true" : "false";
+
+        SharedPreferences sharedPref = getReactApplicationContext().getSharedPreferences(
+                "ApplicationListener", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+
+//        editor.putString("isNudgerOn", nudgerOn);
+        editor.putString("blacklistedApps", blacklistedApps);
+        editor.putString("blacklistedWebsites", blacklistedWebistes);
+        editor.putString("timeDuration", timeDuration);
+        editor.putString("timeTypeDropdownValue", timeTypeDropdownValue);
+        editor.putString("timeType", timeType);
+        editor.apply();
 
     }
 }

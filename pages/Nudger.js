@@ -5,6 +5,7 @@ import {
   Image,
   StyleSheet,
   Text,
+  Dimensions,
   TextInput,
   View,
 } from 'react-native';
@@ -20,18 +21,25 @@ import WebsitesSelectorModal from '../Components/WebsitesSelectorModal';
 import {NativeModules} from 'react-native';
 const {InstalledApplicationsFetcher} = NativeModules;
 
+const windowHeight = Dimensions.get('window').height;
+
 const Nudger = ({navigation}) => {
   let {nudgerSwitch, setNudgerSwitch} = useContext(nudgerSwitchContext);
 
   const [blacklistedApps, setBlacklistedApps] = useState([]);
   const [blacklistedWebsites, setBlacklistedWebsites] = useState([]);
-  // const [timeDuration, setTimeDuration] = useState('15');
-  // const [timeTypeDropdownOpen, setTimeTypeDropdownOpen] = useState(false);
-  // const [timeTypeDropdownValue, setTimeTypeDropdownValue] = useState('minutes');
-  // const [timeTypeDropdownItems, setTimeTypeDropdownItems] = useState([
-  //   {label: 'minutes', value: 'minutes'},
-  //   {label: 'hours', value: 'hours'},
-  // ]);
+  const [appsSelectorModalVisible, setAppsSelectorModalVisible] =
+    useState(false);
+  const [websitesSelectorModalVisible, setWebsitesSelectorModalVisible] =
+    useState(false);
+
+  const [timeDuration, setTimeDuration] = useState('15');
+  const [timeTypeDropdownOpen, setTimeTypeDropdownOpen] = useState(false);
+  const [timeTypeDropdownValue, setTimeTypeDropdownValue] = useState('minutes');
+  const [timeTypeDropdownItems, setTimeTypeDropdownItems] = useState([
+    {label: 'minutes', value: 'minutes'},
+    {label: 'hours', value: 'hours'},
+  ]);
 
   let radio_props = [
     {label: 'daily'},
@@ -40,14 +48,7 @@ const Nudger = ({navigation}) => {
     {label: 'yearly'},
     {label: 'longTerm'},
   ];
-
   const [timeTypeRadio, setTimeTypeRadio] = useState('daily');
-
-  const [appsSelectorModalVisible, setAppsSelectorModalVisible] =
-    useState(false);
-
-  const [websitesSelectorModalVisible, setWebsitesSelectorModalVisible] =
-    useState(false);
 
   useEffect(() => {
     const backHandler = BackHandler.addEventListener(
@@ -61,9 +62,10 @@ const Nudger = ({navigation}) => {
 
   const saveNudgerDetails = () => {
     InstalledApplicationsFetcher.saveNudgerDetails(
-      nudgerSwitch,
       blacklistedApps.toString(),
       blacklistedWebsites.toString(),
+      timeDuration,
+      timeTypeDropdownValue,
       timeTypeRadio,
     );
     navigation.push('Main');
@@ -134,7 +136,7 @@ const Nudger = ({navigation}) => {
                 opacity: 0.3,
               }}
             />
-            {/* <View style={styles.durationSelectorView}>
+            <View style={styles.durationSelectorView}>
               <Text style={styles.nudgerNormalText}>
                 You want to be notified every
               </Text>
@@ -184,14 +186,14 @@ const Nudger = ({navigation}) => {
               <Text style={styles.nudgerNormalText}>
                 of using the blacklisted stuff
               </Text>
-            </View> */}
-            {/* <View
+            </View>
+            <View
               style={{
                 borderBottomColor: '#acbbfc',
                 borderBottomWidth: 1,
                 opacity: 0.3,
               }}
-            /> */}
+            />
             <View style={styles.taskTypeSelector}>
               <Text style={styles.nudgerNormalText}>
                 Which tasks do you want to be notified about?
@@ -239,7 +241,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     padding: 10,
     width: '100%',
-    flex: 1,
+    height: windowHeight - 50,
   },
   topInfo: {
     display: 'flex',

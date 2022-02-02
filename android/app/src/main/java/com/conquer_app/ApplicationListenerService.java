@@ -1,6 +1,5 @@
 package com.conquer_app;
 
-
 import android.accessibilityservice.AccessibilityService;
 import android.accessibilityservice.AccessibilityServiceInfo;
 import android.app.AlarmManager;
@@ -25,7 +24,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-
 public class ApplicationListenerService extends AccessibilityService {
 
     private HashMap<String, Long> previousUrlDetections = new HashMap<>();
@@ -38,14 +36,15 @@ public class ApplicationListenerService extends AccessibilityService {
         SharedPreferences.Editor editor = sharedPref.edit();
         String currentPackage = accessibilityEvent.getPackageName().toString();
 
-//        PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
-//        String packageName = getPackageName();
-//        if (!pm.isIgnoringBatteryOptimizations(packageName)) {
-//            Log.d("obscure_tag", "battery optimization permission is stopping my app");
-//        } else {
-//            Log.d("obscure_tag", "battery optimization permission is not a problem");
-//        }
-        if (!currentPackage.equals("com.android.systemui") && !isDeviceLocked()) {
+        // PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+        // String packageName = getPackageName();
+        // if (!pm.isIgnoringBatteryOptimizations(packageName)) {
+        // Log.d("obscure_tag", "battery optimization permission is stopping my app");
+        // } else {
+        // Log.d("obscure_tag", "battery optimization permission is not a problem");
+        // }
+        String isNudgerOn = sharedPref.getString("isNudgerOn", "none");
+        if (!currentPackage.equals("com.android.systemui") && !isDeviceLocked() && isNudgerOn.equals("true")) {
 
             if (isBrowserRunning(currentPackage)) {
                 Log.d("obscure_tag", "browser is running");
@@ -63,16 +62,19 @@ public class ApplicationListenerService extends AccessibilityService {
                 String capturedUrl = captureUrl(parentNodeInfo, browserConfig);
                 parentNodeInfo.recycle();
 
-                //we can't find a url. Browser either was updated or opened page without url text field
+                // we can't find a url. Browser either was updated or opened page without url
+                // text field
                 if (capturedUrl == null) {
                     return;
                 }
 
                 long eventTime = accessibilityEvent.getEventTime();
                 String detectionId = currentPackage + ", and url " + capturedUrl;
-                //noinspection ConstantConditions
-                long lastRecordedTime = previousUrlDetections.containsKey(detectionId) ? previousUrlDetections.get(detectionId) : 0;
-                //some kind of redirect throttling
+                // noinspection ConstantConditions
+                long lastRecordedTime = previousUrlDetections.containsKey(detectionId)
+                        ? previousUrlDetections.get(detectionId)
+                        : 0;
+                // some kind of redirect throttling
                 if (eventTime - lastRecordedTime > 2000) {
                     previousUrlDetections.put(detectionId, eventTime);
                     currentPackage = capturedUrl;
@@ -86,17 +88,19 @@ public class ApplicationListenerService extends AccessibilityService {
                 String[] blacklistedAppsList = blacklistedAppsString.split(",");
                 blacklistedPackages = new ArrayList<String>(Arrays.asList(blacklistedAppsList));
             }
-//            Log.d("obscure_tag", currentPackage);
+            // Log.d("obscure_tag", currentPackage);
             String storedPackage = sharedPref.getString("current_running_application", "none");
             if (!packageNames().contains(currentPackage)) {
                 if (storedPackage.equals("none")) {
-                    if (blacklistedPackages.contains(currentPackage) || blackListedWebsiteContainsPackage(currentPackage)) {
+                    if (blacklistedPackages.contains(currentPackage)
+                            || blackListedWebsiteContainsPackage(currentPackage)) {
 
                         Log.d("obscure_tag", "blacklisted app has been detected for the first time...starting alarm");
                         editor.putString("current_running_application", currentPackage);
                         editor.apply();
 
-                        AlarmManager alarmMgr = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
+                        AlarmManager alarmMgr = (AlarmManager) getApplicationContext()
+                                .getSystemService(Context.ALARM_SERVICE);
                         Intent intent = new Intent(this, AlarmReceiver.class);
                         PendingIntent alarmIntent = PendingIntent.getBroadcast(this, 1, intent, 0);
                         long timeMilli = new Date().getTime();
@@ -106,16 +110,18 @@ public class ApplicationListenerService extends AccessibilityService {
 
                     }
                 } else if (currentPackage.contains(storedPackage)) {
-//                Log.d("obscure_tag", "blacklisted app has been detected for the second time..doing nothing");
+                    // Log.d("obscure_tag", "blacklisted app has been detected for the second
+                    // time..doing nothing");
                 } else {
-                    //delete alarm and stored package
+                    // delete alarm and stored package
                     Log.d("obscure_tag", "different app is detected...alarm getting cancelled...");
                     editor.remove("current_running_application");
                     editor.apply();
-//                    AlarmManager alarmMgr = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
-//                    Intent intent = new Intent(this, AlarmReceiver.class);
-//                    PendingIntent alarmIntent = PendingIntent.getBroadcast(this, 1, intent, 0);
-//                    alarmMgr.cancel(alarmIntent);
+                    // AlarmManager alarmMgr = (AlarmManager)
+                    // getApplicationContext().getSystemService(Context.ALARM_SERVICE);
+                    // Intent intent = new Intent(this, AlarmReceiver.class);
+                    // PendingIntent alarmIntent = PendingIntent.getBroadcast(this, 1, intent, 0);
+                    // alarmMgr.cancel(alarmIntent);
                 }
             }
         }
@@ -150,8 +156,7 @@ public class ApplicationListenerService extends AccessibilityService {
         }
 
         boolean blackListedWebsiteContainsPackage = false;
-        for (String blacklistedWebsite :
-                blacklistedWebsites) {
+        for (String blacklistedWebsite : blacklistedWebsites) {
             if (currentPackage.contains(blacklistedWebsite)) {
                 blackListedWebsiteContainsPackage = true;
             }
@@ -180,7 +185,6 @@ public class ApplicationListenerService extends AccessibilityService {
         return url;
     }
 
-
     @NonNull
     private static ArrayList<String> packageNames() {
         ArrayList<String> packageNames = new ArrayList<>();
@@ -201,14 +205,18 @@ public class ApplicationListenerService extends AccessibilityService {
 
     /**
      * @return a list of supported browser configs
-     * This list could be instead obtained from remote server to support future browser updates without updating an app
+     *         This list could be instead obtained from remote server to support
+     *         future browser updates without updating an app
      */
     @NonNull
     private static List<ApplicationListenerService.SupportedBrowserConfig> getSupportedBrowsers() {
         List<ApplicationListenerService.SupportedBrowserConfig> browsers = new ArrayList<>();
-        browsers.add(new ApplicationListenerService.SupportedBrowserConfig("com.android.chrome", "com.android.chrome:id/url_bar"));
-        browsers.add(new ApplicationListenerService.SupportedBrowserConfig("org.mozilla.firefox", "org.mozilla.firefox:id/url_bar_title"));
-        browsers.add(new ApplicationListenerService.SupportedBrowserConfig("com.brave.browser", "com.brave.browser:id/url_bar"));
+        browsers.add(new ApplicationListenerService.SupportedBrowserConfig("com.android.chrome",
+                "com.android.chrome:id/url_bar"));
+        browsers.add(new ApplicationListenerService.SupportedBrowserConfig("org.mozilla.firefox",
+                "org.mozilla.firefox:id/url_bar_title"));
+        browsers.add(new ApplicationListenerService.SupportedBrowserConfig("com.brave.browser",
+                "com.brave.browser:id/url_bar"));
         return browsers;
     }
 
@@ -227,10 +235,11 @@ public class ApplicationListenerService extends AccessibilityService {
 
         info.notificationTimeout = 100;
 
-//        PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
-//        PowerManager.WakeLock wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
-//                "MyApp::MyWakelockTag");
-//        wakeLock.acquire();
+        // PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
+        // PowerManager.WakeLock wakeLock =
+        // powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
+        // "MyApp::MyWakelockTag");
+        // wakeLock.acquire();
 
         this.setServiceInfo(info);
     }

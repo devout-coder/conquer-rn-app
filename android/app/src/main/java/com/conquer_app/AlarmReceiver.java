@@ -22,7 +22,8 @@ import java.util.Date;
 
 public class AlarmReceiver extends BroadcastReceiver {
 
-    public NotificationCompat.Builder createNotification(Context context, String title, String content, String channel_id, int priority) {
+    public NotificationCompat.Builder createNotification(Context context, String title, String content,
+                                                         String channel_id, int priority) {
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, channel_id)
                 .setSmallIcon(R.drawable.notification_icon)
@@ -41,6 +42,16 @@ public class AlarmReceiver extends BroadcastReceiver {
         }
     }
 
+    private int stringToTimeDuration(String timeDuration, String timeTypeDropdownValue) {
+        int timeDurationInteger = Integer.parseInt(timeDuration);
+        int requiredTimeDuration;
+        if (timeTypeDropdownValue.equals("minutes")) {
+            return timeDurationInteger * 60000;
+        } else {
+            return timeDurationInteger * 3600000;
+        }
+    }
+
     @Override
     public void onReceive(Context context, Intent arg1) {
         Log.d("obscure_tag", "broadcast is getting received, alarm triggered");
@@ -51,16 +62,19 @@ public class AlarmReceiver extends BroadcastReceiver {
         String storedPackage = sharedPref.getString("current_running_application", "none");
 
         if (!isDeviceLocked(context) && !storedPackage.equals("none")) {
+            String timeDuration = sharedPref.getString("timeDuration", "15");
+            String timeTypeDropdownValue = sharedPref.getString("timeTypeDropdownValue", "minutes");
 
             NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
-            notificationManager.notify(0, createNotification(context, "Shit task", "this task is incomplete", "task_reminders", 4).build());
+            notificationManager.notify(0,
+                    createNotification(context, "Shit task", "this task is incomplete", "task_reminders", 4).build());
 
             AlarmManager alarmMgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
             Intent intent = new Intent(context, AlarmReceiver.class);
             PendingIntent alarmIntent = PendingIntent.getBroadcast(context, 1, intent, 0);
             long timeMilli = new Date().getTime();
             alarmMgr.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP,
-                    timeMilli + 10 * 60000,
+                    timeMilli + stringToTimeDuration(timeDuration, timeTypeDropdownValue),
                     alarmIntent);
         }
     }

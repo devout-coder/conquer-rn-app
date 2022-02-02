@@ -5,6 +5,7 @@ import {NativeModules} from 'react-native';
 import NudgerConfirmationModal from './NudgerConfirmationModal';
 import {nudgerSwitchContext} from '../context';
 const {AccessibilityPermissionHandler} = NativeModules;
+const {InstalledApplicationsFetcher} = NativeModules;
 
 const NudgerToggleSwitch = () => {
   const [confirmationModalVisible, setConfirmationModalVisible] =
@@ -22,11 +23,13 @@ const NudgerToggleSwitch = () => {
             // AccessibilityPermissionHandler.navigateToAccessibilitySettings();
           } else if (accessEnabled == 1) {
             //accesibility permission is given
+            InstalledApplicationsFetcher.saveNudgerSwitchState(newSwitchState);
             setNudgerSwitch(newSwitchState);
           }
         },
       );
     } else {
+      InstalledApplicationsFetcher.saveNudgerSwitchState(newSwitchState);
       setNudgerSwitch(newSwitchState);
     }
   };
