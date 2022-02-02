@@ -1,5 +1,5 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import {ActivityIndicator, StyleSheet, Text, View} from 'react-native';
 import ToggleSwitch from 'toggle-switch-react-native';
 import {NativeModules} from 'react-native';
 import NudgerConfirmationModal from './NudgerConfirmationModal';
@@ -11,13 +11,17 @@ const NudgerToggleSwitch = () => {
   const [confirmationModalVisible, setConfirmationModalVisible] =
     useState(false);
   let {nudgerSwitch, setNudgerSwitch} = useContext(nudgerSwitchContext);
+  const [nudgerSwitchDetailsFetched, setNudgerSwitchDetailsFetched] =
+    useState(false);
 
   useEffect(() => {
     InstalledApplicationsFetcher.getNudgerSwitchState(nudgerSwitchState => {
       if (nudgerSwitchState == 'true') {
         setNudgerSwitch(true);
+        setNudgerSwitchDetailsFetched(true);
       } else {
         setNudgerSwitch(false);
+        setNudgerSwitchDetailsFetched(true);
       }
     });
   }, []);
@@ -47,15 +51,19 @@ const NudgerToggleSwitch = () => {
 
   return (
     <>
-      <ToggleSwitch
-        isOn={nudgerSwitch}
-        onColor="#00ff00"
-        offColor="red"
-        animationSpeed={100}
-        labelStyle={{color: 'black', fontWeight: '900'}}
-        size="medium"
-        onToggle={newSwitchState => checkIfAccessibilityIsOn(newSwitchState)}
-      />
+      {nudgerSwitchDetailsFetched ? (
+        <ToggleSwitch
+          isOn={nudgerSwitch}
+          onColor="#00ff00"
+          offColor="red"
+          animationSpeed={100}
+          labelStyle={{color: 'black', fontWeight: '900'}}
+          size="medium"
+          onToggle={newSwitchState => checkIfAccessibilityIsOn(newSwitchState)}
+        />
+      ) : (
+        <ActivityIndicator size="small" color="#00ff00" />
+      )}
       <NudgerConfirmationModal
         modalVisible={confirmationModalVisible}
         closeModal={() => setConfirmationModalVisible(false)}

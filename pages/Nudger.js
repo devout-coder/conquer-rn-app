@@ -8,6 +8,7 @@ import {
   Dimensions,
   TextInput,
   View,
+  ActivityIndicator,
 } from 'react-native';
 import IonIcon from '../customIcons/IonIcon';
 import {nudgerSwitchContext} from '../context';
@@ -78,6 +79,8 @@ const Nudger = ({navigation}) => {
         let blacklistedWebsitesArray = details.blacklistedWebsites.split(',');
         setBlacklistedWebsites(blacklistedWebsitesArray);
         setNudgerDetailsFetched(true);
+      } else {
+        setNudgerDetailsFetched(true);
       }
       if (details.timeDuration != 'none') {
         setTimeDuration(details.timeDuration);
@@ -111,7 +114,9 @@ const Nudger = ({navigation}) => {
   return (
     <View style={globalStyles.overallBackground}>
       <View style={styles.topContainer}>
-        {!nudgerSwitch ? (
+        {!nudgerDetailsFetched ? (
+          <ActivityIndicator size="large" color="#00ff00" />
+        ) : !nudgerSwitch ? (
           <View style={styles.topInfo}>
             <IonIcon
               iconName="information-circle-sharp"
