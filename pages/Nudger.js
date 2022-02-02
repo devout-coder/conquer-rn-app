@@ -19,6 +19,7 @@ import Clipboard from '@react-native-clipboard/clipboard';
 import AppsSelectorModal from '../Components/AppsSelectorModal';
 import WebsitesSelectorModal from '../Components/WebsitesSelectorModal';
 import {NativeModules} from 'react-native';
+import {defineAnimation} from 'react-native-reanimated';
 const {InstalledApplicationsFetcher} = NativeModules;
 
 const windowHeight = Dimensions.get('window').height;
@@ -26,13 +27,14 @@ const windowHeight = Dimensions.get('window').height;
 const Nudger = ({navigation}) => {
   let {nudgerSwitch, setNudgerSwitch} = useContext(nudgerSwitchContext);
 
+  const [nudgerDetailsFetched, setNudgerDetailsFetched] = useState(false);
+
   const [blacklistedApps, setBlacklistedApps] = useState([]);
   const [blacklistedWebsites, setBlacklistedWebsites] = useState([]);
   const [appsSelectorModalVisible, setAppsSelectorModalVisible] =
     useState(false);
   const [websitesSelectorModalVisible, setWebsitesSelectorModalVisible] =
     useState(false);
-
   const [timeDuration, setTimeDuration] = useState('15');
   const [timeTypeDropdownOpen, setTimeTypeDropdownOpen] = useState(false);
   const [timeTypeDropdownValue, setTimeTypeDropdownValue] = useState('minutes');
@@ -67,7 +69,16 @@ const Nudger = ({navigation}) => {
 
   const fetchNudgerDetails = () => {
     InstalledApplicationsFetcher.getNudgerDetails(details => {
-      console.log(details);
+      if (details.blacklistedApps != 'none') {
+        let blacklistedAppsArray = details.blacklistedApps.split(',');
+        setBlacklistedApps(blacklistedAppsArray);
+        // console.log(blacklistedApps);
+      }
+      if (details.blacklistedWebsites != 'none') {
+        let blacklistedWebsitesArray = details.blacklistedWebsites.split(',');
+        setBlacklistedWebsites(blacklistedWebsitesArray);
+        setNudgerDetailsFetched(true);
+      }
       if (details.timeDuration != 'none') {
         setTimeDuration(details.timeDuration);
       }
@@ -147,12 +158,16 @@ const Nudger = ({navigation}) => {
                   iconColor="#ffffff"
                   iconSize={13}
                 />
-                <WebsitesSelectorModal
-                  modalVisible={websitesSelectorModalVisible}
-                  closeModal={() => setWebsitesSelectorModalVisible(false)}
-                  selectedWebsites={blacklistedWebsites}
-                  setSelectedWebsites={setBlacklistedWebsites}
-                />
+                {nudgerDetailsFetched ? (
+                  <WebsitesSelectorModal
+                    modalVisible={websitesSelectorModalVisible}
+                    closeModal={() => setWebsitesSelectorModalVisible(false)}
+                    selectedWebsites={blacklistedWebsites}
+                    setSelectedWebsites={setBlacklistedWebsites}
+                  />
+                ) : (
+                  <></>
+                )}
               </View>
             </Ripple>
             <View

@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {StyleSheet, Text, TextInput, View} from 'react-native';
 import Modal from 'react-native-modal';
 import Ripple from 'react-native-material-ripple';
@@ -9,12 +9,21 @@ const WebsitesSelectorModal = ({
   selectedWebsites,
   setSelectedWebsites,
 }) => {
-  const [blacklistedWebsites, setBlacklistedWebsites] = useState('');
+
+  const [blacklistedWebsites, setBlacklistedWebsites] = useState(
+    selectedWebsites.join('\n'),
+  );
+
   const saveWebsites = () => {
     const blacklistedWebsitesArray = blacklistedWebsites.split('\n');
     setSelectedWebsites(blacklistedWebsitesArray);
     closeModal();
   };
+
+  // useEffect(() => {
+  //   setBlacklistedWebsites();
+  // }, []);
+
   return (
     <Modal
       isVisible={modalVisible}
