@@ -505,7 +505,6 @@ const TodoModal = ({
             placeholderTextColor="#6C6C6C"
             multiline={true}
             numberOfLines={2}
-            maxLength={40}
           />
           <TextInput
             defaultValue={todoTaskDesc}
