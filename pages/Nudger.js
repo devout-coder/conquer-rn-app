@@ -49,6 +49,7 @@ const Nudger = ({navigation}) => {
     {label: 'longTerm'},
   ];
   const [timeTypeRadio, setTimeTypeRadio] = useState('daily');
+  const [timeTypeRadioInitial, setTimeTypeRadioInitial] = useState(1);
 
   useEffect(() => {
     const backHandler = BackHandler.addEventListener(
@@ -61,10 +62,29 @@ const Nudger = ({navigation}) => {
   }, []);
 
   useEffect(() => {
+    fetchNudgerDetails();
+  }, []);
+
+  const fetchNudgerDetails = () => {
     InstalledApplicationsFetcher.getNudgerDetails(details => {
       console.log(details);
+      if (details.timeDuration != 'none') {
+        setTimeDuration(details.timeDuration);
+      }
+      if (details.timeTypeDropdownValue != 'none') {
+        setTimeTypeDropdownValue(details.timeTypeDropdownValue);
+      }
+      if (details.timeType != 'none') {
+        for (let i = 0; i < radio_props.length; i++) {
+          if (radio_props[i].label == details.timeType) {
+            setTimeTypeRadioInitial(i + 1);
+            // console.log(i);
+            // setTimeTypeRadio(details.timeType);
+          }
+        }
+      }
     });
-  }, []);
+  };
 
   const saveNudgerDetails = () => {
     InstalledApplicationsFetcher.saveNudgerDetails(
@@ -208,7 +228,7 @@ const Nudger = ({navigation}) => {
                 data={radio_props}
                 selectedBtn={e => setTimeTypeRadio(e.label)}
                 box={false}
-                initial={1}
+                initial={timeTypeRadioInitial}
                 duration={100}
                 animationTypes={['zoomIn']}
                 circleSize={12}

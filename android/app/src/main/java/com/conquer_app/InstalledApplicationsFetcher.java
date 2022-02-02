@@ -164,8 +164,6 @@ public class InstalledApplicationsFetcher extends ReactContextBaseJavaModule {
     public void saveNudgerDetails(String blacklistedApps, String blacklistedWebsites,
             String timeDuration, String timeTypeDropdownValue, String timeType) {
 
-        // String nudgerOn = isNudgerOn ? "true" : "false";
-
         SharedPreferences sharedPref = getReactApplicationContext().getSharedPreferences(
                 "ApplicationListener", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
