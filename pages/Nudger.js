@@ -60,6 +60,12 @@ const Nudger = ({navigation}) => {
     return () => backHandler.remove();
   }, []);
 
+  useEffect(() => {
+    InstalledApplicationsFetcher.getNudgerDetails(details => {
+      console.log(details);
+    });
+  }, []);
+
   const saveNudgerDetails = () => {
     InstalledApplicationsFetcher.saveNudgerDetails(
       blacklistedApps.toString(),

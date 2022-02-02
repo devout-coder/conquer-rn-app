@@ -36,13 +36,6 @@ public class ApplicationListenerService extends AccessibilityService {
         SharedPreferences.Editor editor = sharedPref.edit();
         String currentPackage = accessibilityEvent.getPackageName().toString();
 
-        // PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
-        // String packageName = getPackageName();
-        // if (!pm.isIgnoringBatteryOptimizations(packageName)) {
-        // Log.d("obscure_tag", "battery optimization permission is stopping my app");
-        // } else {
-        // Log.d("obscure_tag", "battery optimization permission is not a problem");
-        // }
         String isNudgerOn = sharedPref.getString("isNudgerOn", "none");
         if (!currentPackage.equals("com.android.systemui") && !isDeviceLocked() && isNudgerOn.equals("true")) {
 
@@ -84,7 +77,7 @@ public class ApplicationListenerService extends AccessibilityService {
             String blacklistedAppsString = sharedPref.getString("blacklistedApps", "none");
 
             ArrayList<String> blacklistedPackages = new ArrayList<String>();
-            if (!blacklistedAppsString.equals("none")) {
+            if (!blacklistedAppsString.equals("none") && !blacklistedAppsString.equals("")) {
                 String[] blacklistedAppsList = blacklistedAppsString.split(",");
                 blacklistedPackages = new ArrayList<String>(Arrays.asList(blacklistedAppsList));
             }
@@ -117,11 +110,6 @@ public class ApplicationListenerService extends AccessibilityService {
                     Log.d("obscure_tag", "different app is detected...alarm getting cancelled...");
                     editor.remove("current_running_application");
                     editor.apply();
-                    // AlarmManager alarmMgr = (AlarmManager)
-                    // getApplicationContext().getSystemService(Context.ALARM_SERVICE);
-                    // Intent intent = new Intent(this, AlarmReceiver.class);
-                    // PendingIntent alarmIntent = PendingIntent.getBroadcast(this, 1, intent, 0);
-                    // alarmMgr.cancel(alarmIntent);
                 }
             }
         }
@@ -150,7 +138,7 @@ public class ApplicationListenerService extends AccessibilityService {
         String blacklistedWebsitesString = sharedPref.getString("blacklistedWebsites", "none");
         ArrayList<String> blacklistedWebsites = new ArrayList<String>();
 
-        if (!blacklistedWebsitesString.equals("none")) {
+        if (!blacklistedWebsitesString.equals("none") && !blacklistedWebsitesString.equals("")) {
             String[] blacklistedAppsList = blacklistedWebsitesString.split(",");
             blacklistedWebsites = new ArrayList<String>(Arrays.asList(blacklistedAppsList));
         }
@@ -205,8 +193,8 @@ public class ApplicationListenerService extends AccessibilityService {
 
     /**
      * @return a list of supported browser configs
-     *         This list could be instead obtained from remote server to support
-     *         future browser updates without updating an app
+     * This list could be instead obtained from remote server to support
+     * future browser updates without updating an app
      */
     @NonNull
     private static List<ApplicationListenerService.SupportedBrowserConfig> getSupportedBrowsers() {

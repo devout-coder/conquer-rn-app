@@ -1,4 +1,4 @@
-import React, {useContext, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import ToggleSwitch from 'toggle-switch-react-native';
 import {NativeModules} from 'react-native';
@@ -12,6 +12,16 @@ const NudgerToggleSwitch = () => {
     useState(false);
   let {nudgerSwitch, setNudgerSwitch} = useContext(nudgerSwitchContext);
 
+  useEffect(() => {
+    InstalledApplicationsFetcher.getNudgerSwitchState(nudgerSwitchState => {
+      if (nudgerSwitchState == 'true') {
+        setNudgerSwitch(true);
+      } else {
+        setNudgerSwitch(false);
+      }
+    });
+  }, []);
+
   const checkIfAccessibilityIsOn = newSwitchState => {
     if (newSwitchState) {
       // nudger is turned on
@@ -24,6 +34,7 @@ const NudgerToggleSwitch = () => {
           } else if (accessEnabled == 1) {
             //accesibility permission is given
             InstalledApplicationsFetcher.saveNudgerSwitchState(newSwitchState);
+            // console.log('nudger switch state changed to:', newSwitchState);
             setNudgerSwitch(newSwitchState);
           }
         },
@@ -33,6 +44,7 @@ const NudgerToggleSwitch = () => {
       setNudgerSwitch(newSwitchState);
     }
   };
+
   return (
     <>
       <ToggleSwitch
