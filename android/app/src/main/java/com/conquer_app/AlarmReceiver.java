@@ -4,6 +4,7 @@ package com.conquer_app;
 import android.app.AlarmManager;
 import android.app.Application;
 import android.app.KeyguardManager;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
@@ -12,6 +13,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.provider.Settings;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
@@ -29,6 +31,8 @@ public class AlarmReceiver extends BroadcastReceiver {
                 .setSmallIcon(R.drawable.notification_icon)
                 .setContentTitle(title)
                 .setContentText(content)
+                .setSound(Settings.System.DEFAULT_NOTIFICATION_URI)
+                .setDefaults(NotificationCompat.DEFAULT_SOUND | NotificationCompat.DEFAULT_VIBRATE) //Important for heads-up notification
                 .setPriority(priority);
         return builder;
     }
@@ -58,7 +62,6 @@ public class AlarmReceiver extends BroadcastReceiver {
 
         SharedPreferences sharedPref = context.getSharedPreferences(
                 "ApplicationListener", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPref.edit();
         String storedPackage = sharedPref.getString("current_running_application", "none");
 
         if (!isDeviceLocked(context) && !storedPackage.equals("none")) {
@@ -67,7 +70,7 @@ public class AlarmReceiver extends BroadcastReceiver {
 
             NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
             notificationManager.notify(0,
-                    createNotification(context, "Shit task", "this task is incomplete", "task_reminders", 4).build());
+                    createNotification(context, "Shit task", "this task is incomplete", "task_reminders", NotificationCompat.PRIORITY_HIGH).build());
 
             AlarmManager alarmMgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
             Intent intent = new Intent(context, AlarmReceiver.class);
@@ -76,6 +79,8 @@ public class AlarmReceiver extends BroadcastReceiver {
             alarmMgr.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP,
                     timeMilli + stringToTimeDuration(timeDuration, timeTypeDropdownValue),
                     alarmIntent);
+            AlarmManager.AlarmClockInfo alarmClockInfo = new AlarmManager.AlarmClockInfo(timeMilli + stringToTimeDuration(timeDuration, timeTypeDropdownValue), alarmIntent);
+            alarmMgr.setAlarmClock(alarmClockInfo, alarmIntent);
         }
     }
 }

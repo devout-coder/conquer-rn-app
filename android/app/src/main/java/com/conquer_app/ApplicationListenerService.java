@@ -40,7 +40,7 @@ public class ApplicationListenerService extends AccessibilityService {
         if (!currentPackage.equals("com.android.systemui") && !isDeviceLocked() && isNudgerOn.equals("true")) {
 
             if (isBrowserRunning(currentPackage)) {
-                Log.d("obscure_tag", "browser is running");
+//                Log.d("obscure_tag", "browser is running");
 
                 AccessibilityNodeInfo parentNodeInfo = accessibilityEvent.getSource();
                 if (parentNodeInfo == null) {
@@ -97,9 +97,11 @@ public class ApplicationListenerService extends AccessibilityService {
                         Intent intent = new Intent(this, AlarmReceiver.class);
                         PendingIntent alarmIntent = PendingIntent.getBroadcast(this, 1, intent, 0);
                         long timeMilli = new Date().getTime();
-                        alarmMgr.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP,
-                                timeMilli,
-                                alarmIntent);
+                        AlarmManager.AlarmClockInfo alarmClockInfo = new AlarmManager.AlarmClockInfo(timeMilli, alarmIntent);
+                        alarmMgr.setAlarmClock(alarmClockInfo, alarmIntent);
+//                        alarmMgr.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP,
+//                                timeMilli,
+//                                alarmIntent);
 
                     }
                 } else if (currentPackage.contains(storedPackage)) {
@@ -191,11 +193,6 @@ public class ApplicationListenerService extends AccessibilityService {
         }
     }
 
-    /**
-     * @return a list of supported browser configs
-     * This list could be instead obtained from remote server to support
-     * future browser updates without updating an app
-     */
     @NonNull
     private static List<ApplicationListenerService.SupportedBrowserConfig> getSupportedBrowsers() {
         List<ApplicationListenerService.SupportedBrowserConfig> browsers = new ArrayList<>();
