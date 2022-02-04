@@ -31,11 +31,20 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 
+import static java.time.DayOfWeek.MONDAY;
+import static java.time.DayOfWeek.SUNDAY;
+import static java.time.temporal.TemporalAdjusters.nextOrSame;
+import static java.time.temporal.TemporalAdjusters.previousOrSame;
+
+
 public class AlarmReceiver extends BroadcastReceiver {
+
+    String[] weekMonths = {"Jan", "Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sept", "Oct", "Nov", "Dec"};
 
     @Override
     public void onReceive(Context context, Intent arg1) {
@@ -50,7 +59,7 @@ public class AlarmReceiver extends BroadcastReceiver {
 
             String user = FirebaseAuth.getInstance().getCurrentUser().getUid();
             FirebaseFirestore db = FirebaseFirestore.getInstance();
-            Query query = db.collection("todos").whereEqualTo("user", user).whereEqualTo("time", getCurrentTime(timeType)).orderBy("priority", Query.Direction.DESCENDING);
+            Query query = db.collection("todos").whereEqualTo("user", user).whereEqualTo("time", getCurrentTime(timeType)).whereEqualTo("finished", false).orderBy("priority", Query.Direction.DESCENDING);
             query.get().
                     addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
@@ -84,17 +93,43 @@ public class AlarmReceiver extends BroadcastReceiver {
         }
     }
 
+    private String stripZero(String dayOrWeek) {
+        if (String.valueOf(dayOrWeek.charAt(0)).equals("0")) {
+            return String.valueOf(dayOrWeek.charAt(1));
+        } else {
+            return dayOrWeek;
+        }
+    }
+
+    private String formatWeek(String unformattedWeek) {
+        String[] unformattedWeekArray = unformattedWeek.split("-");
+        String year = unformattedWeekArray[0];
+        String week = stripZero(unformattedWeekArray[1]);
+        String day = stripZero(unformattedWeekArray[2]);
+        String requiredFormat = day + " " + weekMonths[Integer.parseInt(week) - 1] + " " + year;
+        return requiredFormat;
+    }
+
     private String getCurrentTime(String timeType) {
         LocalDateTime time = LocalDateTime.now();
-//        if (timeType.equals("daily")) {
-//
-//        } else if (timeType.equals("weekly")) {
+
+
         if (timeType.equals("daily")) {
-            int date = time.getDayOfMonth();
+            int day = time.getDayOfMonth();
             int month = time.getMonthValue();
             int year = time.getYear();
-            String requiredDate = Integer.toString(date) + "/" + Integer.toString(month) + "/" + Integer.toString(year);
+            String requiredDate = Integer.toString(day) + "/" + Integer.toString(month) + "/" + Integer.toString(year);
             return requiredDate;
+        } else if (timeType.equals("weekly")) {
+            LocalDate today = LocalDate.now();
+
+            LocalDate monday = today.with(previousOrSame(MONDAY));
+            LocalDate sunday = today.with(nextOrSame(SUNDAY));
+            String firstDayString = formatWeek(monday.toString());
+            String lastDayString = formatWeek(sunday.toString());
+            return firstDayString + "-" + lastDayString;
+            //this is in the format yyyy-mm-dd
+            //i want it in 31 Jan 2022-6 Feb 2022
         } else if (timeType.equals("monthly")) {
             String month = time.getMonth().toString();
             month = convertToTitleCase(month);
