@@ -11,6 +11,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.icu.util.Calendar;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.provider.Settings;
@@ -30,6 +31,7 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -42,31 +44,34 @@ public class AlarmReceiver extends BroadcastReceiver {
         SharedPreferences sharedPref = context.getSharedPreferences(
                 "ApplicationListener", Context.MODE_PRIVATE);
         String storedPackage = sharedPref.getString("current_running_application", "none");
+        String timeType = sharedPref.getString("timeType", "none");
 
         if (!isDeviceLocked(context) && !storedPackage.equals("none")) {
 
             String user = FirebaseAuth.getInstance().getCurrentUser().getUid();
             FirebaseFirestore db = FirebaseFirestore.getInstance();
-            Query query = db.collection("todos").whereEqualTo("user", user).whereEqualTo("time", "4/2/2022").orderBy("priority", Query.Direction.DESCENDING);
+            Query query = db.collection("todos").whereEqualTo("user", user).whereEqualTo("time", getCurrentTime(timeType)).orderBy("priority", Query.Direction.DESCENDING);
             query.get().
-                    addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                            if (task.isSuccessful()) {
-                                String allTasks = "";
-                                for (QueryDocumentSnapshot document : task.getResult()) {
-                                    allTasks = allTasks + "• " + document.getData().get("taskName") + "\n";
-                                }
-                                if (!allTasks.equals("")) {
-                                    NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
-                                    notificationManager.notify(0,
-                                            createNotification(context, "You have stuff to do!", allTasks, "task_reminders", NotificationCompat.PRIORITY_HIGH).build());
-                                }
-                            } else {
-                                Log.d("obscure_tag", "Error getting documents.", task.getException());
+                    addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            String allTasks = "";
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                allTasks = allTasks + "• " + document.getData().get("taskName") + "\n";
                             }
+                            if (!allTasks.equals("")) {
+                                NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+                                notificationManager.notify(0,
+                                        createNotification(context, "You have stuff to do!", allTasks, "task_reminders", NotificationCompat.PRIORITY_HIGH).build());
+                            }
+                        } else {
+                            Log.d("obscure_tag", "Error getting documents.", task.getException());
                         }
                     });
+
+//            NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+//            notificationManager.notify(0,
+//                    createNotification(context, "You have stuff to do!", getCurrentTime(timeType), "task_reminders", NotificationCompat.PRIORITY_HIGH).build());
+
 
             String timeDuration = sharedPref.getString("timeDuration", "15");
             String timeTypeDropdownValue = sharedPref.getString("timeTypeDropdownValue", "minutes");
@@ -74,11 +79,32 @@ public class AlarmReceiver extends BroadcastReceiver {
             Intent intent = new Intent(context, AlarmReceiver.class);
             PendingIntent alarmIntent = PendingIntent.getBroadcast(context, 1, intent, 0);
             long timeMilli = new Date().getTime();
-//            alarmMgr.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP,
-//                    timeMilli + stringToTimeDuration(timeDuration, timeTypeDropdownValue),
-//                    alarmIntent);
             AlarmManager.AlarmClockInfo alarmClockInfo = new AlarmManager.AlarmClockInfo(timeMilli + stringToTimeDuration(timeDuration, timeTypeDropdownValue), alarmIntent);
             alarmMgr.setAlarmClock(alarmClockInfo, alarmIntent);
+        }
+    }
+
+    private String getCurrentTime(String timeType) {
+        LocalDateTime time = LocalDateTime.now();
+//        if (timeType.equals("daily")) {
+//
+//        } else if (timeType.equals("weekly")) {
+        if (timeType.equals("daily")) {
+            int date = time.getDayOfMonth();
+            int month = time.getMonthValue();
+            int year = time.getYear();
+            String requiredDate = Integer.toString(date) + "/" + Integer.toString(month) + "/" + Integer.toString(year);
+            return requiredDate;
+        } else if (timeType.equals("monthly")) {
+            String month = time.getMonth().toString();
+            month = convertToTitleCase(month);
+            String year = Integer.toString(time.getYear());
+            return month + " " + year;
+        } else if (timeType.equals("yearly")) {
+            int year = Calendar.getInstance().get(Calendar.YEAR);
+            return Integer.toString(year);
+        } else {
+            return "Long Term Goals🎯";
         }
     }
 
@@ -92,6 +118,7 @@ public class AlarmReceiver extends BroadcastReceiver {
                         .bigText(content))
                 .setSound(Settings.System.DEFAULT_NOTIFICATION_URI)
                 .setDefaults(NotificationCompat.DEFAULT_SOUND | NotificationCompat.DEFAULT_VIBRATE) //Important for heads-up notification
+                .setVibrate(new long[]{1000, 1000, 1000, 1000, 1000})
                 .setPriority(priority);
         return builder;
     }
@@ -113,6 +140,29 @@ public class AlarmReceiver extends BroadcastReceiver {
         } else {
             return timeDurationInteger * 3600000;
         }
+    }
+
+    public static String convertToTitleCase(String text) {
+        if (text == null || text.isEmpty()) {
+            return text;
+        }
+
+        StringBuilder converted = new StringBuilder();
+
+        boolean convertNext = true;
+        for (char ch : text.toCharArray()) {
+            if (Character.isSpaceChar(ch)) {
+                convertNext = true;
+            } else if (convertNext) {
+                ch = Character.toTitleCase(ch);
+                convertNext = false;
+            } else {
+                ch = Character.toLowerCase(ch);
+            }
+            converted.append(ch);
+        }
+
+        return converted.toString();
     }
 
 }
