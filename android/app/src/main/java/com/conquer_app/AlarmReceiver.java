@@ -56,10 +56,9 @@ public class AlarmReceiver extends BroadcastReceiver {
         String timeType = sharedPref.getString("timeType", "none");
 
         if (!isDeviceLocked(context) && !storedPackage.equals("none")) {
-
             String user = FirebaseAuth.getInstance().getCurrentUser().getUid();
             FirebaseFirestore db = FirebaseFirestore.getInstance();
-            Query query = db.collection("todos").whereEqualTo("user", user).whereEqualTo("time", getCurrentTime(timeType)).whereEqualTo("finished", false).orderBy("priority", Query.Direction.DESCENDING);
+            Query query = db.collection("todos").whereEqualTo("user", user).whereEqualTo("time", timeType.equals("yearly") ? Integer.parseInt(getCurrentTime(timeType)) : getCurrentTime(timeType)).whereEqualTo("finished", false).orderBy("priority", Query.Direction.DESCENDING);
             query.get().
                     addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
@@ -112,7 +111,6 @@ public class AlarmReceiver extends BroadcastReceiver {
 
     private String getCurrentTime(String timeType) {
         LocalDateTime time = LocalDateTime.now();
-
 
         if (timeType.equals("daily")) {
             int day = time.getDayOfMonth();
