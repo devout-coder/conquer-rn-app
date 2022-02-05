@@ -77,9 +77,6 @@ public class MainActivity extends ReactActivity {
 
         Log.d("obscure_tag", "application has started!");
 
-        for (HashMap<String, String> app : getInstalledApps()) {
-            Log.d("obscure_tag", app.toString());
-        }
         // if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
         // Intent intent = new Intent();
         // String packageName = getPackageName();

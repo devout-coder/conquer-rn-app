@@ -5,8 +5,10 @@ import {
   Image,
   StyleSheet,
   Text,
+  Dimensions,
   TextInput,
   View,
+  ActivityIndicator,
 } from 'react-native';
 import IonIcon from '../customIcons/IonIcon';
 import {nudgerSwitchContext} from '../context';
@@ -17,12 +19,23 @@ import RadioButtonRN from 'radio-buttons-react-native';
 import Clipboard from '@react-native-clipboard/clipboard';
 import AppsSelectorModal from '../Components/AppsSelectorModal';
 import WebsitesSelectorModal from '../Components/WebsitesSelectorModal';
+import {NativeModules} from 'react-native';
+import {defineAnimation} from 'react-native-reanimated';
+const {InstalledApplicationsFetcher} = NativeModules;
+
+const windowHeight = Dimensions.get('window').height;
 
 const Nudger = ({navigation}) => {
   let {nudgerSwitch, setNudgerSwitch} = useContext(nudgerSwitchContext);
 
+  const [nudgerDetailsFetched, setNudgerDetailsFetched] = useState(false);
+
   const [blacklistedApps, setBlacklistedApps] = useState([]);
   const [blacklistedWebsites, setBlacklistedWebsites] = useState([]);
+  const [appsSelectorModalVisible, setAppsSelectorModalVisible] =
+    useState(false);
+  const [websitesSelectorModalVisible, setWebsitesSelectorModalVisible] =
+    useState(false);
   const [timeDuration, setTimeDuration] = useState('15');
   const [timeTypeDropdownOpen, setTimeTypeDropdownOpen] = useState(false);
   const [timeTypeDropdownValue, setTimeTypeDropdownValue] = useState('minutes');
@@ -38,14 +51,8 @@ const Nudger = ({navigation}) => {
     {label: 'yearly'},
     {label: 'longTerm'},
   ];
-
   const [timeTypeRadio, setTimeTypeRadio] = useState('daily');
-
-  const [appsSelectorModalVisible, setAppsSelectorModalVisible] =
-    useState(false);
-
-  const [websitesSelectorModalVisible, setWebsitesSelectorModalVisible] =
-    useState(false);
+  const [timeTypeRadioInitial, setTimeTypeRadioInitial] = useState(1);
 
   useEffect(() => {
     const backHandler = BackHandler.addEventListener(
@@ -57,10 +64,59 @@ const Nudger = ({navigation}) => {
     return () => backHandler.remove();
   }, []);
 
+  useEffect(() => {
+    fetchNudgerDetails();
+  }, []);
+
+  const fetchNudgerDetails = () => {
+    InstalledApplicationsFetcher.getNudgerDetails(details => {
+      if (details.blacklistedApps != 'none') {
+        let blacklistedAppsArray = details.blacklistedApps.split(',');
+        setBlacklistedApps(blacklistedAppsArray);
+        // console.log(blacklistedApps);
+      }
+      if (details.blacklistedWebsites != 'none') {
+        let blacklistedWebsitesArray = details.blacklistedWebsites.split(',');
+        setBlacklistedWebsites(blacklistedWebsitesArray);
+        setNudgerDetailsFetched(true);
+      } else {
+        setNudgerDetailsFetched(true);
+      }
+      if (details.timeDuration != 'none') {
+        setTimeDuration(details.timeDuration);
+      }
+      if (details.timeTypeDropdownValue != 'none') {
+        setTimeTypeDropdownValue(details.timeTypeDropdownValue);
+      }
+      if (details.timeType != 'none') {
+        for (let i = 0; i < radio_props.length; i++) {
+          if (radio_props[i].label == details.timeType) {
+            setTimeTypeRadioInitial(i + 1);
+            // console.log(i);
+            // setTimeTypeRadio(details.timeType);
+          }
+        }
+      }
+    });
+  };
+
+  const saveNudgerDetails = () => {
+    InstalledApplicationsFetcher.saveNudgerDetails(
+      blacklistedApps.toString(),
+      blacklistedWebsites.toString(),
+      timeDuration,
+      timeTypeDropdownValue,
+      timeTypeRadio,
+    );
+    navigation.push('Main');
+  };
+
   return (
     <View style={globalStyles.overallBackground}>
       <View style={styles.topContainer}>
-        {!nudgerSwitch ? (
+        {!nudgerDetailsFetched ? (
+          <ActivityIndicator size="large" color="#00ff00" />
+        ) : !nudgerSwitch ? (
           <View style={styles.topInfo}>
             <IonIcon
               iconName="information-circle-sharp"
@@ -107,12 +163,16 @@ const Nudger = ({navigation}) => {
                   iconColor="#ffffff"
                   iconSize={13}
                 />
-                <WebsitesSelectorModal
-                  modalVisible={websitesSelectorModalVisible}
-                  closeModal={() => setWebsitesSelectorModalVisible(false)}
-                  selectedWebsites={blacklistedWebsites}
-                  setSelectedWebsites={setBlacklistedWebsites}
-                />
+                {nudgerDetailsFetched ? (
+                  <WebsitesSelectorModal
+                    modalVisible={websitesSelectorModalVisible}
+                    closeModal={() => setWebsitesSelectorModalVisible(false)}
+                    selectedWebsites={blacklistedWebsites}
+                    setSelectedWebsites={setBlacklistedWebsites}
+                  />
+                ) : (
+                  <></>
+                )}
               </View>
             </Ripple>
             <View
@@ -188,7 +248,7 @@ const Nudger = ({navigation}) => {
                 data={radio_props}
                 selectedBtn={e => setTimeTypeRadio(e.label)}
                 box={false}
-                initial={1}
+                initial={timeTypeRadioInitial}
                 duration={100}
                 animationTypes={['zoomIn']}
                 circleSize={12}
@@ -205,6 +265,7 @@ const Nudger = ({navigation}) => {
                 rippleDuration={300}
                 rippleColor="#000000"
                 width="100%"
+                onPress={() => saveNudgerDetails()}
                 rippleContainerBorderRadius={5}>
                 <Text style={styles.saveButtonText}>Save</Text>
               </Ripple>
@@ -226,13 +287,13 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     padding: 10,
     width: '100%',
-    flex: 1,
+    height: windowHeight - 50,
   },
   topInfo: {
     display: 'flex',
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    width: '85%',
+    justifyContent: 'space-around',
+    width: '87%',
     marginTop: 10,
   },
   topInfoText: {
@@ -243,7 +304,7 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'column',
     // backgroundColor: '#000000',
-    justifyContent: 'space-between',
+    justifyContent: 'space-around',
     padding: 10,
     width: '100%',
     height: '100%',
