@@ -11,6 +11,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.BitmapFactory;
 import android.icu.util.Calendar;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -69,16 +70,17 @@ public class AlarmReceiver extends BroadcastReceiver {
                             if (!allTasks.equals("")) {
                                 NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
                                 notificationManager.notify(0,
-                                        createNotification(context, "You have stuff to do!", allTasks, "task_reminders", NotificationCompat.PRIORITY_HIGH).build());
+                                        createNotification(context, "You have stuff to do!", allTasks, "task_reminders", NotificationCompat.PRIORITY_MAX).build());
+//                                this piece of code takes user to home screen
+//                                Intent startMain = new Intent(Intent.ACTION_MAIN);
+//                                startMain.addCategory(Intent.CATEGORY_HOME);
+//                                startMain.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                                context.startActivity(startMain);
                             }
                         } else {
                             Log.d("obscure_tag", "Error getting documents.", task.getException());
                         }
                     });
-
-//            NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
-//            notificationManager.notify(0,
-//                    createNotification(context, "You have stuff to do!", getCurrentTime(timeType), "task_reminders", NotificationCompat.PRIORITY_HIGH).build());
 
 
             String timeDuration = sharedPref.getString("timeDuration", "15");
@@ -150,8 +152,7 @@ public class AlarmReceiver extends BroadcastReceiver {
                 .setStyle(new NotificationCompat.BigTextStyle()
                         .bigText(content))
                 .setSound(Settings.System.DEFAULT_NOTIFICATION_URI)
-                .setDefaults(NotificationCompat.DEFAULT_SOUND | NotificationCompat.DEFAULT_VIBRATE) //Important for heads-up notification
-                .setVibrate(new long[]{1000, 1000, 1000, 1000, 1000})
+                .setDefaults(NotificationCompat.DEFAULT_ALL) //Important for heads-up notification
                 .setPriority(priority);
         return builder;
     }

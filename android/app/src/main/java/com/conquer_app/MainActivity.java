@@ -38,6 +38,19 @@ public class MainActivity extends ReactActivity {
         return "Conquer";
     }
 
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(null);
+        createNotificationChannel("task_reminders", "Task Reminders",
+                "This channel handles all notifications regarding task reminders", NotificationManager.IMPORTANCE_MAX);
+        createNotificationChannel("foreground_services", "Foreground Service",
+                "This channel handles that annoying notifications which can't be turned off due to some fucking Android Policy",
+                NotificationManager.IMPORTANCE_NONE);
+
+        Log.d("obscure_tag", "application has started!");
+
+    }
+
     public String getApplicationName(PackageManager pm, String packageName) {
         ApplicationInfo ai;
         try {
@@ -66,56 +79,6 @@ public class MainActivity extends ReactActivity {
         return allInstalledApps;
     }
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(null);
-        createNotificationChannel("task_reminders", "Task Reminders",
-                "This channel handles all notifications regarding task reminders", NotificationManager.IMPORTANCE_MAX);
-        createNotificationChannel("foreground_services", "Foreground Service",
-                "This channel handles that annoying notifications which can't be turned off due to some fucking Android Policy",
-                NotificationManager.IMPORTANCE_NONE);
-
-        Log.d("obscure_tag", "application has started!");
-
-        // if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-        // Intent intent = new Intent();
-        // String packageName = getPackageName();
-        // PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
-        // if (!pm.isIgnoringBatteryOptimizations(packageName)) {
-        // Toast.makeText(MainActivity.this, "battery optimization permission is
-        // stopping my app", Toast.LENGTH_LONG).show();
-        // intent.setAction(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS);
-        //// intent.setData(Uri.parse("package:" + packageName));
-        // startActivity(intent);
-        // } else {
-        //
-        // Toast.makeText(MainActivity.this, "battery optimization permission is not a
-        // problem", Toast.LENGTH_LONG).show();
-        // }
-        // }
-
-        // if (checkAccessibilityPermission() == 0) {
-        // Toast.makeText(MainActivity.this, "Permission denied..Redirecting to
-        // accessibility service", Toast.LENGTH_SHORT).show();
-        // Intent intent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
-        // startActivity(intent);
-        // } else if (checkAccessibilityPermission() == 1) {
-        // Toast.makeText(MainActivity.this, "Permission is granted",
-        // Toast.LENGTH_SHORT).show();
-        // }
-
-    }
-
-    // public int checkAccessibilityPermission() {
-    // int accessEnabled = -1;
-    // try {
-    // accessEnabled = Settings.Secure.getInt(this.getContentResolver(),
-    // Settings.Secure.ACCESSIBILITY_ENABLED);
-    // } catch (Settings.SettingNotFoundException e) {
-    // e.printStackTrace();
-    // }
-    // return accessEnabled;
-    // }
 
     private void createNotificationChannel(String channel_id, String channel_name, String channel_description,
                                            int channel_importance) {

@@ -97,7 +97,9 @@ public class ApplicationListenerService extends AccessibilityService {
                         Intent intent = new Intent(this, AlarmReceiver.class);
                         PendingIntent alarmIntent = PendingIntent.getBroadcast(this, 1, intent, 0);
                         long timeMilli = new Date().getTime();
-                        AlarmManager.AlarmClockInfo alarmClockInfo = new AlarmManager.AlarmClockInfo(timeMilli, alarmIntent);
+                        String timeDuration = sharedPref.getString("timeDuration", "15");
+                        String timeTypeDropdownValue = sharedPref.getString("timeTypeDropdownValue", "minutes");
+                        AlarmManager.AlarmClockInfo alarmClockInfo = new AlarmManager.AlarmClockInfo(timeMilli + stringToTimeDuration(timeDuration, timeTypeDropdownValue), alarmIntent);
                         alarmMgr.setAlarmClock(alarmClockInfo, alarmIntent);
 //                        alarmMgr.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP,
 //                                timeMilli,
@@ -123,6 +125,16 @@ public class ApplicationListenerService extends AccessibilityService {
             return true;
         } else {
             return false;
+        }
+    }
+
+    private int stringToTimeDuration(String timeDuration, String timeTypeDropdownValue) {
+        int timeDurationInteger = Integer.parseInt(timeDuration);
+        int requiredTimeDuration;
+        if (timeTypeDropdownValue.equals("minutes")) {
+            return timeDurationInteger * 60000;
+        } else {
+            return timeDurationInteger * 3600000;
         }
     }
 

@@ -29,21 +29,25 @@ const NudgerToggleSwitch = () => {
   const checkIfAccessibilityIsOn = newSwitchState => {
     if (newSwitchState) {
       // nudger is turned on
+      setNudgerSwitchDetailsFetched(false);
       AccessibilityPermissionHandler.checkAccessibilityPermission(
         accessEnabled => {
           if (accessEnabled == 0) {
             //accessibility permission isn't given
             setConfirmationModalVisible(true);
+            setNudgerSwitchDetailsFetched(true);
             // AccessibilityPermissionHandler.navigateToAccessibilitySettings();
           } else if (accessEnabled == 1) {
             //accesibility permission is given
             InstalledApplicationsFetcher.saveNudgerSwitchState(newSwitchState);
             // console.log('nudger switch state changed to:', newSwitchState);
+            setNudgerSwitchDetailsFetched(true);
             setNudgerSwitch(newSwitchState);
           }
         },
       );
     } else {
+      //nudger is turned off
       InstalledApplicationsFetcher.saveNudgerSwitchState(newSwitchState);
       setNudgerSwitch(newSwitchState);
     }
