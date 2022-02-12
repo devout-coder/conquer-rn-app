@@ -16,13 +16,17 @@ const NudgerToggleSwitch = () => {
 
   useEffect(() => {
     InstalledApplicationsFetcher.getNudgerSwitchState(nudgerSwitchState => {
-      if (nudgerSwitchState == 'true') {
-        setNudgerSwitch(true);
-        setNudgerSwitchDetailsFetched(true);
-      } else {
-        setNudgerSwitch(false);
-        setNudgerSwitchDetailsFetched(true);
-      }
+      AccessibilityPermissionHandler.checkAccessibilityPermission(
+        accessEnabled => {
+          if (nudgerSwitchState == 'true' && accessEnabled==1) {
+            setNudgerSwitch(true);
+            setNudgerSwitchDetailsFetched(true);
+          } else {
+            setNudgerSwitch(false);
+            setNudgerSwitchDetailsFetched(true);
+          }
+        },
+      );
     });
   }, []);
 
