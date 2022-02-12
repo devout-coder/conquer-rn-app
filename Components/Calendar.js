@@ -183,7 +183,7 @@ const Calendar = ({navigation}) => {
                       ? [styles.date, styles.today]
                       : styles.date
                   }
-                  onPress={() => handleDatePress(date)}>
+                  onPress={index != 0 ? () => handleDatePress(date) : null}>
                   {date.split('/')[0]}{' '}
                 </Text>
               </TouchableOpacity>

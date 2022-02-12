@@ -70,7 +70,7 @@ public class AlarmReceiver extends BroadcastReceiver {
                             if (!allTasks.equals("")) {
                                 NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
                                 notificationManager.notify(0,
-                                        createNotification(context, "You have stuff to do!", allTasks, "task_reminders", NotificationCompat.PRIORITY_MAX).build());
+                                        createNotification(context, "You have stuff to do!", stripLastEmptyLine(allTasks), "task_reminders", NotificationCompat.PRIORITY_MAX).build());
 //                                this piece of code takes user to home screen
 //                                Intent startMain = new Intent(Intent.ACTION_MAIN);
 //                                startMain.addCategory(Intent.CATEGORY_HOME);
@@ -100,6 +100,11 @@ public class AlarmReceiver extends BroadcastReceiver {
         } else {
             return dayOrWeek;
         }
+    }
+
+    private static String stripLastEmptyLine(String unstripped) {
+        String stripped = unstripped.substring(0, unstripped.length() - 1);
+        return stripped;
     }
 
     private String formatWeek(String unformattedWeek) {
