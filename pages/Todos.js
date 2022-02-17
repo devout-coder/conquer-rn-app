@@ -40,12 +40,12 @@ const Todos = ({navigation, route, year, longTerm}) => {
       ? useState('Long Term Goals🎯')
       : useState(route.params['time']);
 
-  const [lastPage, setLastPage] =
+  const [timeType, setTimeType] =
     year != undefined
       ? useState('year')
       : longTerm != undefined
       ? useState('longTerm')
-      : useState(route.params['lastPage']);
+      : useState(route.params['timeType']);
 
   const [finishedTodos, setFinishedTodos] = useState([]);
   const [unfinishedTodos, setUnfinishedTodos] = useState([]);
@@ -58,13 +58,13 @@ const Todos = ({navigation, route, year, longTerm}) => {
     const backHandler = BackHandler.addEventListener(
       'hardwareBackPress',
       () => {
-        if (lastPage == 'daily') {
+        if (timeType == 'daily') {
           navigation.push('Daily');
           return true;
-        } else if (lastPage == 'week') {
+        } else if (timeType == 'week') {
           navigation.push('Weekly');
           return true;
-        } else if (lastPage == 'month') {
+        } else if (timeType == 'month') {
           navigation.push('Monthly');
           return true;
         } else {
@@ -84,9 +84,9 @@ const Todos = ({navigation, route, year, longTerm}) => {
   }, [time, user]); //passed time here so that in yearly todos when i update the year data gets loaded again..
 
   function replaceDate(date) {
-    if (lastPage == 'week' || lastPage == 'month') {
+    if (timeType == 'week' || timeType == 'month') {
       return date.replace(/\s\d{4}/g, '');
-    } else if (lastPage == 'daily') {
+    } else if (timeType == 'daily') {
       let dateComponents = date.split('/');
       return `${weekMonths[dateComponents[1] - 1]} ${dateComponents[0]}`;
     } else {
@@ -148,12 +148,12 @@ const Todos = ({navigation, route, year, longTerm}) => {
   }
 
   function navbarName() {
-    if (lastPage == 'daily') {
+    if (timeType == 'daily') {
       return 'Day';
-    } else if (lastPage == 'longTerm') {
+    } else if (timeType == 'longTerm') {
       return 'Long Term';
     } else {
-      return lastPage.charAt(0).toUpperCase() + lastPage.slice(1);
+      return timeType.charAt(0).toUpperCase() + timeType.slice(1);
     }
   }
 
@@ -252,8 +252,15 @@ const Todos = ({navigation, route, year, longTerm}) => {
     <View style={globalStyles.overallBackground}>
       <Navbar page={navbarName()} />
       <View style={styles.allTodosContainer}>
-        <View style={styles.topBar}>
-          {lastPage == 'year' ? (
+        <View
+          style={[
+            styles.topBar,
+            {
+              position: timeType != 'longTerm' ? 'relative' : 'relative',
+              left: timeType != 'longTerm' ? '5%' : '2%',
+            },
+          ]}>
+          {timeType == 'year' ? (
             <YearPicker year={time} changeYear={newYear => setTime(newYear)} />
           ) : (
             <Text style={styles.time}>{replaceDate(time)}</Text>
@@ -274,7 +281,7 @@ const Todos = ({navigation, route, year, longTerm}) => {
           taskDesc=""
           priority="0"
           time={time}
-          timeType={lastPage}
+          timeType={timeType}
           modalOpen={modalOpen}
           setModalOpen={setModalOpen}
           reloadTodos={loadData}
@@ -335,7 +342,7 @@ const Todos = ({navigation, route, year, longTerm}) => {
           <Text style={styles.noTodosMessage}>No tasks added yet!</Text>
         )}
       </View>
-      {lastPage == 'year' ? (
+      {timeType == 'year' ? (
         <IncompleteTodosSidebar
           timeType="year"
           year={time}
@@ -363,6 +370,9 @@ const styles = StyleSheet.create({
   },
   allTodosContainer: {
     flex: 0.83,
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
     // backgroundColor: '#ffffff',
   },
   postponeIcon: {
@@ -375,8 +385,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     alignSelf: 'center',
     alignItems: 'center',
-    position: 'relative',
-    left: 35,
+    // position: 'relative',
+    // left: 35,
   },
   numTodos: {
     color: '#c6c4c4',

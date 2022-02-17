@@ -40,7 +40,7 @@ const Monthly = ({navigation}) => {
   function handleMonthPress(month) {
     navigation.push('Todos', {
       time: month + ' ' + year.toString(),
-      lastPage: 'month',
+      timeType: 'month',
     });
   }
 

@@ -58,7 +58,7 @@ const EachTodo = ({
       spinArrowDown();
       decreaseSidebarHeight();
     } else {
-      navigation.push('Todos', {time: time, lastPage: timeType});
+      navigation.push('Todos', {time: time, timeType: timeType});
     }
   }
   return (

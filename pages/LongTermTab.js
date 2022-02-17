@@ -16,7 +16,7 @@ const LongTerm = ({navigation}) => {
   useEffect(() => {
     navigation.navigate('Todos', {
       time: 'Long Term Goals🎯',
-      lastPage: 'longTerm',
+      timeType: 'longTerm',
     });
   }, []);
   return <View></View>;
