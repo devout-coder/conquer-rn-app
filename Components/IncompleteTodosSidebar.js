@@ -51,6 +51,7 @@ const IncompleteTodosSidebar = ({timeType, navigation, year, changeYear}) => {
 
   const contHeight = useRef(new Animated.Value(40)).current;
   const [heightIncreased, setHeightIncreased] = useState(false);
+
   function increaseHeight() {
     Animated.timing(contHeight, {
       toValue: 600,
@@ -60,6 +61,7 @@ const IncompleteTodosSidebar = ({timeType, navigation, year, changeYear}) => {
     }).start();
     setHeightIncreased(true);
   }
+
   function decreaseHeight() {
     Animated.timing(contHeight, {
       toValue: 40,
@@ -207,6 +209,9 @@ const IncompleteTodosSidebar = ({timeType, navigation, year, changeYear}) => {
           });
           sortTodos(tparray);
           setReqTodos(tparray);
+          if (tparray.length == 0) {
+            decreaseHeight();
+          }
           setLoading(false);
         });
     }
@@ -253,7 +258,11 @@ const IncompleteTodosSidebar = ({timeType, navigation, year, changeYear}) => {
               </Text>
               <Animated.View
                 style={[styles.expandButton, {transform: [{rotateX: spin}]}]}>
-                <MaterialIcon iconName="expand-less" iconColor="#ffffff" iconSize={28} />
+                <MaterialIcon
+                  iconName="expand-less"
+                  iconColor="#ffffff"
+                  iconSize={28}
+                />
               </Animated.View>
             </View>
           </TouchableWithoutFeedback>

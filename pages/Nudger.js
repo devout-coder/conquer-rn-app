@@ -114,7 +114,7 @@ const Nudger = ({navigation}) => {
   return (
     <View style={globalStyles.overallBackground}>
       <View style={styles.topContainer}>
-        {!nudgerDetailsFetched ? (
+        {!nudgerDetailsFetched || nudgerSwitch == null ? (
           <ActivityIndicator size="large" color="#00ff00" />
         ) : !nudgerSwitch ? (
           <View style={styles.topInfo}>

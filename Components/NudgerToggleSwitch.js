@@ -18,7 +18,7 @@ const NudgerToggleSwitch = () => {
     InstalledApplicationsFetcher.getNudgerSwitchState(nudgerSwitchState => {
       AccessibilityPermissionHandler.checkAccessibilityPermission(
         accessEnabled => {
-          if (nudgerSwitchState == 'true' && accessEnabled==1) {
+          if (nudgerSwitchState == 'true' && accessEnabled == 1) {
             setNudgerSwitch(true);
             setNudgerSwitchDetailsFetched(true);
           } else {
@@ -44,7 +44,6 @@ const NudgerToggleSwitch = () => {
           } else if (accessEnabled == 1) {
             //accesibility permission is given
             InstalledApplicationsFetcher.saveNudgerSwitchState(newSwitchState);
-            // console.log('nudger switch state changed to:', newSwitchState);
             setNudgerSwitchDetailsFetched(true);
             setNudgerSwitch(newSwitchState);
           }

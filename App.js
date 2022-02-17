@@ -33,7 +33,7 @@ const App = () => {
   const [tabNav, setTabNav] = useState(null);
   //tabNav holds the navigation prop for the tab navigator created in Main.js file
 
-  const [nudgerSwitch, setNudgerSwitch] = useState(false);
+  const [nudgerSwitch, setNudgerSwitch] = useState(null);
 
   function toggleJustLoggedOut() {
     setJustLoggedOut(!justLoggedOut);
