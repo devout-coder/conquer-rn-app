@@ -203,6 +203,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     alignItems: 'center',
     marginTop: 30,
+    maxWidth: '99%',
   },
   topbar: {
     display: 'flex',
@@ -228,6 +229,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     // justifyContent: 'center',
     alignItems: 'center',
+    // backgroundColor: '#ffffff',
   },
   //   row: {
   //     display: 'flex',
@@ -238,7 +240,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     alignItems: 'center',
     marginLeft: 12,
-    width: 42,
+    width: '10.8%',
   },
   day: {
     color: '#eada76',

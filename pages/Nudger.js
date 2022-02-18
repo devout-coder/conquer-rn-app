@@ -22,10 +22,13 @@ import WebsitesSelectorModal from '../Components/WebsitesSelectorModal';
 import {NativeModules} from 'react-native';
 import {defineAnimation} from 'react-native-reanimated';
 const {InstalledApplicationsFetcher} = NativeModules;
+// import {MMKV} from 'react-native-mmkv';
 
 const windowHeight = Dimensions.get('window').height;
 
 const Nudger = ({navigation}) => {
+  // const storage = new MMKV();
+
   let {nudgerSwitch, setNudgerSwitch} = useContext(nudgerSwitchContext);
 
   const [nudgerDetailsFetched, setNudgerDetailsFetched] = useState(false);
@@ -51,6 +54,7 @@ const Nudger = ({navigation}) => {
     {label: 'yearly'},
     {label: 'longTerm'},
   ];
+
   const [timeTypeRadio, setTimeTypeRadio] = useState('daily');
   const [timeTypeRadioInitial, setTimeTypeRadioInitial] = useState(1);
 
@@ -69,6 +73,7 @@ const Nudger = ({navigation}) => {
   }, []);
 
   const fetchNudgerDetails = () => {
+  // console.log(storage.getString('blacklistedApps'));
     InstalledApplicationsFetcher.getNudgerDetails(details => {
       if (details.blacklistedApps != 'none') {
         let blacklistedAppsArray = details.blacklistedApps.split(',');
@@ -108,6 +113,11 @@ const Nudger = ({navigation}) => {
       timeTypeDropdownValue,
       timeTypeRadio,
     );
+    // storage.set('blacklistedApps', blacklistedApps.toString());
+    // storage.set('blacklistedWebsites', blacklistedWebsites.toString());
+    // storage.set('timeDuration', timeDuration);
+    // storage.set('timeTypeDropdownValue', timeTypeDropdownValue);
+    // storage.set('timeType', timeTypeRadio);
     navigation.push('Main');
   };
 

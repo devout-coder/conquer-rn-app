@@ -59,16 +59,14 @@ const Todos = ({navigation, route, year, longTerm}) => {
       'hardwareBackPress',
       () => {
         if (timeType == 'daily') {
-          navigation.push('Daily');
+          navigation.navigate('Daily');
           return true;
         } else if (timeType == 'week') {
-          navigation.push('Weekly');
+          navigation.navigate('Weekly');
           return true;
         } else if (timeType == 'month') {
-          navigation.push('Monthly');
+          navigation.navigate('Monthly');
           return true;
-        } else {
-          tabNav.navigate('DailyTab');
         }
       },
     );

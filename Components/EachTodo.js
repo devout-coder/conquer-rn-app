@@ -157,6 +157,7 @@ const styles = StyleSheet.create({
     color: '#ffffff',
     // backgroundColor: '#ffffff',
     fontFamily: 'Ubuntu-Italic',
+    // backgroundColor:"#ffffff"
     lineHeight: 30,
     marginLeft: 8,
     fontSize: 20,
