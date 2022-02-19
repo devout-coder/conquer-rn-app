@@ -115,6 +115,7 @@ const App = () => {
                       },
                       headerTintColor: '#ffffff',
                       headerShadowVisible: false,
+                      headerLeft: () => <></>,
                       headerRight: () => <NudgerToggleSwitch />,
                     }}
                   />

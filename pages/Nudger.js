@@ -62,18 +62,21 @@ const Nudger = ({navigation}) => {
     const backHandler = BackHandler.addEventListener(
       'hardwareBackPress',
       () => {
-        navigation.push('Main');
+        saveNudgerDetails();
+        return true;
       },
     );
-    return () => backHandler.remove();
-  }, []);
+    return () => {
+      backHandler.remove();
+    };
+  });
 
   useEffect(() => {
     fetchNudgerDetails();
   }, []);
 
   const fetchNudgerDetails = () => {
-  // console.log(storage.getString('blacklistedApps'));
+    // console.log(storage.getString('blacklistedApps'));
     InstalledApplicationsFetcher.getNudgerDetails(details => {
       if (details.blacklistedApps != 'none') {
         let blacklistedAppsArray = details.blacklistedApps.split(',');
@@ -269,16 +272,6 @@ const Nudger = ({navigation}) => {
                   color: '#F1D7D7',
                 }}
               />
-            </View>
-            <View style={styles.saveButton}>
-              <Ripple
-                rippleDuration={300}
-                rippleColor="#000000"
-                width="100%"
-                onPress={() => saveNudgerDetails()}
-                rippleContainerBorderRadius={5}>
-                <Text style={styles.saveButtonText}>Save</Text>
-              </Ripple>
             </View>
           </View>
         )}
