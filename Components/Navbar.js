@@ -35,7 +35,7 @@ const Navbar = ({page}) => {
   }
 
   const navigateToNudger = () => {
-    nav.push('Nudger');
+    nav.navigate('Nudger');
   };
 
   return (

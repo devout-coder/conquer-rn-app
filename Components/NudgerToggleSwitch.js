@@ -6,8 +6,11 @@ import NudgerConfirmationModal from './NudgerConfirmationModal';
 import {nudgerSwitchContext} from '../context';
 const {AccessibilityPermissionHandler} = NativeModules;
 const {InstalledApplicationsFetcher} = NativeModules;
+import {MMKV} from 'react-native-mmkv';
 
 const NudgerToggleSwitch = () => {
+  const storage = new MMKV();
+
   const [confirmationModalVisible, setConfirmationModalVisible] =
     useState(false);
   let {nudgerSwitch, setNudgerSwitch} = useContext(nudgerSwitchContext);
@@ -15,19 +18,19 @@ const NudgerToggleSwitch = () => {
     useState(false);
 
   useEffect(() => {
-    InstalledApplicationsFetcher.getNudgerSwitchState(nudgerSwitchState => {
-      AccessibilityPermissionHandler.checkAccessibilityPermission(
-        accessEnabled => {
-          if (nudgerSwitchState == 'true' && accessEnabled == 1) {
-            setNudgerSwitch(true);
-            setNudgerSwitchDetailsFetched(true);
-          } else {
-            setNudgerSwitch(false);
-            setNudgerSwitchDetailsFetched(true);
-          }
-        },
-      );
-    });
+    // InstalledApplicationsFetcher.getNudgerSwitchState(nudgerSwitchState => {
+    AccessibilityPermissionHandler.checkAccessibilityPermission(
+      accessEnabled => {
+        if (storage.getBoolean('isNudgerOn') && accessEnabled == 1) {
+          setNudgerSwitch(true);
+          setNudgerSwitchDetailsFetched(true);
+        } else {
+          setNudgerSwitch(false);
+          setNudgerSwitchDetailsFetched(true);
+        }
+      },
+    );
+    // });
   }, []);
 
   const checkIfAccessibilityIsOn = newSwitchState => {
@@ -44,6 +47,7 @@ const NudgerToggleSwitch = () => {
           } else if (accessEnabled == 1) {
             //accesibility permission is given
             InstalledApplicationsFetcher.saveNudgerSwitchState(newSwitchState);
+            storage.set('isNudgerOn', newSwitchState);
             setNudgerSwitchDetailsFetched(true);
             setNudgerSwitch(newSwitchState);
           }
@@ -52,6 +56,7 @@ const NudgerToggleSwitch = () => {
     } else {
       //nudger is turned off
       InstalledApplicationsFetcher.saveNudgerSwitchState(newSwitchState);
+      storage.set('isNudgerOn', newSwitchState);
       setNudgerSwitch(newSwitchState);
     }
   };

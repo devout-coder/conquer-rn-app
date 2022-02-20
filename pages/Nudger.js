@@ -22,12 +22,12 @@ import WebsitesSelectorModal from '../Components/WebsitesSelectorModal';
 import {NativeModules} from 'react-native';
 import {defineAnimation} from 'react-native-reanimated';
 const {InstalledApplicationsFetcher} = NativeModules;
-// import {MMKV} from 'react-native-mmkv';
+import {MMKV} from 'react-native-mmkv';
 
 const windowHeight = Dimensions.get('window').height;
 
 const Nudger = ({navigation}) => {
-  // const storage = new MMKV();
+  const storage = new MMKV();
 
   let {nudgerSwitch, setNudgerSwitch} = useContext(nudgerSwitchContext);
 
@@ -76,36 +76,37 @@ const Nudger = ({navigation}) => {
   }, []);
 
   const fetchNudgerDetails = () => {
-    // console.log(storage.getString('blacklistedApps'));
-    InstalledApplicationsFetcher.getNudgerDetails(details => {
-      if (details.blacklistedApps != 'none') {
-        let blacklistedAppsArray = details.blacklistedApps.split(',');
-        setBlacklistedApps(blacklistedAppsArray);
-        // console.log(blacklistedApps);
-      }
-      if (details.blacklistedWebsites != 'none') {
-        let blacklistedWebsitesArray = details.blacklistedWebsites.split(',');
-        setBlacklistedWebsites(blacklistedWebsitesArray);
-        setNudgerDetailsFetched(true);
-      } else {
-        setNudgerDetailsFetched(true);
-      }
-      if (details.timeDuration != 'none') {
-        setTimeDuration(details.timeDuration);
-      }
-      if (details.timeTypeDropdownValue != 'none') {
-        setTimeTypeDropdownValue(details.timeTypeDropdownValue);
-      }
-      if (details.timeType != 'none') {
-        for (let i = 0; i < radio_props.length; i++) {
-          if (radio_props[i].label == details.timeType) {
-            setTimeTypeRadioInitial(i + 1);
-            // console.log(i);
-            // setTimeTypeRadio(details.timeType);
-          }
+    let blacklistedApps = storage.getString('blacklistedApps');
+    let blacklistedWebsites = storage.getString('blacklistedWebsites');
+    let timeDuration = storage.getString('timeDuration');
+    let timeTypeDropdownValue = storage.getString('timeTypeDropdownValue');
+    let timeType = storage.getString('timeType');
+
+    if (blacklistedApps != undefined) {
+      let blacklistedAppsArray = blacklistedApps.split(',');
+      setBlacklistedApps(blacklistedAppsArray);
+      // console.log(blacklistedApps);
+    }
+    if (blacklistedWebsites != undefined) {
+      let blacklistedWebsitesArray = blacklistedWebsites.split(',');
+      setBlacklistedWebsites(blacklistedWebsitesArray);
+    }
+    if (timeDuration != undefined) {
+      setTimeDuration(timeDuration);
+    }
+    if (timeTypeDropdownValue != undefined) {
+      setTimeTypeDropdownValue(timeTypeDropdownValue);
+    }
+    if (timeType != undefined) {
+      for (let i = 0; i < radio_props.length; i++) {
+        if (radio_props[i].label == timeType) {
+          setTimeTypeRadioInitial(i + 1);
+          // console.log(i);
+          // setTimeTypeRadio(details.timeType);
         }
       }
-    });
+    }
+    setNudgerDetailsFetched(true);
   };
 
   const saveNudgerDetails = () => {
@@ -116,12 +117,12 @@ const Nudger = ({navigation}) => {
       timeTypeDropdownValue,
       timeTypeRadio,
     );
-    // storage.set('blacklistedApps', blacklistedApps.toString());
-    // storage.set('blacklistedWebsites', blacklistedWebsites.toString());
-    // storage.set('timeDuration', timeDuration);
-    // storage.set('timeTypeDropdownValue', timeTypeDropdownValue);
-    // storage.set('timeType', timeTypeRadio);
-    navigation.push('Main');
+    storage.set('blacklistedApps', blacklistedApps.toString());
+    storage.set('blacklistedWebsites', blacklistedWebsites.toString());
+    storage.set('timeDuration', timeDuration);
+    storage.set('timeTypeDropdownValue', timeTypeDropdownValue);
+    storage.set('timeType', timeTypeRadio);
+    navigation.navigate('Main');
   };
 
   return (
