@@ -176,4 +176,16 @@ public class InstalledApplicationsFetcher extends ReactContextBaseJavaModule {
         editor.apply();
 
     }
+
+    @ReactMethod
+    public void deleteNudgerDetails() {
+
+        SharedPreferences sharedPref = getReactApplicationContext().getSharedPreferences(
+                "ApplicationListener", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+
+        editor.clear();
+        editor.apply();
+
+    }
 }

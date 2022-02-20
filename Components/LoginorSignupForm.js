@@ -116,7 +116,7 @@ const LoginorSignupForm = ({loginorSignup}) => {
 
   return (
     <View style={globalStyles.overallBackground}>
-      <Navbar />
+      <Navbar page="LoginOrSignup" />
       <Modal
         animationType="fade"
         transparent={true}

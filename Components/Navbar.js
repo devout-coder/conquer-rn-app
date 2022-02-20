@@ -17,14 +17,24 @@ import {
 import MaterialIcon from '../customIcons/MaterialIcon';
 import MaterialCommunityIcon from '../customIcons/MaterialCommunityIcon';
 import Toast from './Toast';
+import {NativeModules} from 'react-native';
+const {InstalledApplicationsFetcher} = NativeModules;
+import {MMKV} from 'react-native-mmkv';
 
 const Navbar = ({page}) => {
   let user = useContext(userContext);
   let {justLoggedOut, toggleJustLoggedOut} = useContext(loginContext);
   let {nav, setNav} = useContext(navbarContext);
   let {tabNav, setTabNav} = useContext(tabNavbarContext);
+  const storage = new MMKV();
 
   function logout() {
+    InstalledApplicationsFetcher.deleteNudgerDetails();
+    const keys = storage.getAllKeys();
+    keys.forEach(key => {
+      storage.delete(key);
+    });
+
     toggleJustLoggedOut();
     auth()
       .signOut()
@@ -50,7 +60,7 @@ const Navbar = ({page}) => {
           <Text style={styles.pageName}>{page}</Text>
         </View>
       )}
-      {user != null ? (
+      {user != null && page != 'LoginOrSignup' && page != 'Landing' ? (
         <View style={styles.rightIcons}>
           <TouchableOpacity
             onPress={navigateToNudger}

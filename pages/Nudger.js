@@ -77,31 +77,74 @@ const Nudger = ({navigation}) => {
     fetchNudgerDetails();
   }, []);
 
+  const setStateNudgerDetails = (
+    blacklistedApps,
+    blacklistedWebsites,
+    timeDuration,
+    timeTypeDropdownValue,
+    timeType,
+  ) => {
+    let blacklistedAppsArray = blacklistedApps.split(',');
+    setBlacklistedApps(blacklistedAppsArray);
+    let blacklistedWebsitesArray = blacklistedWebsites.split(',');
+    setBlacklistedWebsites(blacklistedWebsitesArray);
+    setTimeDuration(timeDuration);
+    setTimeTypeDropdownValue(timeTypeDropdownValue);
+    for (let i = 0; i < radio_props.length; i++) {
+      if (radio_props[i].label == timeType) {
+        setTimeTypeRadioInitial(i + 1);
+      }
+    }
+  };
+
   const fetchNudgerDetails = () => {
     let blacklistedApps = storage.getString('blacklistedApps');
     let blacklistedWebsites = storage.getString('blacklistedWebsites');
     let timeDuration = storage.getString('timeDuration');
     let timeTypeDropdownValue = storage.getString('timeTypeDropdownValue');
     let timeType = storage.getString('timeType');
-
     if (blacklistedApps != undefined) {
       //nudger details are stored in the mmkv storage
-      let blacklistedAppsArray = blacklistedApps.split(',');
-      setBlacklistedApps(blacklistedAppsArray);
-      let blacklistedWebsitesArray = blacklistedWebsites.split(',');
-      setBlacklistedWebsites(blacklistedWebsitesArray);
-      setTimeDuration(timeDuration);
-      setTimeTypeDropdownValue(timeTypeDropdownValue);
-      for (let i = 0; i < radio_props.length; i++) {
-        if (radio_props[i].label == timeType) {
-          setTimeTypeRadioInitial(i + 1);
-        }
-      }
+
+      setStateNudgerDetails(
+        blacklistedApps,
+        blacklistedWebsites,
+        timeDuration,
+        timeTypeDropdownValue,
+        timeType,
+      );
+    } else {
+      //nudger details are not stored in the mmkv storage
+      firestore()
+        .collection('nudgerDetails')
+        .where('user', '==', auth().currentUser.uid)
+        .get()
+        .then(snap => {
+          if (snap.docs.length != 0) {
+            //no previous nudger details for this user exist
+            // firestore().collection('nudgerDetails').add(nudgerDetails);
+            let detailsObj = snap.docs[0];
+            let blacklistedApps = detailsObj.get('blacklistedApps');
+            let blacklistedWebsites = detailsObj.get('blacklistedWebsites');
+            let timeDuration = detailsObj.get('timeDuration');
+            let timeTypeDropdownValue = detailsObj.get('timeTypeDropdownValue');
+            let timeType = detailsObj.get('timeType');
+            setStateNudgerDetails(
+              blacklistedApps,
+              blacklistedWebsites,
+              timeDuration,
+              timeTypeDropdownValue,
+              timeType,
+            );
+          }
+        });
     }
     setNudgerDetailsFetched(true);
   };
 
   const saveNudgerDetailsFirebase = () => {
+    //saves all nudger details in firebase
+
     let nudgerDetails = {
       blacklistedApps: blacklistedApps.toString(),
       blacklistedWebsites: blacklistedWebsites.toString(),
