@@ -21,6 +21,8 @@ import AppsSelectorModal from '../Components/AppsSelectorModal';
 import WebsitesSelectorModal from '../Components/WebsitesSelectorModal';
 import {NativeModules} from 'react-native';
 import {defineAnimation} from 'react-native-reanimated';
+import firestore from '@react-native-firebase/firestore';
+import auth from '@react-native-firebase/auth';
 const {InstalledApplicationsFetcher} = NativeModules;
 import {MMKV} from 'react-native-mmkv';
 
@@ -83,30 +85,47 @@ const Nudger = ({navigation}) => {
     let timeType = storage.getString('timeType');
 
     if (blacklistedApps != undefined) {
+      //nudger details are stored in the mmkv storage
       let blacklistedAppsArray = blacklistedApps.split(',');
       setBlacklistedApps(blacklistedAppsArray);
-      // console.log(blacklistedApps);
-    }
-    if (blacklistedWebsites != undefined) {
       let blacklistedWebsitesArray = blacklistedWebsites.split(',');
       setBlacklistedWebsites(blacklistedWebsitesArray);
-    }
-    if (timeDuration != undefined) {
       setTimeDuration(timeDuration);
-    }
-    if (timeTypeDropdownValue != undefined) {
       setTimeTypeDropdownValue(timeTypeDropdownValue);
-    }
-    if (timeType != undefined) {
       for (let i = 0; i < radio_props.length; i++) {
         if (radio_props[i].label == timeType) {
           setTimeTypeRadioInitial(i + 1);
-          // console.log(i);
-          // setTimeTypeRadio(details.timeType);
         }
       }
     }
     setNudgerDetailsFetched(true);
+  };
+
+  const saveNudgerDetailsFirebase = () => {
+    let nudgerDetails = {
+      blacklistedApps: blacklistedApps.toString(),
+      blacklistedWebsites: blacklistedWebsites.toString(),
+      timeDuration: timeDuration,
+      timeTypeDropdownValue: timeTypeDropdownValue,
+      timeType: timeTypeRadio,
+      user: auth().currentUser.uid,
+    };
+    firestore()
+      .collection('nudgerDetails')
+      .where('user', '==', auth().currentUser.uid)
+      .get()
+      .then(snap => {
+        if (snap.docs.length == 0) {
+          //no previous nudger details for this user exist
+          firestore().collection('nudgerDetails').add(nudgerDetails);
+        } else {
+          //making changes to the previously existing nudger details
+          firestore()
+            .collection('nudgerDetails')
+            .doc(snap.docs[0].id)
+            .set(nudgerDetails);
+        }
+      });
   };
 
   const saveNudgerDetails = () => {
@@ -117,6 +136,7 @@ const Nudger = ({navigation}) => {
       timeTypeDropdownValue,
       timeTypeRadio,
     );
+    saveNudgerDetailsFirebase();
     storage.set('blacklistedApps', blacklistedApps.toString());
     storage.set('blacklistedWebsites', blacklistedWebsites.toString());
     storage.set('timeDuration', timeDuration);
