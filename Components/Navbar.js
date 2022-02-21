@@ -20,33 +20,43 @@ import Toast from './Toast';
 import {NativeModules} from 'react-native';
 const {InstalledApplicationsFetcher} = NativeModules;
 import {MMKV} from 'react-native-mmkv';
+import {Menu, MenuItem} from 'react-native-material-menu';
+import IonIcon from '../customIcons/IonIcon';
 
 const Navbar = ({page}) => {
   let user = useContext(userContext);
-  let {justLoggedOut, toggleJustLoggedOut} = useContext(loginContext);
+  let {justLoggedOut, setJustLoggedOut} = useContext(loginContext);
   let {nav, setNav} = useContext(navbarContext);
   let {tabNav, setTabNav} = useContext(tabNavbarContext);
   const storage = new MMKV();
 
-  function logout() {
+  const logout = () => {
+    hideMenu();
     InstalledApplicationsFetcher.deleteNudgerDetails();
     const keys = storage.getAllKeys();
     keys.forEach(key => {
       storage.delete(key);
     });
-
-    toggleJustLoggedOut();
+    // console.log('logging out');
+    setJustLoggedOut(true);
     auth()
       .signOut()
       .then(() => {
         nav.navigate('Login');
       })
       .catch(error => console.log(error));
-  }
+  };
 
   const navigateToNudger = () => {
+    hideMenu();
     nav.navigate('Nudger');
   };
+
+  const [visible, setVisible] = useState(false);
+
+  const hideMenu = () => setVisible(false);
+
+  const showMenu = () => setVisible(true);
 
   return (
     <View style={styles.navbar}>
@@ -55,29 +65,44 @@ const Navbar = ({page}) => {
           source={require('../resources/images/conquerLogo.png')}
           style={styles.conquerLogo}
         />
+      ) : page == 'LoginOrSignup' ? (
+        <></>
       ) : (
         <View style={styles.pageName}>
           <Text style={styles.pageName}>{page}</Text>
         </View>
       )}
       {user != null && page != 'LoginOrSignup' && page != 'Landing' ? (
-        <View style={styles.rightIcons}>
-          <TouchableOpacity
-            onPress={navigateToNudger}
-            onLongPress={() => Toast('Nudger')}>
-            <MaterialCommunityIcon
-              iconName="calendar-alert"
-              iconColor="#ffffff"
-              iconSize={28}
-            />
-          </TouchableOpacity>
+        // <View style={styles.rightIcons}>
+        //   <TouchableOpacity
+        //     onPress={navigateToNudger}
+        //     onLongPress={() => Toast('Nudger')}>
+        //     <MaterialCommunityIcon
+        //       iconName="calendar-alert"
+        //       iconColor="#ffffff"
+        //       iconSize={28}
+        //     />
+        //   </TouchableOpacity>
 
-          <TouchableOpacity
-            onPress={logout}
-            onLongPress={() => Toast('Logout')}>
-            <MaterialIcon iconName="logout" iconColor="#ffffff" iconSize={28} />
-          </TouchableOpacity>
-        </View>
+        //   <TouchableOpacity
+        //     onPress={logout}
+        //     onLongPress={() => Toast('Logout')}>
+        //     <MaterialIcon iconName="logout" iconColor="#ffffff" iconSize={28} />
+        //   </TouchableOpacity>
+        // </View>
+        <Menu
+          visible={visible}
+          anchor={
+            <TouchableOpacity onPress={() => setVisible(true)}>
+              <IonIcon iconName="settings" iconSize={24} iconColor="#ffffff" />
+            </TouchableOpacity>
+          }
+          onRequestClose={hideMenu}>
+          <MenuItem onPress={navigateToNudger}>Nudger</MenuItem>
+          <MenuItem onPress={hideMenu}>Profile</MenuItem>
+          <MenuItem onPress={hideMenu}>Friends</MenuItem>
+          <MenuItem onPress={logout}>Logout</MenuItem>
+        </Menu>
       ) : (
         <View></View>
       )}

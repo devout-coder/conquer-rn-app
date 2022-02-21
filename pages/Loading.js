@@ -5,13 +5,14 @@ import globalStyles from '../globalStyles';
 
 const Loading = ({navigation}) => {
   let user = useContext(userContext);
-  let {justLoggedOut, toggleJustLoggedOut} = useContext(loginContext);
+  let {justLoggedOut, setJustLoggedOut} = useContext(loginContext);
   let {nav, setNav} = useContext(navbarContext);
 
   useEffect(() => {
     setNav(navigation);
     if (justLoggedOut) {
       navigation.navigate('Login');
+      setJustLoggedOut(false);
     } else if (user == null) {
       navigation.navigate('Landing');
     } else if (user != false) {

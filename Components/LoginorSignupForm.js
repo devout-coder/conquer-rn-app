@@ -39,7 +39,7 @@ const LoginorSignupForm = ({loginorSignup}) => {
     const backHandler = BackHandler.addEventListener(
       'hardwareBackPress',
       () => {
-        nav.navigate('Landing');
+        nav.push('Landing');
         return true;
       },
     );
@@ -73,7 +73,7 @@ const LoginorSignupForm = ({loginorSignup}) => {
       setUsername('');
       setEmail('');
       setPassword('');
-      nav.navigate('Main');
+      nav.push('Main');
     } catch (error) {
       setModalVisible(true);
       setModalMessage(error.message);
@@ -88,7 +88,7 @@ const LoginorSignupForm = ({loginorSignup}) => {
       setLoading(false);
       setEmail('');
       setPassword('');
-      nav.navigate('Main');
+      nav.push('Main');
     } catch (error) {
       setModalVisible(true);
       setModalMessage(error.message);

@@ -35,10 +35,6 @@ const App = () => {
 
   const [nudgerSwitch, setNudgerSwitch] = useState(null);
 
-  function toggleJustLoggedOut() {
-    setJustLoggedOut(!justLoggedOut);
-  }
-
   useEffect(() => {
     auth().onAuthStateChanged(user => {
       //this function observes the state of authentication...returns null if user doesnt exist..returns the user details if the user exists..and returns false if the user is being created or loaded..
@@ -73,7 +69,7 @@ const App = () => {
     // <MenuContext style={{flex: 1}}>
     <userContext.Provider value={user}>
       <nudgerSwitchContext.Provider value={{nudgerSwitch, setNudgerSwitch}}>
-        <loginContext.Provider value={{justLoggedOut, toggleJustLoggedOut}}>
+        <loginContext.Provider value={{justLoggedOut, setJustLoggedOut}}>
           <navbarContext.Provider value={{nav, setNav}}>
             <tabNavbarContext.Provider value={{tabNav, setTabNav}}>
               <NavigationContainer>
