@@ -2,10 +2,12 @@ package com.conquer_app;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.media.AudioAttributes;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -43,9 +45,9 @@ public class MainActivity extends ReactActivity {
         super.onCreate(null);
         createNotificationChannel("task_reminders", "Task Reminders",
                 "This channel handles all notifications regarding task reminders", NotificationManager.IMPORTANCE_MAX);
-//        createNotificationChannel("foreground_services", "Foreground Service",
-//                "This channel handles that annoying notifications which can't be turned off due to some fucking Android Policy",
-//                NotificationManager.IMPORTANCE_NONE);
+        createNotificationChannel("task_reminders_asheers_voice", "Task Reminders Ashneer's Voice",
+                "This channel handles all notifications regarding task reminders, with notification tone of Ashneer Grover",
+                NotificationManager.IMPORTANCE_MAX);
 
         Log.d("obscure_tag", "application has started!");
 
@@ -83,8 +85,15 @@ public class MainActivity extends ReactActivity {
     private void createNotificationChannel(String channel_id, String channel_name, String channel_description, int channel_importance) {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            Uri sound = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + getApplicationContext().getPackageName() + "/" + R.raw.ashneer_angry);
+            AudioAttributes attributes = new AudioAttributes.Builder()
+                    .setUsage(AudioAttributes.USAGE_NOTIFICATION)
+                    .build();
             NotificationChannel channel = new NotificationChannel(channel_id, channel_name, channel_importance);
             channel.setDescription(channel_description);
+            if (channel_id.equals("task_reminders_asheers_voice")) {
+                channel.setSound(sound, attributes);
+            }
             // Register the channel with the system; you can't change the importance
             // or other notification behaviors after this
             NotificationManager notificationManager = getSystemService(NotificationManager.class);

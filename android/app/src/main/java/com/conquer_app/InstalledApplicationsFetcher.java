@@ -148,6 +148,7 @@ public class InstalledApplicationsFetcher extends ReactContextBaseJavaModule {
         String blacklistedWebsites = sharedPref.getString("blacklistedWebsites", "none");
         String timeDuration = sharedPref.getString("timeDuration", "none");
         String timeTypeDropdownValue = sharedPref.getString("timeTypeDropdownValue", "none");
+        boolean ashneerGroverVoiceOn = sharedPref.getBoolean("ashneerGroverVoiceOn", false);
         String timeType = sharedPref.getString("timeType", "none");
 
         final WritableMap nudgerDetails = Arguments.createMap();
@@ -155,14 +156,15 @@ public class InstalledApplicationsFetcher extends ReactContextBaseJavaModule {
         nudgerDetails.putString("blacklistedWebsites", blacklistedWebsites);
         nudgerDetails.putString("timeDuration", timeDuration);
         nudgerDetails.putString("timeTypeDropdownValue", timeTypeDropdownValue);
+        nudgerDetails.putBoolean("ashneerGroverVoiceOn", ashneerGroverVoiceOn);
         nudgerDetails.putString("timeType", timeType);
         callback.invoke(nudgerDetails);
 
     }
 
     @ReactMethod
-    public void saveNudgerDetails(String blacklistedApps, String blacklistedWebsites,
-            String timeDuration, String timeTypeDropdownValue, String timeType) {
+    public void saveNudgerDetails(String blacklistedApps, String blacklistedWebsites, String timeDuration,
+                                  String timeTypeDropdownValue, boolean ashneerGroverVoiceSwitch, String timeType) {
 
         SharedPreferences sharedPref = getReactApplicationContext().getSharedPreferences(
                 "ApplicationListener", Context.MODE_PRIVATE);
@@ -172,6 +174,7 @@ public class InstalledApplicationsFetcher extends ReactContextBaseJavaModule {
         editor.putString("blacklistedWebsites", blacklistedWebsites);
         editor.putString("timeDuration", timeDuration);
         editor.putString("timeTypeDropdownValue", timeTypeDropdownValue);
+        editor.putBoolean("ashneerGroverVoiceOn", ashneerGroverVoiceSwitch);
         editor.putString("timeType", timeType);
         editor.apply();
 

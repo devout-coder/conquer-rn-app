@@ -9,6 +9,7 @@ import {
   TextInput,
   View,
   ActivityIndicator,
+  ScrollView,
 } from 'react-native';
 import IonIcon from '../customIcons/IonIcon';
 import {nudgerSwitchContext} from '../context';
@@ -25,6 +26,7 @@ import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 const {InstalledApplicationsFetcher} = NativeModules;
 import {MMKV} from 'react-native-mmkv';
+import ToggleSwitch from 'toggle-switch-react-native';
 
 const windowHeight = Dimensions.get('window').height;
 
@@ -44,6 +46,8 @@ const Nudger = ({navigation}) => {
   const [timeDuration, setTimeDuration] = useState('15');
   const [timeTypeDropdownOpen, setTimeTypeDropdownOpen] = useState(false);
   const [timeTypeDropdownValue, setTimeTypeDropdownValue] = useState('minutes');
+  const [ashneerGroverVoiceSwitch, setAshneerGroverVoiceSwitch] =
+    useState(false);
   const [timeTypeDropdownItems, setTimeTypeDropdownItems] = useState([
     {label: 'minutes', value: 'minutes'},
     {label: 'hours', value: 'hours'},
@@ -82,6 +86,7 @@ const Nudger = ({navigation}) => {
     blacklistedWebsites,
     timeDuration,
     timeTypeDropdownValue,
+    ashneerGroverVoiceSwitch,
     timeType,
   ) => {
     let blacklistedAppsArray = blacklistedApps.split(',');
@@ -90,6 +95,7 @@ const Nudger = ({navigation}) => {
     setBlacklistedWebsites(blacklistedWebsitesArray);
     setTimeDuration(timeDuration);
     setTimeTypeDropdownValue(timeTypeDropdownValue);
+    setAshneerGroverVoiceSwitch(ashneerGroverVoiceSwitch);
     for (let i = 0; i < radio_props.length; i++) {
       if (radio_props[i].label == timeType) {
         setTimeTypeRadioInitial(i + 1);
@@ -102,15 +108,18 @@ const Nudger = ({navigation}) => {
     let blacklistedWebsites = storage.getString('blacklistedWebsites');
     let timeDuration = storage.getString('timeDuration');
     let timeTypeDropdownValue = storage.getString('timeTypeDropdownValue');
+    let ashneerGroverVoiceSwitch = storage.getBoolean(
+      'ashneerGroverVoiceSwitch',
+    );
     let timeType = storage.getString('timeType');
     if (blacklistedApps != undefined) {
       //nudger details are stored in the mmkv storage
-
       setStateNudgerDetails(
         blacklistedApps,
         blacklistedWebsites,
         timeDuration,
         timeTypeDropdownValue,
+        ashneerGroverVoiceSwitch,
         timeType,
       );
     } else {
@@ -122,18 +131,21 @@ const Nudger = ({navigation}) => {
         .then(snap => {
           if (snap.docs.length != 0) {
             //no previous nudger details for this user exist
-            // firestore().collection('nudgerDetails').add(nudgerDetails);
             let detailsObj = snap.docs[0];
             let blacklistedApps = detailsObj.get('blacklistedApps');
             let blacklistedWebsites = detailsObj.get('blacklistedWebsites');
             let timeDuration = detailsObj.get('timeDuration');
             let timeTypeDropdownValue = detailsObj.get('timeTypeDropdownValue');
+            let ashneerGroverVoiceSwitch = detailsObj.get(
+              'ashneerGroverVoiceSwitch',
+            );
             let timeType = detailsObj.get('timeType');
             setStateNudgerDetails(
               blacklistedApps,
               blacklistedWebsites,
               timeDuration,
               timeTypeDropdownValue,
+              ashneerGroverVoiceSwitch,
               timeType,
             );
           }
@@ -151,6 +163,7 @@ const Nudger = ({navigation}) => {
       timeDuration: timeDuration,
       timeTypeDropdownValue: timeTypeDropdownValue,
       timeType: timeTypeRadio,
+      ashneerGroverVoiceSwitch: ashneerGroverVoiceSwitch,
       user: auth().currentUser.uid,
     };
     firestore()
@@ -177,6 +190,7 @@ const Nudger = ({navigation}) => {
       blacklistedWebsites.toString(),
       timeDuration,
       timeTypeDropdownValue,
+      ashneerGroverVoiceSwitch,
       timeTypeRadio,
     );
     saveNudgerDetailsFirebase();
@@ -184,13 +198,16 @@ const Nudger = ({navigation}) => {
     storage.set('blacklistedWebsites', blacklistedWebsites.toString());
     storage.set('timeDuration', timeDuration);
     storage.set('timeTypeDropdownValue', timeTypeDropdownValue);
+    storage.set('ashneerGroverVoiceSwitch', ashneerGroverVoiceSwitch);
     storage.set('timeType', timeTypeRadio);
     navigation.navigate('Main');
   };
 
   return (
     <View style={globalStyles.overallBackground}>
-      <View style={styles.topContainer}>
+      <ScrollView
+        style={styles.topContainer}
+        contentContainerStyle={{justifyContent: 'space-between'}}>
         {!nudgerDetailsFetched || nudgerSwitch == null ? (
           <ActivityIndicator size="large" color="#00ff00" />
         ) : !nudgerSwitch ? (
@@ -201,9 +218,8 @@ const Nudger = ({navigation}) => {
               iconSize={22}
             />
             <Text style={styles.topInfoText}>
-              Once you turn me on, you will be noftified about remaining tasks
-              every 15 minutes(customizable) of using the blacklisted apps and
-              websites.
+              Once you turn me on, you will be noftified about unfinished tasks
+              after overusing the blacklisted apps and websites.
             </Text>
           </View>
         ) : (
@@ -315,6 +331,31 @@ const Nudger = ({navigation}) => {
                 borderBottomColor: '#acbbfc',
                 borderBottomWidth: 1,
                 opacity: 0.3,
+                marginBottom: 5,
+              }}
+            />
+            <View style={styles.ashneerGroverVoiceView}>
+              <Text style={styles.nudgerNormalText}>
+                Get nudged by Ashneer Grover on overusing the blacklisted stuff
+              </Text>
+              <ToggleSwitch
+                isOn={ashneerGroverVoiceSwitch}
+                onColor="red"
+                offColor="blue"
+                animationSpeed={100}
+                labelStyle={{color: 'black', fontWeight: '900'}}
+                size="medium"
+                onToggle={newSwitchState =>
+                  setAshneerGroverVoiceSwitch(newSwitchState)
+                }
+              />
+            </View>
+            <View
+              style={{
+                borderBottomColor: '#acbbfc',
+                borderBottomWidth: 1,
+                opacity: 0.3,
+                marginTop: 10,
               }}
             />
             <View style={styles.taskTypeSelector}>
@@ -339,7 +380,7 @@ const Nudger = ({navigation}) => {
             </View>
           </View>
         )}
-      </View>
+      </ScrollView>
     </View>
   );
 };
@@ -351,8 +392,9 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'column',
     // backgroundColor: '#000000',
-    justifyContent: 'space-between',
+    marginTop: 0,
     padding: 10,
+    paddingTop: 0,
     width: '100%',
     height: windowHeight - 50,
   },
@@ -393,6 +435,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     color: '#ffffff',
     marginTop: 9,
+    maxWidth: '90%',
   },
   durationSelectorView: {
     padding: 10,
@@ -407,25 +450,17 @@ const styles = StyleSheet.create({
     height: 30,
     width: '8%',
   },
+  ashneerGroverVoiceView: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    width: '100%',
+    // backgroundColor: '#ffffff',
+  },
   durationSelector: {
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
-  },
-  saveButton: {
-    backgroundColor: '#a8e3ff',
-    width: '20%',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    alignSelf: 'flex-end',
-    borderRadius: 5,
-  },
-  saveButtonText: {
-    fontFamily: 'Poppins-Medium',
-    fontSize: 18,
-    width: '100%',
-    position: 'relative',
-    left: 12,
   },
 });

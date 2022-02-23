@@ -58,6 +58,7 @@ public class AlarmReceiver extends BroadcastReceiver {
                 "ApplicationListener", Context.MODE_PRIVATE);
         String storedPackage = sharedPref.getString("current_running_application", "none");
         String timeType = sharedPref.getString("timeType", "none");
+        boolean ashneerGroverVoiceOn = sharedPref.getBoolean("ashneerGroverVoiceOn", false);
 
         if (!isDeviceLocked(context) && !storedPackage.equals("none")) {
             String user = FirebaseAuth.getInstance().getCurrentUser().getUid();
@@ -73,7 +74,7 @@ public class AlarmReceiver extends BroadcastReceiver {
                             if (!allTasks.equals("")) {
                                 NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
                                 notificationManager.notify(0,
-                                        createNotification(context, "You have stuff to do!", stripLastEmptyLine(allTasks), "task_reminders", NotificationCompat.PRIORITY_MAX).build());
+                                        createNotification(context, "You have stuff to do!", stripLastEmptyLine(allTasks), ashneerGroverVoiceOn?"task_reminders_asheers_voice":"task_reminders", NotificationCompat.PRIORITY_MAX).build());
 //                                this piece of code takes user to home screen
 //                                Intent startMain = new Intent(Intent.ACTION_MAIN);
 //                                startMain.addCategory(Intent.CATEGORY_HOME);
@@ -152,8 +153,7 @@ public class AlarmReceiver extends BroadcastReceiver {
     }
 
     public NotificationCompat.Builder createNotification(Context context, String title, String content, String channel_id, int priority) {
-
-        Uri sound = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + context.getPackageName() + "/" + R.raw.ashneer_angry);
+//        Uri sound = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + context.getPackageName() + "/" + R.raw.ashneer_angry);
 //        AudioAttributes attributes = new AudioAttributes.Builder()
 //                .setUsage(AudioAttributes.USAGE_NOTIFICATION)
 //                .build();
@@ -162,7 +162,6 @@ public class AlarmReceiver extends BroadcastReceiver {
                 .setContentTitle(title)
                 .setStyle(new NotificationCompat.BigTextStyle()
                         .bigText(content))
-                .setSound(sound)
                 .setDefaults(NotificationCompat.DEFAULT_ALL) //Important for heads-up notification
                 .setPriority(priority);
         return builder;

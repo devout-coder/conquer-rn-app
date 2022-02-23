@@ -99,8 +99,8 @@ const Navbar = ({page}) => {
           }
           onRequestClose={hideMenu}>
           <MenuItem onPress={navigateToNudger}>Nudger</MenuItem>
-          <MenuItem onPress={hideMenu}>Profile</MenuItem>
-          <MenuItem onPress={hideMenu}>Friends</MenuItem>
+          {/* <MenuItem onPress={hideMenu}>Profile</MenuItem> */}
+          {/* <MenuItem onPress={hideMenu}>Friends</MenuItem> */}
           <MenuItem onPress={logout}>Logout</MenuItem>
         </Menu>
       ) : (
