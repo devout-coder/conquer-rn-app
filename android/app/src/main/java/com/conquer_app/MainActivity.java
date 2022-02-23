@@ -43,9 +43,9 @@ public class MainActivity extends ReactActivity {
         super.onCreate(null);
         createNotificationChannel("task_reminders", "Task Reminders",
                 "This channel handles all notifications regarding task reminders", NotificationManager.IMPORTANCE_MAX);
-        createNotificationChannel("foreground_services", "Foreground Service",
-                "This channel handles that annoying notifications which can't be turned off due to some fucking Android Policy",
-                NotificationManager.IMPORTANCE_NONE);
+//        createNotificationChannel("foreground_services", "Foreground Service",
+//                "This channel handles that annoying notifications which can't be turned off due to some fucking Android Policy",
+//                NotificationManager.IMPORTANCE_NONE);
 
         Log.d("obscure_tag", "application has started!");
 
@@ -80,10 +80,8 @@ public class MainActivity extends ReactActivity {
     }
 
 
-    private void createNotificationChannel(String channel_id, String channel_name, String channel_description,
-                                           int channel_importance) {
-        // Create the NotificationChannel, but only on API 26+ because
-        // the NotificationChannel class is new and not in the support library
+    private void createNotificationChannel(String channel_id, String channel_name, String channel_description, int channel_importance) {
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel channel = new NotificationChannel(channel_id, channel_name, channel_importance);
             channel.setDescription(channel_description);

@@ -8,11 +8,14 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.BitmapFactory;
 import android.icu.util.Calendar;
+import android.media.AudioAttributes;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.provider.Settings;
@@ -148,15 +151,18 @@ public class AlarmReceiver extends BroadcastReceiver {
         }
     }
 
-    public NotificationCompat.Builder createNotification(Context context, String title, String content,
-                                                         String channel_id, int priority) {
+    public NotificationCompat.Builder createNotification(Context context, String title, String content, String channel_id, int priority) {
 
+        Uri sound = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + context.getPackageName() + "/" + R.raw.ashneer_angry);
+//        AudioAttributes attributes = new AudioAttributes.Builder()
+//                .setUsage(AudioAttributes.USAGE_NOTIFICATION)
+//                .build();
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, channel_id)
                 .setSmallIcon(R.drawable.notification_icon)
                 .setContentTitle(title)
                 .setStyle(new NotificationCompat.BigTextStyle()
                         .bigText(content))
-                .setSound(Settings.System.DEFAULT_NOTIFICATION_URI)
+                .setSound(sound)
                 .setDefaults(NotificationCompat.DEFAULT_ALL) //Important for heads-up notification
                 .setPriority(priority);
         return builder;
