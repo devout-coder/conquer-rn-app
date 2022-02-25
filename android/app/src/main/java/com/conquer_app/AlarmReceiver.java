@@ -153,10 +153,6 @@ public class AlarmReceiver extends BroadcastReceiver {
     }
 
     public NotificationCompat.Builder createNotification(Context context, String title, String content, String channel_id, int priority) {
-//        Uri sound = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + context.getPackageName() + "/" + R.raw.ashneer_angry);
-//        AudioAttributes attributes = new AudioAttributes.Builder()
-//                .setUsage(AudioAttributes.USAGE_NOTIFICATION)
-//                .build();
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, channel_id)
                 .setSmallIcon(R.drawable.notification_icon)
                 .setContentTitle(title)

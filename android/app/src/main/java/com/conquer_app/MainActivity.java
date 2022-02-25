@@ -48,7 +48,6 @@ public class MainActivity extends ReactActivity {
         createNotificationChannel("task_reminders_asheers_voice", "Task Reminders Ashneer's Voice",
                 "This channel handles all notifications regarding task reminders, with notification tone of Ashneer Grover",
                 NotificationManager.IMPORTANCE_MAX);
-
         Log.d("obscure_tag", "application has started!");
 
     }

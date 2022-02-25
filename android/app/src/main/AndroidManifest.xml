@@ -72,5 +72,20 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".NewFriendActivity"
+            android:label="Conquer">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="conquer-goals.netlify.app"
+                    android:pathPrefix="/add-friend"
+                    android:scheme="https" />
+            </intent-filter>
+        </activity>
     </application>
 </manifest>
