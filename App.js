@@ -18,6 +18,7 @@ import {Notifications} from 'react-native-notifications';
 import {MenuContext} from 'react-native-menu';
 import Nudger from './pages/Nudger';
 import NudgerToggleSwitch from './Components/NudgerToggleSwitch';
+import Friends from './pages/Friends';
 
 const Stack = createNativeStackNavigator();
 
@@ -42,31 +43,7 @@ const App = () => {
     });
   }, [user]);
 
-  // Notifications.registerRemoteNotifications();
-
-  // Notifications.events().registerNotificationReceivedForeground(
-  //   (notification, completion) => {
-  //     console.log(
-  //       `Notification received in foreground: ${notification.title} : ${notification.body}`,
-  //     );
-  //     completion({alert: false, sound: false, badge: false});
-  //   },
-  // );
-
-  // Notifications.events().registerNotificationOpened(
-  //   (notification, completion) => {
-  //     console.log(`Notification opened: ${notification.payload}`);
-  //     completion();
-  //   },
-  // );
-  // Notifications.postLocalNotification({
-  //   title: 'Fuck all the other productivity apps',
-  //   body: 'Conquer is gonna be the best productivity app on play store!',
-  //   extra: 'data',
-  // });
-
   return (
-    // <MenuContext style={{flex: 1}}>
     <userContext.Provider value={user}>
       <nudgerSwitchContext.Provider value={{nudgerSwitch, setNudgerSwitch}}>
         <loginContext.Provider value={{justLoggedOut, setJustLoggedOut}}>
@@ -115,6 +92,21 @@ const App = () => {
                       headerRight: () => <NudgerToggleSwitch />,
                     }}
                   />
+                  <Stack.Screen
+                    name="Friends"
+                    component={Friends}
+                    options={{
+                      headerStyle: {backgroundColor: '#262647'},
+                      headerTitleStyle: {
+                        fontFamily: 'Poppins-SemiBold',
+                        fontSize: 24,
+                        position: 'relative',
+                      },
+                      headerTintColor: '#ffffff',
+                      headerShadowVisible: false,
+                      headerLeft: () => <></>,
+                    }}
+                  />
                 </Stack.Navigator>
               </NavigationContainer>
             </tabNavbarContext.Provider>
@@ -122,7 +114,6 @@ const App = () => {
         </loginContext.Provider>
       </nudgerSwitchContext.Provider>
     </userContext.Provider>
-    // </MenuContext>
   );
 };
 

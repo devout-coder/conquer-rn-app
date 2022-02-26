@@ -52,11 +52,16 @@ const Navbar = ({page}) => {
     nav.navigate('Nudger');
   };
 
-  const [visible, setVisible] = useState(false);
+  const navigateToFriends = () => {
+    hideMenu();
+    nav.navigate('Friends');
+  };
 
-  const hideMenu = () => setVisible(false);
+  const [menuVisible, setMenuVisible] = useState(false);
 
-  const showMenu = () => setVisible(true);
+  const hideMenu = () => setMenuVisible(false);
+
+  const showMenu = () => setMenuVisible(true);
 
   return (
     <View style={styles.navbar}>
@@ -91,16 +96,16 @@ const Navbar = ({page}) => {
         //   </TouchableOpacity>
         // </View>
         <Menu
-          visible={visible}
+          visible={menuVisible}
           anchor={
-            <TouchableOpacity onPress={() => setVisible(true)}>
+            <TouchableOpacity onPress={() => setMenuVisible(true)}>
               <IonIcon iconName="settings" iconSize={24} iconColor="#ffffff" />
             </TouchableOpacity>
           }
           onRequestClose={hideMenu}>
           <MenuItem onPress={navigateToNudger}>Nudger</MenuItem>
           {/* <MenuItem onPress={hideMenu}>Profile</MenuItem> */}
-          {/* <MenuItem onPress={hideMenu}>Friends</MenuItem> */}
+          <MenuItem onPress={navigateToFriends}>Friends</MenuItem>
           <MenuItem onPress={logout}>Logout</MenuItem>
         </Menu>
       ) : (
