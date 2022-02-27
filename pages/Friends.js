@@ -1,10 +1,13 @@
 import {StyleSheet, Text, View, BackHandler, Share} from 'react-native';
-import React, {useEffect} from 'react';
+import React, {useContext, useEffect} from 'react';
 import globalStyles from '../globalStyles';
 import Ripple from 'react-native-material-ripple';
 import auth from '@react-native-firebase/auth';
+import {navbarContext} from '../context';
 
-const Friends = ({navigation}) => {
+const Friends = ({navigation, route}) => {
+  let {nav, setNav} = useContext(navbarContext);
+
   useEffect(() => {
     const backHandler = BackHandler.addEventListener(
       'hardwareBackPress',
@@ -17,6 +20,10 @@ const Friends = ({navigation}) => {
       backHandler.remove();
     };
   });
+
+  useEffect(() => {
+    setNav(navigation);
+  }, []);
 
   const onShare = async () => {
     try {
@@ -43,6 +50,10 @@ const Friends = ({navigation}) => {
       alert(error.message);
     }
   };
+
+  if (route.params != undefined) {
+    console.log(route.params['id']);
+  }
 
   return (
     <View style={globalStyles.overallBackground}>

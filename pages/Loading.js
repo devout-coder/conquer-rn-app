@@ -1,23 +1,32 @@
 import React, {useContext, useEffect} from 'react';
-import {ActivityIndicator, StyleSheet, Text, View} from 'react-native';
+import {ActivityIndicator, Linking, StyleSheet, Text, View} from 'react-native';
 import {loginContext, navbarContext, userContext} from '../context';
 import globalStyles from '../globalStyles';
 
-const Loading = ({navigation}) => {
+const Loading = ({navigation, route}) => {
   let user = useContext(userContext);
   let {justLoggedOut, setJustLoggedOut} = useContext(loginContext);
   let {nav, setNav} = useContext(navbarContext);
 
+  useEffect(() => {}, []);
+
   useEffect(() => {
     setNav(navigation);
-    if (justLoggedOut) {
-      navigation.navigate('Login');
-      setJustLoggedOut(false);
-    } else if (user == null) {
-      navigation.navigate('Landing');
-    } else if (user != false) {
-      navigation.navigate('Main');
-    }
+    Linking.getInitialURL().then(url => {
+      //this linking works when conquer is not running in background and deep links are clicked
+      if (url != null && (user != null || user != false)) {
+        console.log(user);
+        navigation.navigate('Friends', {id: url.split('/add-friend/')[1]});
+      } else if (justLoggedOut) {
+        //if i remove this then on logout when user=null then i will be navigated to landing page
+        navigation.navigate('Login');
+        setJustLoggedOut(false);
+      } else if (user == null) {
+        navigation.navigate('Landing');
+      } else if (user != false) {
+        navigation.navigate('Main');
+      }
+    });
   }, [user]);
 
   return (
