@@ -21,11 +21,6 @@ const Friends = ({navigation}) => {
   const onShare = async () => {
     try {
       const result = await Share.share({
-        // title: `Tap this link to accept ${
-        //   auth().currentUser.displayName
-        // }'s friend request\nhttps://conquer-goals.netlify.app/add-friend/${
-        //   auth().currentUser.uid
-        // }`,
         message: `Tap this link to accept ${
           auth().currentUser.displayName
         }'s Conquer friend request\nhttps://conquer-goals.netlify.app/add-friend/${
