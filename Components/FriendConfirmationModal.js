@@ -1,12 +1,14 @@
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import React from 'react';
+import React, {useEffect} from 'react';
 import Modal from 'react-native-modal';
 import Ripple from 'react-native-material-ripple';
+import auth from '@react-native-firebase/auth';
 
-const NudgerConfirmationModal = ({
+const FriendConfirmationModal = ({
   modalVisible,
   closeModal,
-  navigateToAccessibilitySettings,
+  confirmedUser,
+  friendName,
 }) => {
   return (
     <Modal
@@ -15,39 +17,28 @@ const NudgerConfirmationModal = ({
       animationOut="fadeOutDown"
       onBackButtonPress={closeModal}>
       <View style={styles.modal}>
-        <Text style={styles.deleteText}>
-          You need to provide accessibility permission to Conquer to check if
-          you are using the blacklisted applications
+        <Text style={styles.confirmText}>
+          {friendName} wants to be your friend. Once you accept this request you
+          will be able to share tasks with this individual.
         </Text>
         <View style={styles.buttons}>
-          <Ripple
-            rippleDuration={300}
-            rippleContainerBorderRadius={5}
-            onPress={closeModal}>
-            <Text style={styles.noText}>
-              No I can trust big tech but not you
-            </Text>
-          </Ripple>
-          <Ripple
-            rippleDuration={300}
-            rippleContainerBorderRadius={5}
-            onPress={navigateToAccessibilitySettings}>
-            <Text style={styles.yeahText}>
-              Fine, take me to accessibility settings
-            </Text>
-          </Ripple>
-          {/* </TouchableOpacity> */}
+          <TouchableOpacity onPress={closeModal}>
+            <Text style={styles.noText}>No, sounds like a bad idea.</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={confirmedUser}>
+            <Text style={styles.yeahText}>Yeah cool let's do it!</Text>
+          </TouchableOpacity>
         </View>
       </View>
     </Modal>
   );
 };
 
-export default NudgerConfirmationModal;
+export default FriendConfirmationModal;
 
 const styles = StyleSheet.create({
   modal: {
-    flex: 0.4,
+    flex: 0.33,
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'space-between',
@@ -59,12 +50,12 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'column',
     width: '95%',
-    height: 110,
+    height: 80,
     // backgroundColor: 'black',
     justifyContent: 'space-around',
     // backgroundColor:'#000000'
   },
-  deleteText: {
+  confirmText: {
     fontSize: 20,
     fontFamily: 'Poppins-Regular',
   },

@@ -86,9 +86,9 @@ const App = () => {
       /* configuration for matching screens with paths */
       screens: {
         Friends: {
-          path: 'add-friend/:id?',
+          path: 'add-friend/:friendInfo?',
           parse: {
-            id: id => `${id}`,
+            friendInfo: friendInfo => `${friendInfo}`,
           },
         },
       },

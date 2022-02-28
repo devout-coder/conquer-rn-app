@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useRef, useState} from 'react';
+import React, {useCallback, useContext, useEffect, useRef, useState} from 'react';
 import {
   ActivityIndicator,
   BackHandler,
@@ -27,6 +27,7 @@ import {Menu, MenuItem, MenuDivider} from 'react-native-material-menu';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import RNDateTimePicker from '@react-native-community/datetimepicker';
 import {NativeModules} from 'react-native';
+import { userContext } from '../context';
 const {TaskReminder} = NativeModules;
 
 const TodoModal = ({
@@ -44,6 +45,7 @@ const TodoModal = ({
   reloadTodos,
   allTodos,
 }) => {
+  let user = useContext(userContext);
   const [todoTaskName, setTodoTaskName] = useState(taskName);
   const [todoTaskDesc, setTodoTaskDesc] = useState(taskDesc);
   const [todoTaskPriority, setTodoTaskPriority] = useState(priority);
@@ -75,7 +77,7 @@ const TodoModal = ({
   function loadUnfinishedTodos() {
     firestore()
       .collection('todos')
-      .where('user', '==', auth().currentUser.uid)
+      .where('user', '==', user.uid)
       .where('time', '==', time)
       .orderBy('index', 'asc')
       .get()
@@ -108,7 +110,7 @@ const TodoModal = ({
     if (timeType != 'longTerm') {
       firestore()
         .collection('todos')
-        .where('user', '==', auth().currentUser.uid)
+        .where('user', '==', user.uid)
         .where('time', '==', nextTime())
         .orderBy('priority', 'desc')
         .get()
@@ -364,7 +366,7 @@ const TodoModal = ({
         time: time,
         timeType: timeType,
         priority: todoTaskPriority,
-        user: auth().currentUser.uid,
+        user: user.uid,
         finished: false,
         index: newIndex,
       };

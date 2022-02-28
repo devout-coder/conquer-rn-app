@@ -12,7 +12,7 @@ import {
   ScrollView,
 } from 'react-native';
 import IonIcon from '../customIcons/IonIcon';
-import {nudgerSwitchContext} from '../context';
+import {nudgerSwitchContext, userContext} from '../context';
 import Ripple from 'react-native-material-ripple';
 import DropDownPicker from 'react-native-dropdown-picker';
 import AntDesignIcon from '../customIcons/AntDesignIcon';
@@ -32,6 +32,8 @@ const windowHeight = Dimensions.get('window').height;
 
 const Nudger = ({navigation}) => {
   const storage = new MMKV();
+
+  let user = useContext(userContext);
 
   let {nudgerSwitch, setNudgerSwitch} = useContext(nudgerSwitchContext);
 
@@ -126,7 +128,7 @@ const Nudger = ({navigation}) => {
       //nudger details are not stored in the mmkv storage
       firestore()
         .collection('nudgerDetails')
-        .where('user', '==', auth().currentUser.uid)
+        .where('user', '==', user.uid)
         .get()
         .then(snap => {
           if (snap.docs.length != 0) {
@@ -164,11 +166,11 @@ const Nudger = ({navigation}) => {
       timeTypeDropdownValue: timeTypeDropdownValue,
       timeType: timeTypeRadio,
       ashneerGroverVoiceSwitch: ashneerGroverVoiceSwitch,
-      user: auth().currentUser.uid,
+      user: user.uid,
     };
     firestore()
       .collection('nudgerDetails')
-      .where('user', '==', auth().currentUser.uid)
+      .where('user', '==', user.uid)
       .get()
       .then(snap => {
         if (snap.docs.length == 0) {

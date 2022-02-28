@@ -95,7 +95,7 @@ const Todos = ({navigation, route, year, longTerm}) => {
   function loadData() {
     firestore()
       .collection('todos')
-      .where('user', '==', auth().currentUser.uid)
+      .where('user', '==', user.uid)
       .where('time', '==', time)
       .orderBy('priority', 'desc')
       .get()

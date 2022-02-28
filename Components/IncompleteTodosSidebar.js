@@ -184,7 +184,7 @@ const IncompleteTodosSidebar = ({timeType, navigation, year, changeYear}) => {
     constructor() {
       this.todos = firestore()
         .collection('todos')
-        .where('user', '==', auth().currentUser.uid)
+        .where('user', '==', user.uid)
         .where('timeType', '==', timeType)
         .orderBy('priority', 'desc')
         // .orderBy("index", "asc")
