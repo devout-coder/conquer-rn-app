@@ -11,6 +11,7 @@ import {
   nudgerSwitchContext,
   tabNavbarContext,
   userContext,
+  usedFriendLinkContext,
 } from './context';
 import auth from '@react-native-firebase/auth';
 import Main from './pages/Main';
@@ -62,6 +63,8 @@ const App = () => {
 
   const [nudgerSwitch, setNudgerSwitch] = useState(null);
 
+  const [usedFriendLink, setUsedFriendLink] = useState(false);
+
   useEffect(() => {
     auth().onAuthStateChanged(user => {
       //this function observes the state of authentication...returns null if user doesnt exist..returns the user details if the user exists..and returns false if the user is being created or loaded..
@@ -101,66 +104,70 @@ const App = () => {
         <loginContext.Provider value={{justLoggedOut, setJustLoggedOut}}>
           <navbarContext.Provider value={{nav, setNav}}>
             <tabNavbarContext.Provider value={{tabNav, setTabNav}}>
-              <NavigationContainer linking={user != null ? linking : {}}>
-                <Stack.Navigator initialRouteName="Loading">
-                  <Stack.Screen
-                    name="Landing"
-                    component={Landing}
-                    options={{headerShown: false}}
-                  />
-                  <Stack.Screen
-                    name="Signup"
-                    component={Signup}
-                    options={{headerShown: false}}
-                  />
-                  <Stack.Screen
-                    name="Login"
-                    component={Login}
-                    options={{headerShown: false}}
-                  />
-                  <Stack.Screen
-                    name="Loading"
-                    component={Loading}
-                    options={{headerShown: false}}
-                  />
-                  <Stack.Screen
-                    name="Main"
-                    component={Main}
-                    options={{headerShown: false}}
-                  />
-                  <Stack.Screen
-                    name="Nudger"
-                    component={Nudger}
-                    options={{
-                      headerStyle: {backgroundColor: '#262647'},
-                      headerTitleStyle: {
-                        fontFamily: 'Poppins-SemiBold',
-                        fontSize: 24,
-                        position: 'relative',
-                      },
-                      headerTintColor: '#ffffff',
-                      headerShadowVisible: false,
-                      headerLeft: () => <></>,
-                      headerRight: () => <NudgerToggleSwitch />,
-                    }}
-                  />
-                  <Stack.Screen
-                    name="Friends"
-                    component={Friends}
-                    options={{
-                      headerStyle: {backgroundColor: '#262647'},
-                      headerTitleStyle: {
-                        fontFamily: 'Poppins-SemiBold',
-                        fontSize: 24,
-                        position: 'relative',
-                      },
-                      headerTintColor: '#ffffff',
-                      headerShadowVisible: false,
-                      headerLeft: () => <></>,
-                    }}
-                  />
-                </Stack.Navigator>
-              </NavigationContainer>
+              <usedFriendLinkContext.Provider
+                value={{usedFriendLink, setUsedFriendLink}}>
+                <NavigationContainer
+                  linking={user != null && user != false ? linking : {}}>
+                  <Stack.Navigator initialRouteName="Loading">
+                    <Stack.Screen
+                      name="Landing"
+                      component={Landing}
+                      options={{headerShown: false}}
+                    />
+                    <Stack.Screen
+                      name="Signup"
+                      component={Signup}
+                      options={{headerShown: false}}
+                    />
+                    <Stack.Screen
+                      name="Login"
+                      component={Login}
+                      options={{headerShown: false}}
+                    />
+                    <Stack.Screen
+                      name="Loading"
+                      component={Loading}
+                      options={{headerShown: false}}
+                    />
+                    <Stack.Screen
+                      name="Main"
+                      component={Main}
+                      options={{headerShown: false}}
+                    />
+                    <Stack.Screen
+                      name="Nudger"
+                      component={Nudger}
+                      options={{
+                        headerStyle: {backgroundColor: '#262647'},
+                        headerTitleStyle: {
+                          fontFamily: 'Poppins-SemiBold',
+                          fontSize: 24,
+                          position: 'relative',
+                        },
+                        headerTintColor: '#ffffff',
+                        headerShadowVisible: false,
+                        headerLeft: () => <></>,
+                        headerRight: () => <NudgerToggleSwitch />,
+                      }}
+                    />
+                    <Stack.Screen
+                      name="Friends"
+                      component={Friends}
+                      options={{
+                        headerStyle: {backgroundColor: '#262647'},
+                        headerTitleStyle: {
+                          fontFamily: 'Poppins-SemiBold',
+                          fontSize: 24,
+                          position: 'relative',
+                        },
+                        headerTintColor: '#ffffff',
+                        headerShadowVisible: false,
+                        headerLeft: () => <></>,
+                      }}
+                    />
+                  </Stack.Navigator>
+                </NavigationContainer>
+              </usedFriendLinkContext.Provider>
             </tabNavbarContext.Provider>
           </navbarContext.Provider>
         </loginContext.Provider>

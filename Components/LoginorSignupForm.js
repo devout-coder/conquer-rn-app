@@ -39,6 +39,7 @@ const LoginorSignupForm = ({loginorSignup}) => {
     const backHandler = BackHandler.addEventListener(
       'hardwareBackPress',
       () => {
+        console.log('back pressed on login/signup');
         nav.push('Landing');
         return true;
       },

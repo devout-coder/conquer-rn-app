@@ -7,6 +7,7 @@ import auth from '@react-native-firebase/auth';
 import {navbarContext, userContext} from '../context';
 import FriendConfirmationModal from '../Components/FriendConfirmationModal';
 import {FirebaseFirestoreTypes} from '@react-native-firebase/firestore';
+import Toast from '../Components/Toast';
 
 const Friends = ({navigation, route}) => {
   let {nav, setNav} = useContext(navbarContext);
@@ -63,32 +64,52 @@ const Friends = ({navigation, route}) => {
     }
   };
 
-  const addFriend = () => {
+  const computeFriends = (oldFriends, friendId, friendName) => {
+    let newFriends;
+    let infoToStore = friendId + ',' + friendName;
+    if (oldFriends != undefined) {
+      //doc in friends collection is present for this user
+      if (oldFriends.includes(infoToStore)) {
+        //the guy whose request you are trying to process is already your friend
+        newFriends = oldFriends;
+      } else {
+        newFriends = [...oldFriends, infoToStore];
+      }
+    } else {
+      //no doc in friends collection for this user
+      newFriends = [infoToStore];
+    }
+    return newFriends;
+  };
+
+  const addFriend = async () => {
+    let oldFriendsOfUser = (
+      await firestore().collection('friends').doc(user.uid).get()
+    ).get('friends');
+    let oldFriendsOfAllegedFriend = (
+      await firestore().collection('friends').doc(friendId).get()
+    ).get('friends');
+
+    let newFriendsOfUser = computeFriends(
+      oldFriendsOfUser,
+      friendId,
+      friendName,
+    );
+    let newFriendsOfAllegedFriend = computeFriends(
+      oldFriendsOfAllegedFriend,
+      user.uid,
+      user.displayName,
+    );
+
     firestore()
       .collection('friends')
       .doc(user.uid)
-      .get()
-      .then(data => {
-        let oldFriends = data.get('friends');
-        let newFriends;
-        // console.log(oldFriends);
-        if (oldFriends != undefined) {
-          //doc in friends collection is present for this user
-          if (oldFriends.includes(friendId)) {
-            //the guy whose request you are trying to process is already your friend
-            newFriends = oldFriends;
-          } else {
-            newFriends = [...oldFriends, friendId];
-          }
-        } else {
-          //no doc in friends collection for this user
-          newFriends = [friendId];
-        }
-        firestore()
-          .collection('friends')
-          .doc(user.uid)
-          .set({friends: newFriends});
-      });
+      .set({friends: newFriendsOfUser});
+    firestore()
+      .collection('friends')
+      .doc(friendId)
+      .set({friends: newFriendsOfAllegedFriend});
+    setFriendsConfirmModalVisible(false);
   };
 
   return (
