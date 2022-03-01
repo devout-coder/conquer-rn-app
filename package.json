@@ -32,6 +32,7 @@
     "radio-buttons-react-native": "^1.0.4",
     "react": "17.0.2",
     "react-native": "0.65.1",
+    "react-native-aes-crypto": "^2.1.0",
     "react-native-draggable-flatlist": "^3.0.2",
     "react-native-dropdown-picker": "^5.1.28",
     "react-native-gesture-handler": "^1.10.3",
