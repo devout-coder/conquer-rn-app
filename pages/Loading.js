@@ -22,10 +22,12 @@ const Loading = ({navigation, route}) => {
       Linking.addEventListener('url', callback => {
         // console.log(callback.url.split('/add-friend/')[1]);
         // console.log('hey');
-        navigation.navigate('Friends', {
-          friendInfo: callback.url.split('/add-friend/')[1],
-        });
-        appInBackgroundLinkHandled = true;
+        if (user != null && user != false) {
+          navigation.navigate('Friends', {
+            friendInfo: callback.url.split('/add-friend/')[1],
+          });
+          appInBackgroundLinkHandled = true;
+        }
       });
       if (!appInBackgroundLinkHandled) {
         if (url != null && user != null && user != false && !usedFriendLink) {
