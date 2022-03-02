@@ -17,7 +17,6 @@ const Friends = ({navigation, route}) => {
   const [friendName, setFriendName] = useState(null);
   const [friendId, setFriendId] = useState(null);
   const [friendPhotoUrl, setFriendPhotoUrl] = useState(null);
-
   const [friendsConfirmModalVisible, setFriendsConfirmModalVisible] =
     useState(false);
 
@@ -66,7 +65,7 @@ const Friends = ({navigation, route}) => {
         });
       setFriendsConfirmModalVisible(true);
     }
-  }, []);
+  }, [route.params]);
 
   const onShare = async () => {
     let urlData;
@@ -87,18 +86,6 @@ const Friends = ({navigation, route}) => {
       const result = await Share.share({
         message: `Tap this link to accept ${user.displayName}'s Conquer friend request\nhttps://conquer-goals.netlify.app/add-friend/${urlData}`,
       });
-      // if (result.action === Share.sharedAction) {
-      //   if (result.activityType) {
-      //     // shared with activity type of result.activityType
-      //     // console.log('shared with activity type of result.activityType');
-      //   } else {
-      //     // shared
-      //     // console.log('shared');
-      //   }
-      // } else if (result.action === Share.dismissedAction) {
-      //   // dismissed
-      //   // console.log('dismissed');
-      // }
     } catch (error) {
       alert(error.message);
     }
@@ -172,7 +159,7 @@ const Friends = ({navigation, route}) => {
   return (
     <View style={globalStyles.overallBackground}>
       <View style={styles.mainContainer}>
-        {user != null ? (
+        {user != null && friendsConfirmModalVisible && user.uid != friendId ? (
           <FriendConfirmationModal
             modalVisible={friendsConfirmModalVisible && user.uid != friendId}
             closeModal={() => setFriendsConfirmModalVisible(false)}

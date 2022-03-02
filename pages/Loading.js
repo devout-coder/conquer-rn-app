@@ -18,19 +18,30 @@ const Loading = ({navigation, route}) => {
     setNav(navigation);
     Linking.getInitialURL().then(url => {
       //this linking works when conquer is not running in background and deep links are clicked
-      if (url != null && user != null && user != false && !usedFriendLink) {
+      let appInBackgroundLinkHandled = false;
+      Linking.addEventListener('url', callback => {
+        // console.log(callback.url.split('/add-friend/')[1]);
+        // console.log('hey');
         navigation.navigate('Friends', {
-          friendInfo: url.split('/add-friend/')[1],
+          friendInfo: callback.url.split('/add-friend/')[1],
         });
-        setUsedFriendLink(true);
-      } else if (justLoggedOut) {
-        //if i remove this then on logout when user=null then i will be navigated to landing page
-        navigation.navigate('Login');
-        setJustLoggedOut(false);
-      } else if (user == null) {
-        navigation.navigate('Landing');
-      } else if (user != false) {
-        navigation.navigate('Main');
+        appInBackgroundLinkHandled = true;
+      });
+      if (!appInBackgroundLinkHandled) {
+        if (url != null && user != null && user != false && !usedFriendLink) {
+          navigation.navigate('Friends', {
+            friendInfo: url.split('/add-friend/')[1],
+          });
+          setUsedFriendLink(true);
+        } else if (justLoggedOut) {
+          //if i remove this then on logout when user=null then i will be navigated to landing page
+          navigation.navigate('Login');
+          setJustLoggedOut(false);
+        } else if (user == null) {
+          navigation.navigate('Landing');
+        } else if (user != false) {
+          navigation.navigate('Main');
+        }
       }
     });
   }, [user]);

@@ -22,31 +22,6 @@ import NudgerToggleSwitch from './Components/NudgerToggleSwitch';
 import Friends from './pages/Friends';
 import {Linking} from 'react-native';
 
-// const useMount = func => useEffect(() => func(), []);
-
-// const useInitialURL = () => {
-//   const [friend, setFriend] = useState(null);
-//   const [processing, setProcessing] = useState(true);
-
-//   useMount(() => {
-//     const getUrlAsync = async () => {
-//       // Get the deep link used to open the app
-//       const initialUrl = await Linking.getInitialURL();
-//       Linking.addEventListener('url', callback => {
-//         setFriend(callback.url.split('/add-friend/')[1]);
-//       });
-//       if (initialUrl != null) {
-//         setFriend(initialUrl.split('/add-friend/')[1]);
-//       }
-//       setProcessing(false);
-//     };
-
-//     getUrlAsync();
-//   });
-
-//   return {friend, processing};
-// };
-
 const Stack = createNativeStackNavigator();
 
 const App = () => {
@@ -72,31 +47,6 @@ const App = () => {
     });
   }, [user]);
 
-  // const {friend: friend, processing} = useInitialURL();
-  // console.log(
-  //   processing
-  //     ? `Processing the initial url from a deep link`
-  //     : `The deep link is: ${friend || 'None'}`,
-  // );
-
-  const linking = {
-    //this linking works only when conquer is running in background and deep link is clicked
-    prefixes: [
-      /* your linking prefixes */
-      'https://conquer-goals.netlify.app/',
-    ],
-    config: {
-      /* configuration for matching screens with paths */
-      screens: {
-        Friends: {
-          path: 'add-friend/:friendInfo?',
-          parse: {
-            friendInfo: friendInfo => `${friendInfo}`,
-          },
-        },
-      },
-    },
-  };
 
   return (
     <userContext.Provider value={user}>
@@ -106,8 +56,7 @@ const App = () => {
             <tabNavbarContext.Provider value={{tabNav, setTabNav}}>
               <usedFriendLinkContext.Provider
                 value={{usedFriendLink, setUsedFriendLink}}>
-                <NavigationContainer
-                  linking={user != null && user != false ? linking : {}}>
+                <NavigationContainer>
                   <Stack.Navigator initialRouteName="Loading">
                     <Stack.Screen
                       name="Landing"
