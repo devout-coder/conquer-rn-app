@@ -223,7 +223,10 @@ const IncompleteTodosSidebar = ({timeType, navigation, year, changeYear}) => {
   useEffect(() => {
     if (user) {
       const loadTodos = new loadReqTodos();
-      return function cleanup() {
+      // return function cleanup() {
+      //   loadTodos.unsubscribe();
+      // };
+      return () => {
         loadTodos.unsubscribe();
       };
     } else {

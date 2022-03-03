@@ -1,4 +1,13 @@
-import {StyleSheet, Text, View, BackHandler, Share} from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  View,
+  BackHandler,
+  Share,
+  ActivityIndicator,
+  Image,
+  TouchableOpacity,
+} from 'react-native';
 import React, {useContext, useEffect, useState} from 'react';
 import globalStyles from '../globalStyles';
 import Ripple from 'react-native-material-ripple';
@@ -10,6 +19,9 @@ import {FirebaseFirestoreTypes} from '@react-native-firebase/firestore';
 import Toast from '../Components/Toast';
 import Aes from 'react-native-aes-crypto';
 import {cipherKey} from '../sensitive-stuff';
+import {ScrollView} from 'react-native-gesture-handler';
+import IonIcon from '../customIcons/IonIcon';
+import MaterialIcon from '../customIcons/MaterialIcon';
 
 const Friends = ({navigation, route}) => {
   let {nav, setNav} = useContext(navbarContext);
@@ -156,6 +168,35 @@ const Friends = ({navigation, route}) => {
     setFriendsConfirmModalVisible(false);
   };
 
+  const [friendsLoading, setFriendsLoading] = useState(true);
+  const [allFriends, setAllFriends] = useState([]);
+
+  class fetchAllFriendsUser {
+    constructor() {
+      this.friends = firestore()
+        .collection('friends')
+        .doc(user.uid)
+        .onSnapshot(snap => {
+          // snap.docs.map(each => console.log(each));
+          setAllFriends(snap.get('friends'));
+          setFriendsLoading(false);
+        });
+    }
+    unsubscribe() {
+      return this.friends();
+    }
+  }
+
+  useEffect(() => {
+    if (user) {
+      let friends = new fetchAllFriendsUser();
+
+      return () => {
+        friends.unsubscribe();
+      };
+    }
+  }, []);
+
   return (
     <View style={globalStyles.overallBackground}>
       <View style={styles.mainContainer}>
@@ -169,7 +210,7 @@ const Friends = ({navigation, route}) => {
         ) : (
           <></>
         )}
-        <Text style={styles.normalText}>
+        <Text style={[styles.normalText, {marginTop: 10}]}>
           Add friends to create common tasks with them
         </Text>
         <Ripple
@@ -179,6 +220,40 @@ const Friends = ({navigation, route}) => {
           rippleContainerBorderRadius={5}>
           <Text style={styles.shareLink}>Share friendship link</Text>
         </Ripple>
+        {!friendsLoading ? (
+          <View style={styles.friendsContainer}>
+            <Text style={styles.friendsText}>Your friends</Text>
+            <View style={styles.friendsList}>
+              {allFriends.map((friend, index) => (
+                <View style={styles.eachFriend} key={index}>
+                  {friend.friendPhotoUrl != null ? (
+                    <Image
+                      style={styles.friendPhoto}
+                      source={{uri: friend.friendPhotoUrl}}
+                    />
+                  ) : (
+                    <Image
+                      style={styles.friendPhoto}
+                      source={require('../resources/images/avatar.png')}
+                    />
+                  )}
+                  <View style={styles.friendNameView}>
+                    <Text style={styles.friendName}>{friend.friendName}</Text>
+                  </View>
+                  <TouchableOpacity styles={styles.friendRemove}>
+                    <MaterialIcon
+                      iconName="delete"
+                      iconSize={25}
+                      iconColor="rgb(255, 49, 49)"
+                    />
+                  </TouchableOpacity>
+                </View>
+              ))}
+            </View>
+          </View>
+        ) : (
+          <ActivityIndicator size="large" color="#00ff00" />
+        )}
       </View>
     </View>
   );
@@ -199,8 +274,52 @@ const styles = StyleSheet.create({
   shareLink: {
     color: '#eada76',
     alignSelf: 'center',
-    marginTop: 9,
     fontFamily: 'Poppins-Medium',
+    margin: 10,
     fontSize: 21,
+  },
+  friendsList: {
+    flexDirection: 'column',
+    // backgroundColor: '#ffffff',
+    padding: 10,
+    alignItems: 'flex-start',
+  },
+  eachFriend: {
+    display: 'flex',
+    flexDirection: 'row',
+    margin: 10,
+    // backgroundColor:"#ffffff",
+    width: '90%',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  friendsText: {
+    fontFamily: 'Poppins-SemiBold',
+    marginTop: 18,
+    fontSize: 22,
+    // position:"absolute",
+    color: '#c6c4c4',
+  },
+  friendPhoto: {
+    width: 35,
+    height: 35,
+    borderRadius: 50,
+  },
+  friendNameView: {
+    // width: '100%',
+    // backgroundColor:"#ffffff",
+    width: '50%',
+  },
+  friendName: {
+    fontFamily: 'Poppins-Regular',
+    fontSize: 20,
+    color: '#ffffff',
+    // backgroundColor: '#ffffff',
+    // width: '100%',
+  },
+  friendRemove: {
+    alignSelf: 'flex-end',
+    // position: 'absolute',
+    // right: 0,
   },
 });
