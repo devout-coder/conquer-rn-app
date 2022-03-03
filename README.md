@@ -4,7 +4,7 @@
 
 Conquer is a productivity app which allows users to divide their tasks and goals into five segments: daily, weekly, monthly, yearly and long term. Users can create, update, prioritize, postpone and delete tasks in all these sections. This is available both as a [web](https://conquer-goals.netlify.app/)(PWA) and [android](https://play.google.com/store/apps/details?id=com.conquer_app) app
 
-This repo handles the android app of conquer which has a  cool extra feature: Users can blacklist apps and websites and get notified on overusing the blacklisted stuff.
+This repo handles the android app of conquer which has a cool extra feature: Users can blacklist apps and websites and get notified and NUDGED BY ASHNEER GROVER on overusing the blacklisted stuff.
 [This](https://github.com/devout-coder/conquer) is the repo containing the code of the web app
 
 ---
@@ -12,6 +12,12 @@ This repo handles the android app of conquer which has a  cool extra feature: Us
 ## Tech Stack used:
 
 I have primarily used React Native and Firebase for this app. But a few features(reminders for instance) are built using java and I have used [Native Modules](https://reactnative.dev/docs/native-modules-android) to bridge React Native and Java.
+
+---
+
+## Work in Progress:
+
+Trying to make sure that users are able to add friends and share tasks with friends
 
 ---
 
