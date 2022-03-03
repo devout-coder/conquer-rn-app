@@ -12,7 +12,6 @@ import React, {useContext, useEffect, useState} from 'react';
 import globalStyles from '../globalStyles';
 import Ripple from 'react-native-material-ripple';
 import firestore from '@react-native-firebase/firestore';
-import auth from '@react-native-firebase/auth';
 import {navbarContext, userContext} from '../context';
 import FriendConfirmationModal from '../Components/FriendConfirmationModal';
 import {FirebaseFirestoreTypes} from '@react-native-firebase/firestore';
@@ -22,6 +21,7 @@ import {cipherKey} from '../sensitive-stuff';
 import {ScrollView} from 'react-native-gesture-handler';
 import IonIcon from '../customIcons/IonIcon';
 import MaterialIcon from '../customIcons/MaterialIcon';
+import EachFriend from '../Components/EachFriend';
 
 const Friends = ({navigation, route}) => {
   let {nav, setNav} = useContext(navbarContext);
@@ -225,29 +225,7 @@ const Friends = ({navigation, route}) => {
             <Text style={styles.friendsText}>Your friends</Text>
             <View style={styles.friendsList}>
               {allFriends.map((friend, index) => (
-                <View style={styles.eachFriend} key={index}>
-                  {friend.friendPhotoUrl != null ? (
-                    <Image
-                      style={styles.friendPhoto}
-                      source={{uri: friend.friendPhotoUrl}}
-                    />
-                  ) : (
-                    <Image
-                      style={styles.friendPhoto}
-                      source={require('../resources/images/avatar.png')}
-                    />
-                  )}
-                  <View style={styles.friendNameView}>
-                    <Text style={styles.friendName}>{friend.friendName}</Text>
-                  </View>
-                  <TouchableOpacity styles={styles.friendRemove}>
-                    <MaterialIcon
-                      iconName="delete"
-                      iconSize={25}
-                      iconColor="rgb(255, 49, 49)"
-                    />
-                  </TouchableOpacity>
-                </View>
+                <EachFriend key={index} friend={friend} />
               ))}
             </View>
           </View>
@@ -284,42 +262,12 @@ const styles = StyleSheet.create({
     padding: 10,
     alignItems: 'flex-start',
   },
-  eachFriend: {
-    display: 'flex',
-    flexDirection: 'row',
-    margin: 10,
-    // backgroundColor:"#ffffff",
-    width: '90%',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
+
   friendsText: {
     fontFamily: 'Poppins-SemiBold',
     marginTop: 18,
     fontSize: 22,
     // position:"absolute",
     color: '#c6c4c4',
-  },
-  friendPhoto: {
-    width: 35,
-    height: 35,
-    borderRadius: 50,
-  },
-  friendNameView: {
-    // width: '100%',
-    // backgroundColor:"#ffffff",
-    width: '50%',
-  },
-  friendName: {
-    fontFamily: 'Poppins-Regular',
-    fontSize: 20,
-    color: '#ffffff',
-    // backgroundColor: '#ffffff',
-    // width: '100%',
-  },
-  friendRemove: {
-    alignSelf: 'flex-end',
-    // position: 'absolute',
-    // right: 0,
   },
 });
