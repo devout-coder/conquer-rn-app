@@ -53,7 +53,12 @@ const FriendsSelectorModal = ({
               alignItems: 'center',
             }}>
             {userFriends.map((friend, index) => (
-              <TodoModalEachFriend key={index} friend={friend} />
+              <TodoModalEachFriend
+                key={index}
+                friend={friend}
+                selectedFriends={selectedFriends}
+                setSelectedFriends={setSelectedFriends}
+              />
             ))}
           </ScrollView>
         ) : (

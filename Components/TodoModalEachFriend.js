@@ -2,11 +2,21 @@ import {Image, StyleSheet, Text, View} from 'react-native';
 import React, {useState} from 'react';
 import Ripple from 'react-native-material-ripple';
 import CheckBox from '@react-native-community/checkbox';
+import {createHeritageClause} from 'typescript';
 
-const TodoModalEachFriend = ({friend}) => {
-  const [checked, setChecked] = useState(false);
+const TodoModalEachFriend = ({friend, selectedFriends, setSelectedFriends}) => {
+  const [checked, setChecked] = useState(
+    selectedFriends.includes(friend.friendId) ? true : false,
+  );
+
   const checkUncheckfunc = () => {
-    console.log(friend.friendName);
+    if (!checked) {
+      setSelectedFriends([...selectedFriends, friend.friendId]);
+    } else {
+      setSelectedFriends(
+        selectedFriends.filter(item => item !== friend.friendId),
+      );
+    }
     setChecked(!checked);
   };
 

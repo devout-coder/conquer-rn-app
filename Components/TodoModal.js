@@ -375,6 +375,7 @@ const TodoModal = ({
         timeType: timeType,
         priority: todoTaskPriority,
         user: user.uid,
+        selectedFriends: selectedFriends,
         finished: false,
         index: newIndex,
       };
@@ -392,6 +393,7 @@ const TodoModal = ({
             taskName: todoTaskName,
             taskDesc: todoTaskDesc,
             priority: todoTaskPriority,
+            selectedFriends: selectedFriends,
             index:
               //props.taskIndex is the inital position and newIndex gives the final position
               //!  DON'T TOUCH IT PLEASE this piece of code was absolutely mind fucking
