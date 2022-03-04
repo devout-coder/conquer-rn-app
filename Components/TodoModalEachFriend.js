@@ -1,0 +1,73 @@
+import {Image, StyleSheet, Text, View} from 'react-native';
+import React, {useState} from 'react';
+import Ripple from 'react-native-material-ripple';
+import CheckBox from '@react-native-community/checkbox';
+
+const TodoModalEachFriend = ({friend}) => {
+  const [checked, setChecked] = useState(false);
+  const checkUncheckfunc = () => {
+    console.log(friend.friendName);
+    setChecked(!checked);
+  };
+
+  return (
+    <View style={styles.eachFriendContainer}>
+      <Ripple
+        rippleDuration={300}
+        rippleContainerBorderRadius={5}
+        rippleColor="#ffffff"
+        onPress={checkUncheckfunc}
+        style={styles.bottomButton}>
+        <View style={styles.eachFriend}>
+          <CheckBox
+            value={checked}
+            tintColors={{
+              true: '#F1D7D7',
+              false: '#F1D7D7',
+            }}
+            onValueChange={checkUncheckfunc}
+          />
+          {friend.friendPhotoUrl != null ? (
+            <Image
+              style={styles.friendPhoto}
+              source={{uri: friend.friendPhotoUrl}}
+            />
+          ) : (
+            <Image
+              style={styles.friendPhoto}
+              source={require('../resources/images/avatar.png')}
+            />
+          )}
+          <Text style={styles.friendName}>{friend.friendName}</Text>
+        </View>
+      </Ripple>
+    </View>
+  );
+};
+
+export default TodoModalEachFriend;
+
+const styles = StyleSheet.create({
+  eachFriendContainer: {
+    width: '98%',
+  },
+  eachFriend: {
+    width: '100%',
+    padding: 15,
+    // backgroundColor: '#ffffff',
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  friendPhoto: {
+    width: 35,
+    height: 35,
+    borderRadius: 50,
+    marginLeft: '5%',
+  },
+  friendName: {
+    fontFamily: 'Poppins-Regular',
+    color: '#F1D7D7',
+    fontSize: 20,
+    marginLeft: '8%',
+  },
+});

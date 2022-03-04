@@ -11,7 +11,6 @@ const DeleteModal = ({
   index,
   id,
 }) => {
-
   function deleteTodoManagePri(newIndex) {
     //this function manages index of todos below a certain todo in case i delete it
     // console.log(allTodos)
@@ -46,6 +45,8 @@ const DeleteModal = ({
     <Modal
       isVisible={modalVisible}
       animationIn="fadeInUp"
+      onBackdropPress={closeModal}
+      onBackButtonPress={closeModal}
       animationOut="fadeOutDown">
       <View style={styles.modal}>
         <Text style={styles.deleteText}>
@@ -68,7 +69,7 @@ export default DeleteModal;
 
 const styles = StyleSheet.create({
   modal: {
-    flex: 0.17,
+    // flex: 0.17,
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'space-between',

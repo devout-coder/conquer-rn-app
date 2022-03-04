@@ -1,4 +1,10 @@
-import React, {useCallback, useContext, useEffect, useRef, useState} from 'react';
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import {
   ActivityIndicator,
   BackHandler,
@@ -27,8 +33,10 @@ import {Menu, MenuItem, MenuDivider} from 'react-native-material-menu';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import RNDateTimePicker from '@react-native-community/datetimepicker';
 import {NativeModules} from 'react-native';
-import { userContext } from '../context';
-const {TaskReminder} = NativeModules;
+import {userContext} from '../context';
+import IonIcon from '../customIcons/IonIcon';
+import FriendsSelectorModal from './FriendsSelectorModal';
+// const {TaskReminder} = NativeModules;
 
 const TodoModal = ({
   modalOpen,
@@ -401,75 +409,75 @@ const TodoModal = ({
     reloadTodos();
   }
 
-  const [reminderMenuVisible, setReminderMenuVisible] = useState(false);
+  // const [reminderMenuVisible, setReminderMenuVisible] = useState(false);
 
-  const [reminderDate, setReminderDate] = useState(new Date());
-  const [reminderMode, setReminderMode] = useState('date');
-  const [reminderSelectorVisible, setReminderSelectorVisible] = useState(false);
-  const [maxAllowedDate, setMaxAllowedDate] = useState(null);
-  const [minAllowedDate, setMinAllowedDate] = useState(null);
+  // const [reminderDate, setReminderDate] = useState(new Date());
+  // const [reminderMode, setReminderMode] = useState('date');
+  // const [reminderSelectorVisible, setReminderSelectorVisible] = useState(false);
+  // const [maxAllowedDate, setMaxAllowedDate] = useState(null);
+  // const [minAllowedDate, setMinAllowedDate] = useState(null);
 
-  const convertWeekDay = weekDay => {
-    // converts date in the form 20 Dec 2021 to 2021-12-20
+  // const convertWeekDay = weekDay => {
+  //   // converts date in the form 20 Dec 2021 to 2021-12-20
 
-    let [day, month, year] = weekDay.split(' ');
-    month = parseInt(reverseObject(weekMonths)[month]) + 1;
-    month = month.toString();
-    if (day.length == 1) {
-      day = '0' + day;
-    }
-    if (month.length == 1) {
-      month = '0' + month;
-    }
-    return new Date(`${year}-${month}-${day}`);
-  };
+  //   let [day, month, year] = weekDay.split(' ');
+  //   month = parseInt(reverseObject(weekMonths)[month]) + 1;
+  //   month = month.toString();
+  //   if (day.length == 1) {
+  //     day = '0' + day;
+  //   }
+  //   if (month.length == 1) {
+  //     month = '0' + month;
+  //   }
+  //   return new Date(`${year}-${month}-${day}`);
+  // };
 
-  const addReminder = () => {
-    setReminderMenuVisible(false);
+  // const addReminder = () => {
+  //   setReminderMenuVisible(false);
 
-    if (timeType == 'daily') {
-      setReminderMode('time');
-      let [day, month, year] = time.split('/');
-      if (day.length == 1) {
-        day = '0' + day;
-      }
-      if (month.length == 1) {
-        month = '0' + month;
-      }
-      let thisDay = new Date(`${year}-${month}-${day}`);
-      setReminderDate(thisDay);
-    } else if (timeType == 'week') {
-      let firstDay = convertWeekDay(time.split('-')[0]);
-      let lastDay = convertWeekDay(time.split('-')[1]);
-      setMinAllowedDate(firstDay);
-      setMaxAllowedDate(lastDay);
-    } else if (timeType == 'month') {
-      let [month, year] = time.split(' ');
-      month = fullMonths.indexOf(month);
-      let firstDay = new Date(year, month, 1);
-      let lastDay = new Date(year, month + 1, 0);
-      setMinAllowedDate(firstDay);
-      setMaxAllowedDate(lastDay);
-    } else if (timeType == 'year') {
-      let firstDay = new Date(time, 0, 1);
-      let lastDay = new Date(time, 11, 31);
-      setMinAllowedDate(firstDay);
-      setMaxAllowedDate(lastDay);
-    }
-    setReminderSelectorVisible(true);
-  };
+  //   if (timeType == 'daily') {
+  //     setReminderMode('time');
+  //     let [day, month, year] = time.split('/');
+  //     if (day.length == 1) {
+  //       day = '0' + day;
+  //     }
+  //     if (month.length == 1) {
+  //       month = '0' + month;
+  //     }
+  //     let thisDay = new Date(`${year}-${month}-${day}`);
+  //     setReminderDate(thisDay);
+  //   } else if (timeType == 'week') {
+  //     let firstDay = convertWeekDay(time.split('-')[0]);
+  //     let lastDay = convertWeekDay(time.split('-')[1]);
+  //     setMinAllowedDate(firstDay);
+  //     setMaxAllowedDate(lastDay);
+  //   } else if (timeType == 'month') {
+  //     let [month, year] = time.split(' ');
+  //     month = fullMonths.indexOf(month);
+  //     let firstDay = new Date(year, month, 1);
+  //     let lastDay = new Date(year, month + 1, 0);
+  //     setMinAllowedDate(firstDay);
+  //     setMaxAllowedDate(lastDay);
+  //   } else if (timeType == 'year') {
+  //     let firstDay = new Date(time, 0, 1);
+  //     let lastDay = new Date(time, 11, 31);
+  //     setMinAllowedDate(firstDay);
+  //     setMaxAllowedDate(lastDay);
+  //   }
+  //   setReminderSelectorVisible(true);
+  // };
 
-  const onReminderSet = (event, selectedDate) => {
-    const currentDate = selectedDate || reminderDate;
-    setReminderDate(currentDate);
-    if (timeType != 'daily' && reminderMode == 'date') {
-      setReminderMode('time');
-    } else {
-      setReminderSelectorVisible(false);
-      setReminderMode('date');
-    }
-    TaskReminder.saveReminder(todoTaskName, currentDate.toString());
-  };
+  // const onReminderSet = (event, selectedDate) => {
+  //   const currentDate = selectedDate || reminderDate;
+  //   setReminderDate(currentDate);
+  //   if (timeType != 'daily' && reminderMode == 'date') {
+  //     setReminderMode('time');
+  //   } else {
+  //     setReminderSelectorVisible(false);
+  //     setReminderMode('date');
+  //   }
+  //   TaskReminder.saveReminder(todoTaskName, currentDate.toString());
+  // };
 
   // console.log(
   //   reminderDate.getDate(),
@@ -478,6 +486,10 @@ const TodoModal = ({
   //   reminderDate.getHours(),
   //   reminderDate.getMinutes(),
   // );
+
+  const [friendsSelectorModalVisible, setFriendsSelectorModalVisible] =
+    useState(false);
+  const [selectedFriends, setSelectedFriends] = useState([]);
 
   return (
     <Modal
@@ -589,6 +601,25 @@ const TodoModal = ({
             ) : (
               <></>
             )}
+            <TouchableOpacity
+              style={styles.addFriendIcon}
+              onPress={() => {
+                setFriendsSelectorModalVisible(true);
+              }}
+              onLongPress={() => Toast('Share task with friends')}>
+              <IonIcon
+                iconName="person-add"
+                iconColor="#ffffff"
+                iconSize={26}
+              />
+              <FriendsSelectorModal
+                style={styles.friendsSelectorModal}
+                modalVisible={friendsSelectorModalVisible}
+                closeModal={() => setFriendsSelectorModalVisible(false)}
+                selectedFriends={selectedFriends}
+                setSelectedFriends={setSelectedFriends}
+              />
+            </TouchableOpacity>
             {id != undefined ? (
               <TouchableOpacity
                 style={styles.deleteIcon}
@@ -599,18 +630,18 @@ const TodoModal = ({
                   iconSize={32}
                   iconColor="#ffffff"
                 />
+                <DeleteModal
+                  modalVisible={deleteModalVisible}
+                  closeModal={toggleModal}
+                  reloadTodos={reloadTodos}
+                  allTodos={allTodos != undefined ? allTodos : loadedTodos}
+                  index={index}
+                  id={id}
+                />
               </TouchableOpacity>
             ) : (
               <></>
             )}
-            <DeleteModal
-              modalVisible={deleteModalVisible}
-              closeModal={toggleModal}
-              reloadTodos={reloadTodos}
-              allTodos={allTodos != undefined ? allTodos : loadedTodos}
-              index={index}
-              id={id}
-            />
             <TouchableOpacity
               style={styles.saveIcon}
               onPress={saveTodo}

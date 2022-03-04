@@ -15,6 +15,7 @@ const FriendConfirmationModal = ({
       isVisible={modalVisible}
       animationIn="fadeInUp"
       animationOut="fadeOutDown"
+      onBackdropPress={closeModal}
       onBackButtonPress={closeModal}>
       <View style={styles.modal}>
         <Text style={styles.confirmText}>
