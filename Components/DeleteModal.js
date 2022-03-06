@@ -1,7 +1,8 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import {Button, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import Modal from 'react-native-modal';
 import firestore from '@react-native-firebase/firestore';
+import {userContext} from '../context';
 
 const DeleteModal = ({
   modalVisible,
@@ -11,16 +12,20 @@ const DeleteModal = ({
   index,
   id,
 }) => {
+  let user = useContext(userContext);
+
   function deleteTodoManagePri(newIndex) {
     //this function manages index of todos below a certain todo in case i delete it
     // console.log(allTodos)
     allTodos.forEach((each, ind) => {
       if (ind >= newIndex) {
+        let indexDict = each.index;
+        indexDict[user.uid] = ind - 1;
         firestore()
           .collection('todos')
           .doc(each.id)
           .update({
-            index: ind - 1,
+            index: indexDict,
           })
           .catch(error => console.log(error));
       }
@@ -30,7 +35,7 @@ const DeleteModal = ({
   function deleteTodo() {
     //this func deletes that particular todo
     closeModal();
-    deleteTodoManagePri(index);
+    deleteTodoManagePri(index[user.uid]);
     firestore()
       .collection('todos')
       .doc(id)

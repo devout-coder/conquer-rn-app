@@ -28,6 +28,7 @@ import DraggableFlatList, {
 } from 'react-native-draggable-flatlist';
 import Toast from '../Components/Toast';
 import MaterialIcon from '../customIcons/MaterialIcon';
+import {isNamedExportBindings} from 'typescript';
 
 const Todos = ({navigation, route, year, longTerm}) => {
   let user = useContext(userContext);
@@ -93,6 +94,7 @@ const Todos = ({navigation, route, year, longTerm}) => {
   }
 
   function loadData() {
+    setLoading(true);
     firestore()
       .collection('todos')
       .where('users', 'array-contains', user.uid)
@@ -100,7 +102,6 @@ const Todos = ({navigation, route, year, longTerm}) => {
       .orderBy('priority', 'desc')
       .get()
       .then(snap => {
-        setLoading(true);
         let finished = [];
         let unfinished = [];
         snap.docs.map(each => {
@@ -125,17 +126,17 @@ const Todos = ({navigation, route, year, longTerm}) => {
         let all = [...finished, ...unfinished];
         setFinishedTodos(
           finished.sort((a, b) => {
-            return a.index - b.index;
+            return a.index[user.uid] - b.index[ndexuser.uid];
           }),
         );
         setUnfinishedTodos(
           unfinished.sort((a, b) => {
-            return a.index - b.index;
+            return a.index[user.uid] - b.index[user.uid];
           }),
         );
         setAllTodos(
           all.sort((a, b) => {
-            return a.index - b.index;
+            return a.index[user.uid] - b.index[user.uid];
           }),
         );
         setLoading(false);
@@ -161,9 +162,9 @@ const Todos = ({navigation, route, year, longTerm}) => {
     if (from != to) {
       allTodos.forEach(each => {
         if (each.id == unfinishedTodos[to].id) {
-          finalPos = each.index;
+          finalPos = each.index[user.uid];
         } else if (each.id == unfinishedTodos[from].id) {
-          initialPos = each.index;
+          initialPos = each.index[user.uid];
         }
       });
 
@@ -173,42 +174,48 @@ const Todos = ({navigation, route, year, longTerm}) => {
         setUnfinishedTodos(data);
         if (initialPos < finalPos) {
           allTodos.forEach((each, index) => {
+            let indexDict = each.index;
             if (index == initialPos) {
+              indexDict[user.uid] = finalPos;
               firestore()
                 .collection('todos')
                 .doc(each.id)
                 .update({
-                  index: finalPos,
+                  index: indexDict,
                 })
                 .catch(error => console.error(error));
             }
             if (index > initialPos && index <= finalPos) {
+              indexDict[user.uid] = indexDict[user.uid] - 1;
               firestore()
                 .collection('todos')
                 .doc(each.id)
                 .update({
-                  index: index - 1,
+                  index: indexDict,
                 })
                 .catch(error => console.error(error));
             }
           });
         } else if (initialPos > finalPos) {
           allTodos.forEach((each, index) => {
+            let indexDict = each.index;
             if (index == initialPos) {
+              indexDict[user.uid] = finalPos;
               firestore()
                 .collection('todos')
                 .doc(each.id)
                 .update({
-                  index: finalPos,
+                  index: indexDict,
                 })
                 .catch(error => console.error(error));
             }
             if (index < initialPos && index >= finalPos) {
+              indexDict[user.uid] = indexDict[user.uid] + 1;
               firestore()
                 .collection('todos')
                 .doc(each.id)
                 .update({
-                  index: index + 1,
+                  index: indexDict,
                 })
                 .catch(error => console.error(error));
             }
@@ -218,16 +225,13 @@ const Todos = ({navigation, route, year, longTerm}) => {
       }
     }
   }
-  allTodos.forEach(each => {
-    console.log(each.taskName, each.index);
-  });
 
   const unfinishedTodo = ({item, drag, isActive}) => {
     return (
       <ScaleDecorator>
         <EachTodo
           id={item.id}
-          key={item.index}
+          key={item.index[user.uid]}
           index={item.index}
           priority={item.priority}
           taskName={item.taskName}
@@ -245,7 +249,10 @@ const Todos = ({navigation, route, year, longTerm}) => {
       </ScaleDecorator>
     );
   };
-
+  // console.log(allTodos);
+  allTodos.forEach(todo => {
+    console.log(todo.taskName, todo.index[user.uid]);
+  });
   return (
     <View style={globalStyles.overallBackground}>
       <Navbar page={navbarName()} />
@@ -300,7 +307,7 @@ const Todos = ({navigation, route, year, longTerm}) => {
                   onDragEnd={({data, to, from}) =>
                     rearrangeTodos(data, from, to)
                   }
-                  keyExtractor={item => item.index}
+                  keyExtractor={item => item.index[user.uid]}
                   renderItem={unfinishedTodo}
                 />
               </View>

@@ -102,13 +102,13 @@ const IncompleteTodosSidebar = ({timeType, navigation, year, changeYear}) => {
       let temparr = [a.time, b.time];
       if (timeType == 'year') {
         if (temparr[0] == temparr[1]) {
-          return a.index - b.index;
+          return a.index[user.uid] - b.index[user.uid];
         } else {
           return temparr[1] - temparr[0];
         }
       } else if (timeType == 'month') {
         if (temparr[0] == temparr[1]) {
-          return a.index - b.index;
+          return a.index[user.uid] - b.index[user.uid];
         } else {
           let newTemp = Array.from(
             temparr.map(each => {
@@ -129,7 +129,7 @@ const IncompleteTodosSidebar = ({timeType, navigation, year, changeYear}) => {
         }
       } else if (timeType == 'week') {
         if (temparr[0] == temparr[1]) {
-          return a.index - b.index;
+          return a.index[user.uid] - b.index[user.uid];
         } else {
           let newTemp = Array.from(
             temparr.map(each => {
@@ -154,7 +154,7 @@ const IncompleteTodosSidebar = ({timeType, navigation, year, changeYear}) => {
         }
       } else if (timeType == 'daily') {
         if (temparr[0] == temparr[1]) {
-          return a.index - b.index;
+          return a.index[user.uid] - b.index[user.uid];
         } else {
           let newTemp = Array.from(
             temparr.map(each => {
