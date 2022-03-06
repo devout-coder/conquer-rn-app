@@ -95,7 +95,7 @@ const Todos = ({navigation, route, year, longTerm}) => {
   function loadData() {
     firestore()
       .collection('todos')
-      .where('user', '==', user.uid)
+      .where('users', 'array-contains', user.uid)
       .where('time', '==', time)
       .orderBy('priority', 'desc')
       .get()
@@ -218,9 +218,9 @@ const Todos = ({navigation, route, year, longTerm}) => {
       }
     }
   }
-  // allTodos.forEach(each => {
-  //   console.log(each.taskName, each.index);
-  // });
+  allTodos.forEach(each => {
+    console.log(each.taskName, each.index);
+  });
 
   const unfinishedTodo = ({item, drag, isActive}) => {
     return (

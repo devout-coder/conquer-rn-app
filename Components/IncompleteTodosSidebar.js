@@ -184,7 +184,7 @@ const IncompleteTodosSidebar = ({timeType, navigation, year, changeYear}) => {
     constructor() {
       this.todos = firestore()
         .collection('todos')
-        .where('user', '==', user.uid)
+        .where('users', 'array-contains', user.uid)
         .where('timeType', '==', timeType)
         .orderBy('priority', 'desc')
         // .orderBy("index", "asc")
@@ -223,9 +223,6 @@ const IncompleteTodosSidebar = ({timeType, navigation, year, changeYear}) => {
   useEffect(() => {
     if (user) {
       const loadTodos = new loadReqTodos();
-      // return function cleanup() {
-      //   loadTodos.unsubscribe();
-      // };
       return () => {
         loadTodos.unsubscribe();
       };

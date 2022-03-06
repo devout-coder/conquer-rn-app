@@ -85,7 +85,7 @@ const TodoModal = ({
   function loadUnfinishedTodos() {
     firestore()
       .collection('todos')
-      .where('user', '==', user.uid)
+      .where('users', 'array-contains', user.uid)
       .where('time', '==', time)
       .orderBy('index', 'asc')
       .get()
@@ -118,7 +118,7 @@ const TodoModal = ({
     if (timeType != 'longTerm') {
       firestore()
         .collection('todos')
-        .where('user', '==', user.uid)
+        .where('users', 'array-contains', user.uid)
         .where('time', '==', nextTime())
         .orderBy('priority', 'desc')
         .get()
@@ -374,8 +374,7 @@ const TodoModal = ({
         time: time,
         timeType: timeType,
         priority: todoTaskPriority,
-        user: user.uid,
-        selectedFriends: selectedFriends,
+        user: [user.uid],
         finished: false,
         index: newIndex,
       };
@@ -393,7 +392,7 @@ const TodoModal = ({
             taskName: todoTaskName,
             taskDesc: todoTaskDesc,
             priority: todoTaskPriority,
-            selectedFriends: selectedFriends,
+            // selectedFriends: selectedFriends,
             index:
               //props.taskIndex is the inital position and newIndex gives the final position
               //!  DON'T TOUCH IT PLEASE this piece of code was absolutely mind fucking
