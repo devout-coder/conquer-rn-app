@@ -1,9 +1,11 @@
 import {Image, StyleSheet, Text, View} from 'react-native';
-import React, {useState} from 'react';
+import React, {useContext, useState} from 'react';
 import Ripple from 'react-native-material-ripple';
 import CheckBox from '@react-native-community/checkbox';
+import {userContext} from '../context';
 
 const TodoModalEachFriend = ({friend, todoTaskUsers, setTodoTaskUsers}) => {
+  let user = useContext(userContext);
   const [checked, setChecked] = useState(
     todoTaskUsers.includes(friend.friendId) ? true : false,
   );
@@ -17,7 +19,7 @@ const TodoModalEachFriend = ({friend, todoTaskUsers, setTodoTaskUsers}) => {
     setChecked(!checked);
   };
 
-  return (
+  return friend.friendId != todoTaskUsers[0] ? (
     <View style={styles.eachFriendContainer}>
       <Ripple
         rippleDuration={300}
@@ -49,6 +51,25 @@ const TodoModalEachFriend = ({friend, todoTaskUsers, setTodoTaskUsers}) => {
         </View>
       </Ripple>
     </View>
+  ) : (
+    <View style={styles.eachFriendContainer}>
+      <View style={styles.eachFriend}>
+        <View style={{marginRight: '11%'}}></View>
+        {friend.friendPhotoUrl != null ? (
+          <Image
+            style={styles.friendPhoto}
+            source={{uri: friend.friendPhotoUrl}}
+          />
+        ) : (
+          <Image
+            style={styles.friendPhoto}
+            source={require('../resources/images/avatar.png')}
+          />
+        )}
+        <Text style={styles.friendName}>{friend.friendName}</Text>
+        <Text style={styles.ownerText}>Owner</Text>
+      </View>
+    </View>
   );
 };
 
@@ -76,5 +97,11 @@ const styles = StyleSheet.create({
     color: '#F1D7D7',
     fontSize: 20,
     marginLeft: '8%',
+  },
+  ownerText: {
+    fontSize: 16,
+    fontFamily: 'Poppins-Medium',
+    color: '#ffffff',
+    marginLeft: 'auto',
   },
 });

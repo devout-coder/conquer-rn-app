@@ -637,11 +637,15 @@ const TodoModal = ({
               onPress={() => {
                 setFriendsSelectorModalVisible(true);
               }}
-              onLongPress={() => Toast('Share task with friends')}>
+              onLongPress={() =>
+                user.uid == todoTaskUsers[0]
+                  ? Toast('Share task with friends')
+                  : Toast('View users for this task')
+              }>
               <IonIcon
-                iconName="person-add"
+                iconName="people"
                 iconColor="#ffffff"
-                iconSize={26}
+                iconSize={30}
               />
               <FriendsSelectorModal
                 style={styles.friendsSelectorModal}

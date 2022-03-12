@@ -111,7 +111,7 @@ const Todos = ({navigation, route, year, longTerm}) => {
             taskDesc: each.get('taskDesc'),
             priority: each.get('priority'),
             finished: each.get('finished'),
-            users: each.get("users"),
+            users: each.get('users'),
             time: each.get('time'),
             index: each.get('index'),
             timeType: each.get('timeType'),
@@ -283,18 +283,22 @@ const Todos = ({navigation, route, year, longTerm}) => {
             />
           </TouchableOpacity>
         </View>
-        <TodoModal
-          taskName=""
-          taskDesc=""
-          priority="0"
-          time={time}
-          timeType={timeType}
-          users={[user.uid]}
-          modalOpen={modalOpen}
-          setModalOpen={setModalOpen}
-          reloadTodos={loadData}
-          allTodos={allTodos}
-        />
+        {user != null ? (
+          <TodoModal
+            taskName=""
+            taskDesc=""
+            priority="0"
+            time={time}
+            timeType={timeType}
+            users={[user.uid]}
+            modalOpen={modalOpen}
+            setModalOpen={setModalOpen}
+            reloadTodos={loadData}
+            allTodos={allTodos}
+          />
+        ) : (
+          <></>
+        )}
         {loading ? (
           <ActivityIndicator size="large" color="#00ff00" />
         ) : unfinishedTodos.length != 0 || finishedTodos.length != 0 ? (
@@ -304,15 +308,19 @@ const Todos = ({navigation, route, year, longTerm}) => {
                 <Text style={styles.numTodos}>
                   {unfinishedTodos.length} unfinished
                 </Text>
-                <DraggableFlatList
-                  data={unfinishedTodos}
-                  style={styles.unfinishedTodosList}
-                  onDragEnd={({data, to, from}) =>
-                    rearrangeTodos(data, from, to)
-                  }
-                  keyExtractor={item => item.index[user.uid]}
-                  renderItem={unfinishedTodo}
-                />
+                {user != null ? (
+                  <DraggableFlatList
+                    data={unfinishedTodos}
+                    style={styles.unfinishedTodosList}
+                    onDragEnd={({data, to, from}) =>
+                      rearrangeTodos(data, from, to)
+                    }
+                    keyExtractor={item => item.index[user.uid]}
+                    renderItem={unfinishedTodo}
+                  />
+                ) : (
+                  <></>
+                )}
               </View>
             ) : (
               <View></View>

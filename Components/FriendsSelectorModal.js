@@ -26,7 +26,18 @@ const FriendsSelectorModal = ({
     let friends = (
       await firestore().collection('friends').doc(user.uid).get()
     ).get('friends');
-    setUserFriends(friends);
+    let mainUser = todoTaskUsers[0];
+    if (user.uid == mainUser) {
+      setUserFriends(friends);
+    } else {
+      let assigner;
+      friends.forEach(friend => {
+        if (friend.friendId == mainUser) {
+          assigner = friend;
+        }
+      });
+      setUserFriends([assigner]);
+    }
     setFriendsLoading(false);
   };
 
@@ -60,6 +71,28 @@ const FriendsSelectorModal = ({
                 setTodoTaskUsers={setTodoTaskUsers}
               />
             ))}
+            {todoTaskUsers[0] != user.uid ? (
+              <>
+                <TodoModalEachFriend
+                  friend={{
+                    friendId: user.uid,
+                    friendPhotoUrl: user.photoURL,
+                    friendName: 'Me',
+                  }}
+                  todoTaskUsers={todoTaskUsers}
+                  setTodoTaskUsers={setTodoTaskUsers}
+                />
+                {todoTaskUsers.length - 2 > 0 ? (
+                  <Text style={styles.moreFriends}>
+                    and {todoTaskUsers.length - 2} more...
+                  </Text>
+                ) : (
+                  <></>
+                )}
+              </>
+            ) : (
+              <></>
+            )}
           </ScrollView>
         ) : (
           <ActivityIndicator size="large" color="#00ff00" />
@@ -102,5 +135,11 @@ const styles = StyleSheet.create({
     width: '100%',
     // backgroundColor: '#ffffff',
     flex: 1,
+  },
+  moreFriends: {
+    color: 'rgba(255,255,255,0.5)',
+    marginLeft: 'auto',
+    marginRight: 15,
+    fontFamily: 'Poppins-Medium',
   },
 });
