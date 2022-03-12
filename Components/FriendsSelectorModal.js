@@ -15,8 +15,8 @@ import TodoModalEachFriend from './TodoModalEachFriend';
 const FriendsSelectorModal = ({
   modalVisible,
   closeModal,
-  selectedFriends,
-  setSelectedFriends,
+  todoTaskUsers,
+  setTodoTaskUsers,
 }) => {
   let user = useContext(userContext);
   let [userFriends, setUserFriends] = useState([]);
@@ -56,8 +56,8 @@ const FriendsSelectorModal = ({
               <TodoModalEachFriend
                 key={index}
                 friend={friend}
-                selectedFriends={selectedFriends}
-                setSelectedFriends={setSelectedFriends}
+                todoTaskUsers={todoTaskUsers}
+                setTodoTaskUsers={setTodoTaskUsers}
               />
             ))}
           </ScrollView>

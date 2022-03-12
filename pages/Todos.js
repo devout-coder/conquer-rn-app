@@ -111,6 +111,7 @@ const Todos = ({navigation, route, year, longTerm}) => {
             taskDesc: each.get('taskDesc'),
             priority: each.get('priority'),
             finished: each.get('finished'),
+            users: each.get("users"),
             time: each.get('time'),
             index: each.get('index'),
             timeType: each.get('timeType'),
@@ -239,6 +240,7 @@ const Todos = ({navigation, route, year, longTerm}) => {
           finished={item.finished}
           time={item.time}
           timeType={item.timeType}
+          users={item.users}
           timesPostponed={item.timesPostponed}
           reloadTodos={loadData}
           allTodos={allTodos}
@@ -250,9 +252,9 @@ const Todos = ({navigation, route, year, longTerm}) => {
     );
   };
   // console.log(allTodos);
-  allTodos.forEach(todo => {
-    console.log(todo.taskName, todo.index[user.uid]);
-  });
+  // allTodos.forEach(todo => {
+  //   console.log(todo.taskName, todo.index[user.uid]);
+  // });
   return (
     <View style={globalStyles.overallBackground}>
       <Navbar page={navbarName()} />
@@ -287,6 +289,7 @@ const Todos = ({navigation, route, year, longTerm}) => {
           priority="0"
           time={time}
           timeType={timeType}
+          users={[user.uid]}
           modalOpen={modalOpen}
           setModalOpen={setModalOpen}
           reloadTodos={loadData}
@@ -331,6 +334,7 @@ const Todos = ({navigation, route, year, longTerm}) => {
                       finished={each.finished}
                       time={each.time}
                       timeType={each.timeType}
+                      users={each.users}
                       timesPostponed={each.timesPostponed}
                       reloadTodos={loadData}
                       allTodos={allTodos}

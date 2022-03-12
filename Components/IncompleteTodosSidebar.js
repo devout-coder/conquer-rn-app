@@ -199,6 +199,7 @@ const IncompleteTodosSidebar = ({timeType, navigation, year, changeYear}) => {
               priority: each.get('priority'),
               finished: each.get('finished'),
               time: each.get('time'),
+              users: each.get('users'),
               index: each.get('index'),
               timeType: each.get('timeType'),
               timesPostponed: each.get('timesPostponed'),
@@ -278,6 +279,7 @@ const IncompleteTodosSidebar = ({timeType, navigation, year, changeYear}) => {
                 finished={each.finished}
                 time={each.time}
                 timeType={each.timeType}
+                users={each.users}
                 timesPostponed={each.timesPostponed}
                 reloadTodos={loadReqTodos}
                 sidebarTodo={true}

@@ -49,6 +49,7 @@ const TodoModal = ({
   time,
   index,
   timeType,
+  users,
   timesPostponed,
   reloadTodos,
   allTodos,
@@ -57,6 +58,7 @@ const TodoModal = ({
   const [todoTaskName, setTodoTaskName] = useState(taskName);
   const [todoTaskDesc, setTodoTaskDesc] = useState(taskDesc);
   const [todoTaskPriority, setTodoTaskPriority] = useState(priority);
+  const [todoTaskUsers, setTodoTaskUsers] = useState(users);
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
   const toggleModal = () => {
     setDeleteModalVisible(!deleteModalVisible);
@@ -98,6 +100,7 @@ const TodoModal = ({
             priority: each.get('priority'),
             finished: each.get('finished'),
             time: each.get('time'),
+            users: each.get('users'),
             index: each.get('index'),
             timeType: each.get('timeType'),
             timesPostponed: each.get('timesPostponed'),
@@ -137,6 +140,7 @@ const TodoModal = ({
               time: each.get('time'),
               index: each.get('index'),
               timeType: each.get('timeType'),
+              users: each.get('users'),
               timesPostponed: each.get('timesPostponed'),
             };
             futureTodos.push(eachdict);
@@ -358,6 +362,7 @@ const TodoModal = ({
     setTimeout(() => {
       setTodoTaskName('');
       setTodoTaskDesc('');
+      setTodoTaskUsers([user.uid]);
       setTodoTaskPriority('0');
     }, 1000);
   }
@@ -399,7 +404,7 @@ const TodoModal = ({
         time: time,
         timeType: timeType,
         priority: todoTaskPriority,
-        users: [user.uid],
+        users: todoTaskUsers,
         finished: false,
         index: indexDict,
       };
@@ -418,12 +423,13 @@ const TodoModal = ({
           : indexDict[user.uid];
       //props.taskIndex is the inital position and newIndex gives the final position
       //!  DON'T TOUCH IT PLEASE this piece of code was absolutely mind fucking
+
       firestore().collection('todos').doc(id).set(
         {
           taskName: todoTaskName,
           taskDesc: todoTaskDesc,
           priority: todoTaskPriority,
-          // selectedFriends: selectedFriends,
+          users: todoTaskUsers,
           index: indexDict,
         },
         {merge: true},
@@ -514,7 +520,7 @@ const TodoModal = ({
 
   const [friendsSelectorModalVisible, setFriendsSelectorModalVisible] =
     useState(false);
-  const [selectedFriends, setSelectedFriends] = useState([]);
+  // console.log(todoTaskUsers);
 
   return (
     <Modal
@@ -641,8 +647,8 @@ const TodoModal = ({
                 style={styles.friendsSelectorModal}
                 modalVisible={friendsSelectorModalVisible}
                 closeModal={() => setFriendsSelectorModalVisible(false)}
-                selectedFriends={selectedFriends}
-                setSelectedFriends={setSelectedFriends}
+                todoTaskUsers={todoTaskUsers}
+                setTodoTaskUsers={setTodoTaskUsers}
               />
             </TouchableOpacity>
             {id != undefined ? (
