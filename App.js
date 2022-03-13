@@ -20,7 +20,6 @@ import {MenuContext} from 'react-native-menu';
 import Nudger from './pages/Nudger';
 import NudgerToggleSwitch from './Components/NudgerToggleSwitch';
 import Friends from './pages/Friends';
-import {Linking} from 'react-native';
 
 const Stack = createNativeStackNavigator();
 

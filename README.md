@@ -11,7 +11,7 @@ This repo handles the android app of conquer which has a cool extra feature: Use
 
 ## Tech Stack used:
 
-I have primarily used React Native and Firebase for this app. But a few features(reminders for instance) are built using java and I have used [Native Modules](https://reactnative.dev/docs/native-modules-android) to bridge React Native and Java.
+I have primarily used React Native and Firebase for this app. But a few features(for instance the part of the code which nudges users on overusing blacklisted stuff) are built using java and I have used [Native Modules](https://reactnative.dev/docs/native-modules-android) to bridge React Native and Java.
 
 ---
 

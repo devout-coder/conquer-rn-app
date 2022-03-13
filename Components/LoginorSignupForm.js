@@ -15,6 +15,7 @@ import Navbar from '../Components/Navbar';
 import globalStyles from '../globalStyles';
 import auth from '@react-native-firebase/auth';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
+import firestore from '@react-native-firebase/firestore';
 import {navbarContext} from '../context';
 import EntypoIcon from '../customIcons/EntypoIcon';
 
@@ -70,6 +71,11 @@ const LoginorSignupForm = ({loginorSignup}) => {
     try {
       await auth().createUserWithEmailAndPassword(email, password);
       await auth().currentUser.updateProfile({displayName: username});
+      firestore().collection('users').doc(auth().currentUser.uid).set({
+        email: email,
+        photoURL: null,
+        userName: username,
+      });
       setLoading(false);
       setUsername('');
       setEmail('');
@@ -103,6 +109,12 @@ const LoginorSignupForm = ({loginorSignup}) => {
     const googleCredential = auth.GoogleAuthProvider.credential(idToken);
     try {
       await auth().signInWithCredential(googleCredential);
+      let currentUser = auth().currentUser;
+      firestore().collection('users').doc(currentUser.uid).set({
+        email: currentUser.email,
+        photoURL: currentUser.photoURL,
+        userName: currentUser.displayName,
+      });
       setLoading(false);
       setUsername('');
       setEmail('');
