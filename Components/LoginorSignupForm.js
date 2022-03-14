@@ -40,7 +40,11 @@ const LoginorSignupForm = ({loginorSignup}) => {
     const backHandler = BackHandler.addEventListener(
       'hardwareBackPress',
       () => {
-        console.log('back pressed on login/signup');
+        // console.log('back pressed on login/signup');
+        setLoading(false);
+        setUsername('');
+        setEmail('');
+        setPassword('');
         nav.push('Landing');
         return true;
       },
@@ -105,9 +109,9 @@ const LoginorSignupForm = ({loginorSignup}) => {
 
   const signUpgoogle = async () => {
     setLoading(true);
-    const {idToken} = await GoogleSignin.signIn();
-    const googleCredential = auth.GoogleAuthProvider.credential(idToken);
     try {
+      const {idToken} = await GoogleSignin.signIn();
+      const googleCredential = auth.GoogleAuthProvider.credential(idToken);
       await auth().signInWithCredential(googleCredential);
       let currentUser = auth().currentUser;
       firestore().collection('users').doc(currentUser.uid).set({

@@ -26,9 +26,8 @@ import EachFriend from '../Components/EachFriend';
 const Friends = ({navigation, route}) => {
   let {nav, setNav} = useContext(navbarContext);
   let user = useContext(userContext);
-  const [friendName, setFriendName] = useState(null);
   const [friendId, setFriendId] = useState(null);
-  const [friendPhotoUrl, setFriendPhotoUrl] = useState(null);
+  const [friendName, setFriendName] = useState(null);
   const [friendsConfirmModalVisible, setFriendsConfirmModalVisible] =
     useState(false);
 
@@ -59,25 +58,20 @@ const Friends = ({navigation, route}) => {
 
   useEffect(() => {
     setNav(navigation);
+    setFriendInfo();
+  }, [route.params]);
+
+  const setFriendInfo = async () => {
     if (route.params != undefined) {
       let friendInfo = route.params['friendInfo'];
       let [cipher, iv] = friendInfo.split('~');
-      decryptData({cipher, iv}, cipherKey)
-        .then(decryptedText => {
-          let [friendId, friendName, friendPhotoUrl] =
-            decryptedText.split('~~$');
-          friendName = friendName.replace('~~~', ' ');
-          friendPhotoUrl = decodeURIComponent(friendPhotoUrl);
-          setFriendId(friendId);
-          setFriendName(friendName);
-          setFriendPhotoUrl(friendPhotoUrl);
-        })
-        .catch(error => {
-          // console.log(error);
-        });
+      let decryptedText = await decryptData({cipher, iv}, cipherKey);
+      setFriendId(decryptedText);
+      let doc = await firestore().collection('users').doc(decryptedText).get();
+      setFriendName(doc.get('userName'));
       setFriendsConfirmModalVisible(true);
     }
-  }, [route.params]);
+  };
 
   const onShare = async () => {
     let urlData;
@@ -87,13 +81,7 @@ const Friends = ({navigation, route}) => {
       // ).then(({cipher, iv}) => {
       //   urlData = cipher + '~' + iv;
       // });
-      const {cipher, iv} = await encryptData(
-        `${user.uid}~~$${user.displayName.replace(
-          ' ',
-          '~~~',
-        )}~~$${encodeURIComponent(user.photoURL)}`,
-        cipherKey,
-      );
+      const {cipher, iv} = await encryptData(`${user.uid}`, cipherKey);
       urlData = cipher + '~' + iv;
       const result = await Share.share({
         message: `Tap this link to accept ${user.displayName}'s Conquer friend request\nhttps://conquer-goals.netlify.app/add-friend/${urlData}`,
@@ -103,39 +91,24 @@ const Friends = ({navigation, route}) => {
     }
   };
 
-  const arrayContainsObject = (arr, obj) => {
-    // return (obj1.friendId = obj2.friendId);
-    let doesContain = false;
-    arr.forEach(val => {
-      if (val.friendId == obj.friendId) {
-        doesContain = true;
-      }
-    });
-    return doesContain;
-  };
-
-  const computeFriends = (oldFriends, friendId, friendName, friendPhotoUrl) => {
+  const computeFriends = (oldFriends, friendId) => {
     let newFriends;
-    let infoToStore = {
-      friendId: friendId,
-      friendName: friendName,
-      friendPhotoUrl: friendPhotoUrl,
-    };
+
     if (oldFriends != undefined) {
       //doc in friends collection is present for this user
-      if (arrayContainsObject(oldFriends, infoToStore)) {
+      if (oldFriends.includes(friendId)) {
         //the guy whose request you are trying to process is already your friend
         newFriends = oldFriends;
       } else {
-        newFriends = [...oldFriends, infoToStore];
+        newFriends = [...oldFriends, friendId];
       }
     } else {
       //no doc in friends collection for this user
-      newFriends = [infoToStore];
+      newFriends = [friendId];
     }
     return newFriends;
   };
-
+  // console.log('heu')
   const addFriend = async () => {
     let oldFriendsOfUser = (
       await firestore().collection('friends').doc(user.uid).get()
@@ -144,17 +117,10 @@ const Friends = ({navigation, route}) => {
       await firestore().collection('friends').doc(friendId).get()
     ).get('friends');
 
-    let newFriendsOfUser = computeFriends(
-      oldFriendsOfUser,
-      friendId,
-      friendName,
-      friendPhotoUrl,
-    );
+    let newFriendsOfUser = computeFriends(oldFriendsOfUser, friendId);
     let newFriendsOfAllegedFriend = computeFriends(
       oldFriendsOfAllegedFriend,
       user.uid,
-      user.displayName,
-      user.photoURL,
     );
 
     firestore()
@@ -165,6 +131,7 @@ const Friends = ({navigation, route}) => {
       .collection('friends')
       .doc(friendId)
       .set({friends: newFriendsOfAllegedFriend});
+
     setFriendsConfirmModalVisible(false);
   };
 
@@ -178,7 +145,9 @@ const Friends = ({navigation, route}) => {
         .doc(user.uid)
         .onSnapshot(snap => {
           // snap.docs.map(each => console.log(each));
-          setAllFriends(snap.get('friends'));
+          setAllFriends(
+            snap.get('friends') != undefined ? snap.get('friends') : [],
+          );
           setFriendsLoading(false);
         });
     }
@@ -248,12 +217,13 @@ const styles = StyleSheet.create({
   mainContainer: {
     // backgroundColor: '#ffffff',
     width: '92%',
+    marginTop: 20,
   },
   shareLink: {
     color: '#eada76',
     alignSelf: 'center',
     fontFamily: 'Poppins-Medium',
-    margin: 10,
+    margin: 15,
     fontSize: 21,
   },
   friendsList: {

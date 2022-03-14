@@ -22,6 +22,7 @@ const {InstalledApplicationsFetcher} = NativeModules;
 import {MMKV} from 'react-native-mmkv';
 import {Menu, MenuItem} from 'react-native-material-menu';
 import IonIcon from '../customIcons/IonIcon';
+import {GoogleSignin} from '@react-native-google-signin/google-signin';
 
 const Navbar = ({page}) => {
   let user = useContext(userContext);
@@ -39,6 +40,15 @@ const Navbar = ({page}) => {
     });
     // console.log('logging out');
     setJustLoggedOut(true);
+    GoogleSignin.revokeAccess()
+      .then(() => {
+        logoutAuth();
+      })
+      .catch(error => {
+        logoutAuth();
+      });
+  };
+  const logoutAuth = () => {
     auth()
       .signOut()
       .then(() => {
@@ -46,7 +56,6 @@ const Navbar = ({page}) => {
       })
       .catch(error => console.log(error));
   };
-
   const navigateToNudger = () => {
     hideMenu();
     nav.navigate('Nudger');
