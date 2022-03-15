@@ -18,10 +18,10 @@ const DeleteFriendModal = ({modalVisible, closeModal, friend}) => {
       await firestore().collection('friends').doc(friend.friendId).get()
     ).get('friends');
     let updatedFriendsOfUser = oldFriendsOfUser.filter(eachFriend => {
-      return eachFriend.friendId != friend.friendId;
+      return eachFriend != friend.friendId;
     });
     let updatedFriendsOfFriend = oldFriendsOfFriend.filter(eachFriend => {
-      return eachFriend.friendId != user.uid;
+      return eachFriend != user.uid;
     });
     firestore()
       .collection('friends')

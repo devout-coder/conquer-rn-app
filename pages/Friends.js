@@ -65,9 +65,9 @@ const Friends = ({navigation, route}) => {
     if (route.params != undefined) {
       let friendInfo = route.params['friendInfo'];
       let [cipher, iv] = friendInfo.split('~');
-      let decryptedText = await decryptData({cipher, iv}, cipherKey);
-      setFriendId(decryptedText);
-      let doc = await firestore().collection('users').doc(decryptedText).get();
+      let friendId = await decryptData({cipher, iv}, cipherKey);
+      setFriendId(friendId);
+      let doc = await firestore().collection('users').doc(friendId).get();
       setFriendName(doc.get('userName'));
       setFriendsConfirmModalVisible(true);
     }
@@ -144,12 +144,32 @@ const Friends = ({navigation, route}) => {
         .collection('friends')
         .doc(user.uid)
         .onSnapshot(snap => {
-          // snap.docs.map(each => console.log(each));
-          setAllFriends(
-            snap.get('friends') != undefined ? snap.get('friends') : [],
-          );
-          setFriendsLoading(false);
+          if (snap.get('friends') != undefined) {
+            this.fetchFriendsDetails(snap.get('friends'));
+          } else {
+            setFriendsLoading(false);
+          }
         });
+    }
+    fetchFriendsDetails(friends) {
+      let friendsDetails = [];
+      friends.forEach(friendId => {
+        let obj = {};
+        firestore()
+          .collection('users')
+          .doc(friendId)
+          .get()
+          .then(doc => {
+            obj['friendId'] = friendId;
+            obj['friendName'] = doc.get('userName');
+            obj['friendPhotoUrl'] = doc.get('photoURL');
+            friendsDetails.push(obj);
+            if (friendsDetails.length == friends.length) {
+              setAllFriends(friendsDetails);
+              setFriendsLoading(false);
+            }
+          });
+      });
     }
     unsubscribe() {
       return this.friends();
@@ -191,7 +211,11 @@ const Friends = ({navigation, route}) => {
         </Ripple>
         {!friendsLoading ? (
           <View style={styles.friendsContainer}>
-            <Text style={styles.friendsText}>Your friends</Text>
+            {allFriends.length == 0 ? (
+              <Text style={styles.noFriendsText}>No friends added yet!</Text>
+            ) : (
+              <Text style={styles.friendsText}>Your friends</Text>
+            )}
             <View style={styles.friendsList}>
               {allFriends.map((friend, index) => (
                 <EachFriend key={index} friend={friend} />
@@ -239,5 +263,14 @@ const styles = StyleSheet.create({
     fontSize: 22,
     // position:"absolute",
     color: '#c6c4c4',
+  },
+  noFriendsText: {
+    fontFamily: 'Poppins-SemiBold',
+    // margin: 18,
+    marginTop: 40,
+    alignSelf: 'center',
+    color: 'red',
+    fontSize: 23,
+    color: '#ffc0cb',
   },
 });
