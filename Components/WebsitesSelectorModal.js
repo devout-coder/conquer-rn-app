@@ -31,6 +31,7 @@ const WebsitesSelectorModal = ({
       animationOut="fadeOutDown"
       onBackButtonPress={saveWebsites}
       backdropColor="rgba(0, 0, 0,0.6)"
+      deviceHeight={1000}
       style={styles.modal}>
       <View style={styles.modalContainer}>
         <TextInput

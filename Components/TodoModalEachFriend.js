@@ -19,7 +19,7 @@ const TodoModalEachFriend = ({friend, todoTaskUsers, setTodoTaskUsers}) => {
     setChecked(!checked);
   };
 
-  return friend.friendId != todoTaskUsers[0] ? (
+  return user.uid == todoTaskUsers[0] ? (
     <View style={styles.eachFriendContainer}>
       <Ripple
         rippleDuration={300}
@@ -54,7 +54,18 @@ const TodoModalEachFriend = ({friend, todoTaskUsers, setTodoTaskUsers}) => {
   ) : (
     <View style={styles.eachFriendContainer}>
       <View style={styles.eachFriend}>
-        <View style={{marginRight: '11%'}}></View>
+        {friend.friendId == user.uid ? (
+          <CheckBox
+            value={checked}
+            tintColors={{
+              true: '#F1D7D7',
+              false: '#F1D7D7',
+            }}
+            onValueChange={checkUncheckfunc}
+          />
+        ) : (
+          <View style={{marginRight: '11%'}}></View>
+        )}
         {friend.friendPhotoUrl != null ? (
           <Image
             style={styles.friendPhoto}
@@ -67,7 +78,11 @@ const TodoModalEachFriend = ({friend, todoTaskUsers, setTodoTaskUsers}) => {
           />
         )}
         <Text style={styles.friendName}>{friend.friendName}</Text>
-        <Text style={styles.ownerText}>Owner</Text>
+        {friend.friendId == todoTaskUsers[0] ? (
+          <Text style={styles.ownerText}>Owner</Text>
+        ) : (
+          <></>
+        )}
       </View>
     </View>
   );
@@ -96,6 +111,8 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins-Regular',
     color: '#F1D7D7',
     fontSize: 20,
+    width: '69%',
+    // backgroundColor: '#ffffff',
     marginLeft: '8%',
   },
   ownerText: {

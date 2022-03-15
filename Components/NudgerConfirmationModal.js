@@ -13,6 +13,7 @@ const NudgerConfirmationModal = ({
       isVisible={modalVisible}
       animationIn="fadeInUp"
       animationOut="fadeOutDown"
+      deviceHeight={1000}
       onBackButtonPress={closeModal}>
       <View style={styles.modal}>
         <Text style={styles.deleteText}>

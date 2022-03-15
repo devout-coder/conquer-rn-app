@@ -52,6 +52,7 @@ const AppsSelectorModal = ({
       animationIn="fadeInUp"
       animationOut="fadeOutDown"
       onBackButtonPress={closeModal}
+      deviceHeight={1000}
       onBackdropPress={closeModal}
       backdropColor="rgba(0, 0, 0,0.6)"
       style={styles.modal}>

@@ -16,6 +16,7 @@ const FriendConfirmationModal = ({
       animationIn="fadeInUp"
       animationOut="fadeOutDown"
       onBackdropPress={closeModal}
+      deviceHeight={1000}
       onBackButtonPress={closeModal}>
       <View style={styles.modal}>
         <Text style={styles.confirmText}>

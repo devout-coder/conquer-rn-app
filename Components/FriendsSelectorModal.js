@@ -22,21 +22,38 @@ const FriendsSelectorModal = ({
   let [userFriends, setUserFriends] = useState([]);
   let [friendsLoading, setFriendsLoading] = useState(true);
 
+  const fetchFriendsDetails = friends => {
+    let friendsDetails = [];
+    friends.forEach(friendId => {
+      let obj = {};
+      firestore()
+        .collection('users')
+        .doc(friendId)
+        .get()
+        .then(doc => {
+          obj['friendId'] = friendId;
+          obj['friendName'] = doc.get('userName');
+          obj['friendPhotoUrl'] = doc.get('photoURL');
+          friendsDetails.push(obj);
+          if (friendsDetails.length == friends.length) {
+            setUserFriends(friendsDetails);
+            setFriendsLoading(false);
+          }
+        });
+    });
+  };
+
   const fetchFriends = async () => {
-    let friends = (
-      await firestore().collection('friends').doc(user.uid).get()
-    ).get('friends');
     let mainUser = todoTaskUsers[0];
+
     if (user.uid == mainUser) {
-      setUserFriends(friends);
+      let friends = (
+        await firestore().collection('friends').doc(user.uid).get()
+      ).get('friends');
+      fetchFriendsDetails(friends);
     } else {
-      let assigner;
-      friends.forEach(friend => {
-        if (friend.friendId == mainUser) {
-          assigner = friend;
-        }
-      });
-      setUserFriends([assigner]);
+      let reqUsers = todoTaskUsers.filter(eachUser => eachUser != user.uid);
+      fetchFriendsDetails(reqUsers);
     }
     setFriendsLoading(false);
   };
@@ -51,6 +68,7 @@ const FriendsSelectorModal = ({
       animationIn="fadeInUp"
       animationOut="fadeOutDown"
       onBackButtonPress={closeModal}
+      deviceHeight={1000}
       onBackdropPress={closeModal}
       backdropColor="rgba(0, 0, 0,0.6)"
       style={styles.modal}>
@@ -72,24 +90,15 @@ const FriendsSelectorModal = ({
               />
             ))}
             {todoTaskUsers[0] != user.uid ? (
-              <>
-                <TodoModalEachFriend
-                  friend={{
-                    friendId: user.uid,
-                    friendPhotoUrl: user.photoURL,
-                    friendName: 'Me',
-                  }}
-                  todoTaskUsers={todoTaskUsers}
-                  setTodoTaskUsers={setTodoTaskUsers}
-                />
-                {todoTaskUsers.length - 2 > 0 ? (
-                  <Text style={styles.moreFriends}>
-                    and {todoTaskUsers.length - 2} more...
-                  </Text>
-                ) : (
-                  <></>
-                )}
-              </>
+              <TodoModalEachFriend
+                friend={{
+                  friendId: user.uid,
+                  friendPhotoUrl: user.photoURL,
+                  friendName: 'Me',
+                }}
+                todoTaskUsers={todoTaskUsers}
+                setTodoTaskUsers={setTodoTaskUsers}
+              />
             ) : (
               <></>
             )}

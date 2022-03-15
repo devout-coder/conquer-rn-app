@@ -52,6 +52,7 @@ const DeleteModal = ({
       animationIn="fadeInUp"
       onBackdropPress={closeModal}
       onBackButtonPress={closeModal}
+      deviceHeight={1000}
       animationOut="fadeOutDown">
       <View style={styles.modal}>
         <Text style={styles.deleteText}>
