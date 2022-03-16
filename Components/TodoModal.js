@@ -155,6 +155,7 @@ const TodoModal = ({
   }
 
   useEffect(() => {
+    //todo: load both present and future todos for all users when users are added 
     loadFutureTodos();
     if (allTodos == undefined) {
       loadUnfinishedTodos();
@@ -289,8 +290,8 @@ const TodoModal = ({
     });
   }
 
-  function existingTodoChangePri() {
-    //this changes the priority of all todos in between the todo and its new position
+  function existingTodoPriChanged() {
+    //this changes the index of all todos in between the todo and its new position
     let todos = allTodos != undefined ? allTodos : loadedTodos;
     let initialPos = index[user.uid];
     let finalPos = decidePosition(todos, todoTaskPriority);
@@ -328,6 +329,7 @@ const TodoModal = ({
   }
 
   function updateFutureTodosIndex(presentTodos, futureTodos, newIndex) {
+    //reduces the index of all present tasks which ar below the postponed tasks and increases the index of future tasks which will be after the postponed task
     let currentTaskIndex = index[user.uid];
     presentTodos.forEach((each, index) => {
       let indexDict = each.index;
@@ -369,12 +371,12 @@ const TodoModal = ({
   // console.log(decidePosition(futureTodos, todoTaskPriority))
   function postponeTodo() {
     let presentTodos = allTodos != undefined ? allTodos : loadedTodos;
-    let newIndex = decidePosition(futureTodos, todoTaskPriority);
+    let newIndex = decidePosition(futureTodos, todoTaskPriority); //todo: calculate new index for every user
 
-    updateFutureTodosIndex(presentTodos, futureTodos, newIndex);
+    updateFutureTodosIndex(presentTodos, futureTodos, newIndex); //todo: run this for the future tasks of all users
 
     let indexDict = index;
-    indexDict[user.uid] = newIndex;
+    indexDict[user.uid] = newIndex; //todo: update indexDict for every user
 
     firestore()
       .collection('todos')
@@ -392,12 +394,12 @@ const TodoModal = ({
 
   function saveTodo() {
     let todos = allTodos != undefined ? allTodos : loadedTodos;
-    let newIndex = decidePosition(todos, todoTaskPriority);
+    let newIndex = decidePosition(todos, todoTaskPriority); //todo: do this for all users
     if (id === undefined) {
       //makes a new todo if the id prop is empty str which means that no particular todo is opened
-      newTodoManagePri(newIndex);
+      newTodoManagePri(newIndex); //todo: do this for all users
       let indexDict = index != undefined ? index : {};
-      indexDict[user.uid] = newIndex;
+      indexDict[user.uid] = newIndex; //todo: add indices for all users in indexDict
       let todo = {
         taskName: todoTaskName,
         taskDesc: todoTaskDesc,
@@ -412,7 +414,7 @@ const TodoModal = ({
     } else {
       //modifies the properties of original todo if some exisiting todo is opened in modal
       if (priChanged) {
-        existingTodoChangePri();
+        existingTodoPriChanged(); //todo: do this for all users
       }
       indexDict = index;
       indexDict[user.uid] =
@@ -420,7 +422,8 @@ const TodoModal = ({
           ? newIndex - 1
           : priChanged && indexDict[user.uid] > newIndex
           ? newIndex
-          : indexDict[user.uid];
+          : indexDict[user.uid]; //todo: change indices for every user like this
+
       //props.taskIndex is the inital position and newIndex gives the final position
       //!  DON'T TOUCH IT PLEASE this piece of code was absolutely mind fucking
 
@@ -642,11 +645,7 @@ const TodoModal = ({
                   ? Toast('Share task with friends')
                   : Toast('View users for this task')
               }>
-              <IonIcon
-                iconName="people"
-                iconColor="#ffffff"
-                iconSize={30}
-              />
+              <IonIcon iconName="people" iconColor="#ffffff" iconSize={30} />
               <FriendsSelectorModal
                 style={styles.friendsSelectorModal}
                 modalVisible={friendsSelectorModalVisible}
