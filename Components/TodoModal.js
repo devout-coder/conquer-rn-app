@@ -83,53 +83,20 @@ const TodoModal = ({
     return `postponed ${times}...`;
   }
 
-  const [loadedTodos, setLoadedTodos] = useState(null);
-  function loadUnfinishedTodos() {
-    firestore()
-      .collection('todos')
-      .where('users', 'array-contains', user.uid)
-      .where('time', '==', time)
-      .get()
-      .then(snap => {
-        let all = [];
-        snap.docs.map(each => {
-          let eachdict = {
-            id: each.id,
-            taskName: each.get('taskName'),
-            taskDesc: each.get('taskDesc'),
-            priority: each.get('priority'),
-            finished: each.get('finished'),
-            time: each.get('time'),
-            users: each.get('users'),
-            index: each.get('index'),
-            timeType: each.get('timeType'),
-            timesPostponed: each.get('timesPostponed'),
-          };
-          all.push(eachdict);
-        });
-        setLoadedTodos(
-          all.sort((a, b) => {
-            return a.index[user.uid] - b.index[user.uid];
-          }),
-        );
-      })
-      .catch(error => {
-        console.log(error.message);
-      });
-  }
+  const [presentTodos, setPresentTodos] = useState({});
 
-  const [futureTodos, setFutureTodos] = useState([]);
+  const [futureTodos, setFutureTodos] = useState({});
 
-  function loadFutureTodos() {
-    if (timeType != 'longTerm') {
+  function loadTodosAllUsers(todosTime) {
+    let dict = {};
+    todoTaskUsers.forEach(taskUser => {
       firestore()
         .collection('todos')
-        .where('users', 'array-contains', user.uid)
-        .where('time', '==', nextTime())
-        .orderBy('priority', 'desc')
+        .where('users', 'array-contains', taskUser)
+        .where('time', '==', todosTime)
         .get()
         .then(snap => {
-          let futureTodos = [];
+          let all = [];
           snap.docs.map(each => {
             let eachdict = {
               id: each.id,
@@ -138,29 +105,54 @@ const TodoModal = ({
               priority: each.get('priority'),
               finished: each.get('finished'),
               time: each.get('time'),
+              users: each.get('users'),
               index: each.get('index'),
               timeType: each.get('timeType'),
-              users: each.get('users'),
               timesPostponed: each.get('timesPostponed'),
             };
-            futureTodos.push(eachdict);
+            all.push(eachdict);
           });
-          setFutureTodos(
-            futureTodos.sort((a, b) => {
-              return a.index[user.uid] - b.index[user.uid];
-            }),
-          );
+          dict[taskUser] = all.sort((a, b) => {
+            return a.index[taskUser] - b.index[taskUser];
+          });
+
+          if (todoTaskUsers.length == Object.keys(dict).length) {
+            if (todosTime == time) {
+              setPresentTodos(dict);
+            } else {
+              setFutureTodos(dict);
+            }
+          }
         });
-    }
+    });
   }
 
   useEffect(() => {
-    //todo: load both present and future todos for all users when users are added 
-    loadFutureTodos();
-    if (allTodos == undefined) {
-      loadUnfinishedTodos();
+    loadTodosAllUsers(time);
+    if (timeType != 'longTerm') {
+      loadTodosAllUsers(nextTime());
     }
-  }, []);
+  }, [todoTaskUsers]);
+
+  for (let user in presentTodos) {
+    console.log('====');
+    console.log(user);
+    // console.log(presentTodos[user].length);
+    presentTodos[user].forEach(todo => {
+      console.log(todo.taskName);
+    });
+    console.log('====');
+  }
+
+  for (let user in futureTodos) {
+    console.log('====');
+    console.log(user);
+    // console.log(futureTodos[user].length);
+    futureTodos[user].forEach(todo => {
+      console.log(todo.taskName);
+    });
+    console.log('====');
+  }
 
   function reverseObject(object) {
     let tempObj = {};
