@@ -61,6 +61,7 @@ const TodoModal = ({
   const [todoTaskOriginalUsers, setTodoTaskOriginalUsers] = useState(users);
   const [todoTaskUsers, setTodoTaskUsers] = useState(users);
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
+  const [reloadEverything, setReloadEverything] = useState(false);
   const toggleModal = () => {
     setDeleteModalVisible(!deleteModalVisible);
   };
@@ -147,7 +148,7 @@ const TodoModal = ({
     if (timeType != 'longTerm') {
       loadTodosAllUsers(nextTime());
     }
-  }, [todoTaskUsers]);
+  }, [todoTaskUsers, reloadEverything]);
 
   function reverseObject(object) {
     let tempObj = {};
@@ -276,17 +277,18 @@ const TodoModal = ({
     });
   }
 
-  function existingTodoPriChanged() {
+  function existingTodoPriChanged(user, todos) {
     //this changes the index of all todos in between the todo and its new position
-    let todos = allTodos != undefined ? allTodos : loadedTodos;
-    let initialPos = index[user.uid];
+    let initialPos = index[user];
     let finalPos = decidePosition(todos, todoTaskPriority);
     if (initialPos < finalPos) {
-      todos.forEach((each, index) => {
-        if (index > initialPos && index <= finalPos) {
+      todos.forEach(each => {
+        let indexDict = each.index;
+        let index = indexDict[user];
+        if (index > initialPos && index < finalPos) {
           // this reduces index of all items in between initial and final position by 1
-          let indexDict = each.index;
-          indexDict[user.uid] = index - 1;
+          indexDict[user] = index - 1;
+          console.log(each.taskName, indexDict[user]);
           firestore()
             .collection('todos')
             .doc(each.id)
@@ -298,10 +300,12 @@ const TodoModal = ({
       });
     } else if (initialPos > finalPos) {
       // this increases index of all items in between initial and final position by 1
-      todos.forEach((each, index) => {
+      todos.forEach(each => {
+        let indexDict = each.index;
+        let index = indexDict[user];
         if (index < initialPos && index >= finalPos) {
-          let indexDict = each.index;
-          indexDict[user.uid] = index + 1;
+          indexDict[user] = index + 1;
+          console.log(each.taskName, indexDict[user]);
           firestore()
             .collection('todos')
             .doc(each.id)
@@ -354,7 +358,7 @@ const TodoModal = ({
       setTodoTaskPriority('0');
     }, 1000);
   }
-  // console.log(decidePosition(futureTodos, todoTaskPriority))
+
   function postponeTodo() {
     let presentTodos = allTodos != undefined ? allTodos : loadedTodos;
     let newIndex = decidePosition(futureTodos, todoTaskPriority); //todo: calculate new index for every user
@@ -374,6 +378,7 @@ const TodoModal = ({
       })
       .then(() => {
         closeModal();
+        setReloadEverything(!reloadEverything);
         reloadTodos();
       });
   }
@@ -394,6 +399,7 @@ const TodoModal = ({
           presentTodos[taskUser],
           newIndices[taskUser],
         );
+        console.log(newIndices);
         if (todoTaskUsers.indexOf(taskUser) == todoTaskUsers.length - 1) {
           let todo = {
             taskName: todoTaskName,
@@ -410,32 +416,45 @@ const TodoModal = ({
       }
     } else {
       //modifies the properties of original todo if some exisiting todo is opened in modal
-      if (priChanged) {
-        existingTodoPriChanged(); //todo: do this for all users
+      // for()
+      let indexDict = index;
+      for (taskUser of todoTaskUsers) {
+        if (todoTaskOriginalUsers.includes(taskUser)) {
+          if (priChanged) {
+            existingTodoPriChanged(taskUser, originalPresentTodos[taskUser]);
+            indexDict[taskUser] =
+              priChanged && indexDict[taskUser] < newIndices[taskUser]
+                ? newIndices[taskUser] - 1
+                : priChanged && indexDict[taskUser] > newIndices[taskUser]
+                ? newIndices[taskUser]
+                : indexDict[taskUser];
+            //!  DON'T TOUCH IT PLEASE this piece of code was absolutely mind fucking
+          }
+        } else {
+          newTodoManagePri(
+            taskUser,
+            presentTodos[taskUser],
+            newIndices[taskUser],
+          );
+          indexDict[taskUser] = newIndices[taskUser];
+        }
+        if (todoTaskUsers.indexOf(taskUser) == todoTaskUsers.length - 1) {
+          console.log(indexDict);
+          firestore().collection('todos').doc(id).set(
+            {
+              taskName: todoTaskName,
+              taskDesc: todoTaskDesc,
+              priority: todoTaskPriority,
+              users: todoTaskUsers,
+              index: indexDict,
+            },
+            {merge: true},
+          );
+          setPriChanged(false);
+        }
       }
-      indexDict = index;
-      indexDict[user.uid] =
-        priChanged && indexDict[user.uid] < newIndex
-          ? newIndex - 1
-          : priChanged && indexDict[user.uid] > newIndex
-          ? newIndex
-          : indexDict[user.uid]; //todo: change indices for every user like this
-
-      //props.taskIndex is the inital position and newIndex gives the final position
-      //!  DON'T TOUCH IT PLEASE this piece of code was absolutely mind fucking
-
-      firestore().collection('todos').doc(id).set(
-        {
-          taskName: todoTaskName,
-          taskDesc: todoTaskDesc,
-          priority: todoTaskPriority,
-          users: todoTaskUsers,
-          index: indexDict,
-        },
-        {merge: true},
-      );
-      setPriChanged(false);
     }
+    setReloadEverything(!reloadEverything);
     closeModal();
     reloadTodos();
   }
@@ -475,6 +494,7 @@ const TodoModal = ({
           .doc(id)
           .delete()
           .then(() => {
+            setReloadEverything(!reloadEverything);
             reloadTodos();
             closeModal();
           })
