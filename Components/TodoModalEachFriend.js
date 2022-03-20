@@ -111,7 +111,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins-Regular',
     color: '#F1D7D7',
     fontSize: 20,
-    width: '69%',
+    width: '40%',
     // backgroundColor: '#ffffff',
     marginLeft: '8%',
   },

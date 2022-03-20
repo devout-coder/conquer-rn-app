@@ -58,6 +58,7 @@ const TodoModal = ({
   const [todoTaskName, setTodoTaskName] = useState(taskName);
   const [todoTaskDesc, setTodoTaskDesc] = useState(taskDesc);
   const [todoTaskPriority, setTodoTaskPriority] = useState(priority);
+  const [todoTaskOriginalUsers, setTodoTaskOriginalUsers] = useState(users);
   const [todoTaskUsers, setTodoTaskUsers] = useState(users);
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
   const toggleModal = () => {
@@ -86,6 +87,12 @@ const TodoModal = ({
   const [presentTodos, setPresentTodos] = useState({});
 
   const [futureTodos, setFutureTodos] = useState({});
+
+  const [originalPresentTodos, setOriginalPresentTodos] = useState({});
+
+  const [originalFutureTodos, setOriginalFutureTodos] = useState({});
+
+  const firstRender = useRef(true);
 
   function loadTodosAllUsers(todosTime) {
     let dict = {};
@@ -118,8 +125,16 @@ const TodoModal = ({
 
           if (todoTaskUsers.length == Object.keys(dict).length) {
             if (todosTime == time) {
+              if (firstRender.current) {
+                setOriginalPresentTodos(dict);
+                firstRender.current = false;
+              }
               setPresentTodos(dict);
             } else {
+              if (firstRender.current) {
+                setOriginalFutureTodos(dict);
+                firstRender.current = false;
+              }
               setFutureTodos(dict);
             }
           }
@@ -133,26 +148,6 @@ const TodoModal = ({
       loadTodosAllUsers(nextTime());
     }
   }, [todoTaskUsers]);
-
-  for (let user in presentTodos) {
-    console.log('====');
-    console.log(user);
-    // console.log(presentTodos[user].length);
-    presentTodos[user].forEach(todo => {
-      console.log(todo.taskName);
-    });
-    console.log('====');
-  }
-
-  for (let user in futureTodos) {
-    console.log('====');
-    console.log(user);
-    // console.log(futureTodos[user].length);
-    futureTodos[user].forEach(todo => {
-      console.log(todo.taskName);
-    });
-    console.log('====');
-  }
 
   function reverseObject(object) {
     let tempObj = {};
@@ -263,14 +258,13 @@ const TodoModal = ({
     return reqIndex;
   }
 
-  function newTodoManagePri(newIndex) {
+  function newTodoManagePri(user, todos, newIndex) {
     // it increases the index of all todos which have index value equal to or more than newIndex
 
-    let todos = allTodos != undefined ? allTodos : loadedTodos;
     todos.forEach((each, index) => {
-      if (index >= newIndex) {
+      if (each.index[user] >= newIndex) {
         let indexDict = each.index;
-        indexDict[user.uid] = index + 1;
+        indexDict[user] = indexDict[user] + 1;
         firestore()
           .collection('todos')
           .doc(each.id)
@@ -385,24 +379,35 @@ const TodoModal = ({
   }
 
   function saveTodo() {
-    let todos = allTodos != undefined ? allTodos : loadedTodos;
-    let newIndex = decidePosition(todos, todoTaskPriority); //todo: do this for all users
+    let newIndices = {};
+    for (let taskUser of todoTaskUsers) {
+      newIndices[taskUser] = decidePosition(
+        presentTodos[taskUser],
+        todoTaskPriority,
+      );
+    }
     if (id === undefined) {
       //makes a new todo if the id prop is empty str which means that no particular todo is opened
-      newTodoManagePri(newIndex); //todo: do this for all users
-      let indexDict = index != undefined ? index : {};
-      indexDict[user.uid] = newIndex; //todo: add indices for all users in indexDict
-      let todo = {
-        taskName: todoTaskName,
-        taskDesc: todoTaskDesc,
-        time: time,
-        timeType: timeType,
-        priority: todoTaskPriority,
-        users: todoTaskUsers,
-        finished: false,
-        index: indexDict,
-      };
-      firestore().collection('todos').add(todo);
+      for (let taskUser of todoTaskUsers) {
+        newTodoManagePri(
+          taskUser,
+          presentTodos[taskUser],
+          newIndices[taskUser],
+        );
+        if (todoTaskUsers.indexOf(taskUser) == todoTaskUsers.length - 1) {
+          let todo = {
+            taskName: todoTaskName,
+            taskDesc: todoTaskDesc,
+            time: time,
+            timeType: timeType,
+            priority: todoTaskPriority,
+            users: todoTaskUsers,
+            finished: false,
+            index: newIndices,
+          };
+          firestore().collection('todos').add(todo);
+        }
+      }
     } else {
       //modifies the properties of original todo if some exisiting todo is opened in modal
       if (priChanged) {
@@ -434,6 +439,69 @@ const TodoModal = ({
     closeModal();
     reloadTodos();
   }
+
+  function deleteTodoManagePri(user, todos, taskIndex) {
+    //this function manages index of todos below a certain todo in case i delete it
+    // console.log(allTodos)
+    todos.forEach(each => {
+      if (each.index[user] >= taskIndex) {
+        let indexDict = each.index;
+        indexDict[user] = indexDict[user] - 1;
+        firestore()
+          .collection('todos')
+          .doc(each.id)
+          .update({
+            index: indexDict,
+          })
+          .catch(error => console.log(error));
+      }
+    });
+  }
+
+  function deleteTodo() {
+    //this func deletes that particular todo
+    for (let todoUser in originalPresentTodos) {
+      deleteTodoManagePri(
+        todoUser,
+        originalPresentTodos[todoUser],
+        index[todoUser],
+      );
+      if (
+        Object.keys(originalPresentTodos).indexOf(todoUser) ==
+        Object.keys(originalPresentTodos).length - 1
+      ) {
+        firestore()
+          .collection('todos')
+          .doc(id)
+          .delete()
+          .then(() => {
+            reloadTodos();
+            closeModal();
+          })
+          .catch(error => console.log(error));
+      }
+    }
+  }
+
+  for (let user in presentTodos) {
+    console.log('====');
+    console.log(user);
+    // console.log(presentTodos[user].length);
+    presentTodos[user].forEach(todo => {
+      console.log(todo.taskName, todo.index[user]);
+    });
+    console.log('====');
+  }
+
+  // for (let user in futureTodos) {
+  //   console.log('====');
+  //   console.log(user);
+  //   // console.log(futureTodos[user].length);
+  //   futureTodos[user].forEach(todo => {
+  //     console.log(todo.taskName);
+  //   });
+  //   console.log('====');
+  // }
 
   // const [reminderMenuVisible, setReminderMenuVisible] = useState(false);
 
@@ -659,10 +727,7 @@ const TodoModal = ({
                 <DeleteModal
                   modalVisible={deleteModalVisible}
                   closeModal={toggleModal}
-                  reloadTodos={reloadTodos}
-                  allTodos={allTodos != undefined ? allTodos : loadedTodos}
-                  index={index}
-                  id={id}
+                  deleteTodo={deleteTodo}
                 />
               </TouchableOpacity>
             ) : (
