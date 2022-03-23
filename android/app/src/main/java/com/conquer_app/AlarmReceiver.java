@@ -63,7 +63,7 @@ public class AlarmReceiver extends BroadcastReceiver {
         if (!isDeviceLocked(context) && !storedPackage.equals("none")) {
             String user = FirebaseAuth.getInstance().getCurrentUser().getUid();
             FirebaseFirestore db = FirebaseFirestore.getInstance();
-            Query query = db.collection("todos").whereEqualTo("user", user).whereEqualTo("time", timeType.equals("yearly") ? Integer.parseInt(getCurrentTime(timeType)) : getCurrentTime(timeType)).whereEqualTo("finished", false).orderBy("priority", Query.Direction.DESCENDING);
+            Query query = db.collection("todos").whereArrayContains("users", user).whereEqualTo("time", timeType.equals("yearly") ? Integer.parseInt(getCurrentTime(timeType)) : getCurrentTime(timeType)).whereEqualTo("finished", false).orderBy("priority", Query.Direction.DESCENDING);
             query.get().
                     addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {

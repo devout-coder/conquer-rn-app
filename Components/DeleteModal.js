@@ -15,7 +15,8 @@ const DeleteModal = ({modalVisible, closeModal, deleteTodo}) => {
       animationOut="fadeOutDown">
       <View style={styles.modal}>
         <Text style={styles.deleteText}>
-          Are you sure you want to delete this item from your list?
+          If you delete this task it will also be deleted for all the users this
+          task is shared with. Are you sure you want to do that?
         </Text>
         <View style={styles.buttons}>
           <TouchableOpacity style={styles.noButton} onPress={closeModal}>
