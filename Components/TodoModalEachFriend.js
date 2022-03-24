@@ -68,37 +68,45 @@ const TodoModalEachFriend = ({
     </View>
   ) : (
     <View style={styles.eachFriendContainer}>
-      <View style={styles.eachFriend}>
-        {friend.friendId == user.uid ? (
-          <CheckBox
-            value={checked}
-            tintColors={{
-              true: '#F1D7D7',
-              false: '#F1D7D7',
-            }}
-            onValueChange={checkUncheckfunc}
-          />
-        ) : (
-          <View style={{marginRight: '11%'}}></View>
-        )}
-        {friend.friendPhotoUrl != null ? (
-          <Image
-            style={styles.friendPhoto}
-            source={{uri: friend.friendPhotoUrl}}
-          />
-        ) : (
-          <Image
-            style={styles.friendPhoto}
-            source={require('../resources/images/avatar.png')}
-          />
-        )}
-        <Text style={styles.friendName}>{friend.friendName}</Text>
-        {friend.friendId == todoTaskUsers[0] ? (
-          <Text style={styles.ownerText}>Owner</Text>
-        ) : (
-          <></>
-        )}
-      </View>
+      <Ripple
+        rippleDuration={300}
+        rippleContainerBorderRadius={5}
+        rippleColor="#ffffff"
+        onPress={friend.friendId == user.uid ? checkUncheckfunc : null}
+        disabled={friend.friendId == user.uid ? false : true}
+        style={styles.bottomButton}>
+        <View style={styles.eachFriend}>
+          {friend.friendId == user.uid ? (
+            <CheckBox
+              value={checked}
+              tintColors={{
+                true: '#F1D7D7',
+                false: '#F1D7D7',
+              }}
+              onValueChange={checkUncheckfunc}
+            />
+          ) : (
+            <View style={{marginRight: '11%'}}></View>
+          )}
+          {friend.friendPhotoUrl != null ? (
+            <Image
+              style={styles.friendPhoto}
+              source={{uri: friend.friendPhotoUrl}}
+            />
+          ) : (
+            <Image
+              style={styles.friendPhoto}
+              source={require('../resources/images/avatar.png')}
+            />
+          )}
+          <Text style={styles.friendName}>{friend.friendName}</Text>
+          {friend.friendId == todoTaskUsers[0] ? (
+            <Text style={styles.ownerText}>Owner</Text>
+          ) : (
+            <></>
+          )}
+        </View>
+      </Ripple>
     </View>
   );
 };

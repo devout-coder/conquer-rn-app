@@ -104,6 +104,9 @@ const FriendsSelectorModal = ({
                 }}
                 todoTaskUsers={todoTaskUsers}
                 setTodoTaskUsers={setTodoTaskUsers}
+                todoTaskOriginalUsers={todoTaskOriginalUsers}
+                todoTaskRemovedUsers={todoTaskRemovedUsers}
+                setTodoTaskRemovedUsers={setTodoTaskRemovedUsers}
               />
             ) : (
               <></>

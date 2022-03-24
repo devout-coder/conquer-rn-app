@@ -268,7 +268,10 @@ const TodoModal = ({
         //if this task contains multiple users, do increment index for every user if the new task is added to that user as well
         let indexDict = each.index;
         for (let eachUser of each.users) {
-          if (todoTaskUsers.includes(eachUser)) {
+          if (
+            todoTaskUsers.includes(eachUser) &&
+            !todoTaskOriginalUsers.includes(eachUser)
+          ) {
             indexDict[eachUser] = indexDict[eachUser] + 1;
           }
         }
@@ -439,7 +442,6 @@ const TodoModal = ({
       }
     } else {
       //modifies the properties of original todo if some exisiting todo is opened in modal
-      // for()
       let indexDict = index;
       for (let deletedUser of todoTaskRemovedUsers) {
         deleteTodoManagePri(
@@ -449,7 +451,7 @@ const TodoModal = ({
           true,
         );
         delete indexDict[deletedUser];
-        delete originalPresentTodos[deletedUser];
+        // delete originalPresentTodos[deletedUser];
       }
       for (let taskUser of todoTaskUsers) {
         if (todoTaskOriginalUsers.includes(taskUser)) {
@@ -506,7 +508,9 @@ const TodoModal = ({
           //this works for reducing index of todos higher than the todos where the user is removed
           let allTodos = originalPresentTodos;
           let reqUsers = each.users.filter(currentUser => {
-            return currentUser != user;
+            return (
+              currentUser != user && todoTaskOriginalUsers.includes(currentUser)
+            );
           });
           for (let eachUser of reqUsers) {
             let userTodos = allTodos[eachUser];
@@ -520,7 +524,7 @@ const TodoModal = ({
             });
             allTodos[eachUser] = userTodos;
           }
-          setOriginalPresentTodos(allTodos)
+          setOriginalPresentTodos(allTodos);
           indexDict[user] = indexDict[user] - 1;
         }
         firestore()
@@ -560,6 +564,7 @@ const TodoModal = ({
       }
     }
   }
+
 
   for (let user in presentTodos) {
     console.log('====');
