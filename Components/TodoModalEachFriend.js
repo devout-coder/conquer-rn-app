@@ -4,7 +4,14 @@ import Ripple from 'react-native-material-ripple';
 import CheckBox from '@react-native-community/checkbox';
 import {userContext} from '../context';
 
-const TodoModalEachFriend = ({friend, todoTaskUsers, setTodoTaskUsers}) => {
+const TodoModalEachFriend = ({
+  friend,
+  todoTaskUsers,
+  setTodoTaskUsers,
+  todoTaskOriginalUsers,
+  todoTaskRemovedUsers,
+  setTodoTaskRemovedUsers,
+}) => {
   let user = useContext(userContext);
   const [checked, setChecked] = useState(
     todoTaskUsers.includes(friend.friendId) ? true : false,
@@ -13,8 +20,16 @@ const TodoModalEachFriend = ({friend, todoTaskUsers, setTodoTaskUsers}) => {
   const checkUncheckfunc = () => {
     if (!checked) {
       setTodoTaskUsers([...todoTaskUsers, friend.friendId]);
+      if (todoTaskRemovedUsers.includes(friend.friendId)) {
+        setTodoTaskRemovedUsers(
+          todoTaskRemovedUsers.filter(eachUser => eachUser != friend.friendId),
+        );
+      }
     } else {
       setTodoTaskUsers(todoTaskUsers.filter(item => item !== friend.friendId));
+      if (todoTaskOriginalUsers.includes(friend.friendId)) {
+        setTodoTaskRemovedUsers([...todoTaskRemovedUsers, friend.friendId]);
+      }
     }
     setChecked(!checked);
   };

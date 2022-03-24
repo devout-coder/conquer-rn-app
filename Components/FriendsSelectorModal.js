@@ -17,6 +17,9 @@ const FriendsSelectorModal = ({
   closeModal,
   todoTaskUsers,
   setTodoTaskUsers,
+  todoTaskOriginalUsers,
+  todoTaskRemovedUsers,
+  setTodoTaskRemovedUsers,
 }) => {
   let user = useContext(userContext);
   let [userFriends, setUserFriends] = useState([]);
@@ -87,6 +90,9 @@ const FriendsSelectorModal = ({
                 friend={friend}
                 todoTaskUsers={todoTaskUsers}
                 setTodoTaskUsers={setTodoTaskUsers}
+                todoTaskOriginalUsers={todoTaskOriginalUsers}
+                todoTaskRemovedUsers={todoTaskRemovedUsers}
+                setTodoTaskRemovedUsers={setTodoTaskRemovedUsers}
               />
             ))}
             {todoTaskUsers[0] != user.uid ? (

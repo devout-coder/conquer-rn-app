@@ -60,6 +60,7 @@ const TodoModal = ({
   const [todoTaskPriority, setTodoTaskPriority] = useState(priority);
   const [todoTaskOriginalUsers, setTodoTaskOriginalUsers] = useState(users);
   const [todoTaskUsers, setTodoTaskUsers] = useState(users);
+  const [todoTaskRemovedUsers, setTodoTaskRemovedUsers] = useState([]);
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
   const [reloadEverything, setReloadEverything] = useState(false);
   const toggleModal = () => {
@@ -295,7 +296,10 @@ const TodoModal = ({
         if (index > initialPos && index < finalPos) {
           // this reduces index of all items in between initial and final position by 1
           for (let eachUser of each.users) {
-            if (todoTaskOriginalUsers.includes(eachUser)) {
+            if (
+              todoTaskOriginalUsers.includes(eachUser) &&
+              !todoTaskRemovedUsers.includes(eachUser)
+            ) {
               indexDict[eachUser] = indexDict[eachUser] - 1;
             }
           }
@@ -317,7 +321,10 @@ const TodoModal = ({
         if (index < initialPos && index >= finalPos) {
           // this increases index of all items in between initial and final position by 1
           for (let eachUser of each.users) {
-            if (todoTaskOriginalUsers.includes(eachUser)) {
+            if (
+              todoTaskOriginalUsers.includes(eachUser) &&
+              !todoTaskRemovedUsers.includes(eachUser)
+            ) {
               indexDict[eachUser] = indexDict[eachUser] + 1;
             }
           }
@@ -434,6 +441,16 @@ const TodoModal = ({
       //modifies the properties of original todo if some exisiting todo is opened in modal
       // for()
       let indexDict = index;
+      for (let deletedUser of todoTaskRemovedUsers) {
+        deleteTodoManagePri(
+          deletedUser,
+          originalPresentTodos[deletedUser],
+          index[deletedUser],
+          true,
+        );
+        delete indexDict[deletedUser];
+        delete originalPresentTodos[deletedUser];
+      }
       for (let taskUser of todoTaskUsers) {
         if (todoTaskOriginalUsers.includes(taskUser)) {
           if (priChanged) {
@@ -472,16 +489,39 @@ const TodoModal = ({
     reloadTodos();
   }
 
-  function deleteTodoManagePri(user, todos, taskIndex) {
+  function deleteTodoManagePri(user, todos, taskIndex, userRemoved) {
     //this function manages index of todos below a certain todo in case i delete it
     // console.log(allTodos)
     todos.forEach(each => {
       if (each.index[user] > taskIndex) {
         let indexDict = each.index;
-        for (let eachUser of each.users) {
-          if (todoTaskOriginalUsers.includes(eachUser)) {
-            indexDict[eachUser] = indexDict[eachUser] - 1;
+        if (!userRemoved) {
+          //this works for delete function
+          for (let eachUser of each.users) {
+            if (todoTaskOriginalUsers.includes(eachUser)) {
+              indexDict[eachUser] = indexDict[eachUser] - 1;
+            }
           }
+        } else {
+          //this works for reducing index of todos higher than the todos where the user is removed
+          let allTodos = originalPresentTodos;
+          let reqUsers = each.users.filter(currentUser => {
+            return currentUser != user;
+          });
+          for (let eachUser of reqUsers) {
+            let userTodos = allTodos[eachUser];
+            userTodos = userTodos.map(eachTodo => {
+              if (eachTodo.id == each.id) {
+                let tempInd = eachTodo.index;
+                tempInd[user] = tempInd[user] - 1;
+                eachTodo.index = tempInd;
+              }
+              return eachTodo;
+            });
+            allTodos[eachUser] = userTodos;
+          }
+          setOriginalPresentTodos(allTodos)
+          indexDict[user] = indexDict[user] - 1;
         }
         firestore()
           .collection('todos')
@@ -501,6 +541,7 @@ const TodoModal = ({
         todoUser,
         originalPresentTodos[todoUser],
         index[todoUser],
+        false,
       );
       if (
         Object.keys(originalPresentTodos).indexOf(todoUser) ==
@@ -749,6 +790,9 @@ const TodoModal = ({
                 closeModal={() => setFriendsSelectorModalVisible(false)}
                 todoTaskUsers={todoTaskUsers}
                 setTodoTaskUsers={setTodoTaskUsers}
+                todoTaskOriginalUsers={todoTaskOriginalUsers}
+                todoTaskRemovedUsers={todoTaskRemovedUsers}
+                setTodoTaskRemovedUsers={setTodoTaskRemovedUsers}
               />
             </TouchableOpacity>
             {id != undefined ? (
