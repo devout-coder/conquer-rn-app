@@ -60,6 +60,11 @@ const TodoModal = ({
   const [todoTaskPriority, setTodoTaskPriority] = useState(priority);
   const [todoTaskOriginalUsers, setTodoTaskOriginalUsers] = useState(users);
   const [todoTaskUsers, setTodoTaskUsers] = useState(users);
+  const todoTaskNewUsers = () => {
+    return todoTaskUsers.filter(eachUser => {
+      return !todoTaskOriginalUsers.includes(eachUser);
+    });
+  };
   const [todoTaskRemovedUsers, setTodoTaskRemovedUsers] = useState([]);
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
   const [reloadEverything, setReloadEverything] = useState(false);
@@ -260,7 +265,7 @@ const TodoModal = ({
     return reqIndex;
   }
 
-  function newTodoManagePri(user, todos, newIndex) {
+  function newTodoManagePri(user, todos, newIndex, absolutelyNewTodo) {
     // it increases the index of all todos which have index value equal to or more than newIndex
 
     todos.forEach(each => {
@@ -268,14 +273,16 @@ const TodoModal = ({
         //if this task contains multiple users, do increment index for every user if the new task is added to that user as well
         let indexDict = each.index;
         for (let eachUser of each.users) {
-          if (
-            todoTaskUsers.includes(eachUser) &&
-            !todoTaskOriginalUsers.includes(eachUser)
-          ) {
+          if (todoTaskNewUsers().includes(eachUser)) {
             indexDict[eachUser] = indexDict[eachUser] + 1;
           }
+          if (absolutelyNewTodo) {
+            if (users[0] == eachUser) {
+              indexDict[eachUser] = indexDict[eachUser] + 1;
+            }
+          }
         }
-        // console.log(indexDict);
+        console.log('new', each.taskName, indexDict);
         firestore()
           .collection('todos')
           .doc(each.id)
@@ -300,13 +307,14 @@ const TodoModal = ({
           // this reduces index of all items in between initial and final position by 1
           for (let eachUser of each.users) {
             if (
-              todoTaskOriginalUsers.includes(eachUser) &&
-              !todoTaskRemovedUsers.includes(eachUser)
+              !todoTaskNewUsers().includes(eachUser) &&
+              !todoTaskRemovedUsers.includes(eachUser) &&
+              todoTaskUsers.includes(eachUser)
             ) {
               indexDict[eachUser] = indexDict[eachUser] - 1;
             }
           }
-          // console.log(each.taskName, indexDict);
+          console.log('existing', each.taskName, indexDict);
           firestore()
             .collection('todos')
             .doc(each.id)
@@ -324,14 +332,17 @@ const TodoModal = ({
         if (index < initialPos && index >= finalPos) {
           // this increases index of all items in between initial and final position by 1
           for (let eachUser of each.users) {
+            //if todoTaskUsers.includes(eachUser)  not working cause its even adding for new users
+            // if !todoTaskNewUsers().includes(eachUser) not working cause its even adding for users where the task whose index is changed is not present
             if (
-              todoTaskOriginalUsers.includes(eachUser) &&
-              !todoTaskRemovedUsers.includes(eachUser)
+              !todoTaskNewUsers().includes(eachUser) &&
+              !todoTaskRemovedUsers.includes(eachUser) &&
+              todoTaskUsers.includes(eachUser)
             ) {
               indexDict[eachUser] = indexDict[eachUser] + 1;
             }
           }
-          // console.log(each.taskName, indexDict);
+          console.log('existing', each.taskName, indexDict);
           firestore()
             .collection('todos')
             .doc(each.id)
@@ -424,6 +435,7 @@ const TodoModal = ({
           taskUser,
           presentTodos[taskUser],
           newIndices[taskUser],
+          true,
         );
         if (todoTaskUsers.indexOf(taskUser) == todoTaskUsers.length - 1) {
           // console.log(newIndices);
@@ -444,6 +456,7 @@ const TodoModal = ({
       //modifies the properties of original todo if some exisiting todo is opened in modal
       let indexDict = index;
       for (let deletedUser of todoTaskRemovedUsers) {
+        console.log('deleted');
         deleteTodoManagePri(
           deletedUser,
           originalPresentTodos[deletedUser],
@@ -470,6 +483,7 @@ const TodoModal = ({
             taskUser,
             presentTodos[taskUser],
             newIndices[taskUser],
+            false,
           );
           indexDict[taskUser] = newIndices[taskUser];
         }
@@ -565,13 +579,12 @@ const TodoModal = ({
     }
   }
 
-
   for (let user in presentTodos) {
     console.log('====');
     console.log(user);
     // console.log(presentTodos[user].length);
     presentTodos[user].forEach(todo => {
-      console.log(todo.taskName, todo.index[user]);
+      console.log(todo.taskName, todo.index[user], todo.priority);
     });
     console.log('====');
   }
