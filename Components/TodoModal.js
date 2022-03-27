@@ -265,24 +265,58 @@ const TodoModal = ({
     return reqIndex;
   }
 
-  function newTodoManagePri(user, todos, newIndex, absolutelyNewTodo) {
+  function newTodoManagePri(user, todos, newIndex) {
     // it increases the index of all todos which have index value equal to or more than newIndex
 
     todos.forEach(each => {
       if (each.index[user] >= newIndex) {
         //if this task contains multiple users, do increment index for every user if the new task is added to that user as well
+
+        // for (let eachUser of each.users) {
+        //   //!shouldn't run for existing user but it is
+        //   if (!todoTaskOriginalUsers.includes(eachUser)) {
+        //     console.log('new users', todoTaskNewUsers(), 'user', eachUser);
+        //     if (originalPresentTodos[eachUser] != undefined) {
+        //       let allTodos = originalPresentTodos;
+        //       for (let allTodosUser in allTodos) {
+        //         let userTodos = allTodos[allTodosUser];
+        //         userTodos = userTodos.map(eachTodo => {
+        //           if (eachTodo.id == each.id) {
+        //             let tempInd = eachTodo.index;
+        //             tempInd[eachUser] = tempInd[eachUser] + 1;
+        //             eachTodo.index = tempInd;
+        //             console.log(
+        //               'making a change in original todos',
+        //               eachTodo.taskName,
+        //               each.index,
+        //             );
+        //           }
+        //           return eachTodo;
+        //         });
+        //         allTodos[allTodosUser] = userTodos;
+        //       }
+        //       setOriginalPresentTodos(allTodos);
+        //     }
+        //     indexDict[eachUser] = indexDict[eachUser] + 1;
+        //     console.log(
+        //       'changed only if user is a new user in existing todos',
+        //       each.taskName,
+        //       indexDict,
+        //     );
+        //   }
+        //   if (absolutelyNewTodo) {
+        //     if (users[0] == eachUser) {
+        //       indexDict[eachUser] = indexDict[eachUser] + 1;
+
+        //       console.log('run in newTodoManagePri ', each.taskName, indexDict);
+        //     }
+        //   }
+        // }
+
         let indexDict = each.index;
-        for (let eachUser of each.users) {
-          if (todoTaskNewUsers().includes(eachUser)) {
-            indexDict[eachUser] = indexDict[eachUser] + 1;
-          }
-          if (absolutelyNewTodo) {
-            if (users[0] == eachUser) {
-              indexDict[eachUser] = indexDict[eachUser] + 1;
-            }
-          }
-        }
-        console.log('new', each.taskName, indexDict);
+        console.log(each.taskName, indexDict);
+        indexDict[user] = indexDict[user] + 1;
+
         firestore()
           .collection('todos')
           .doc(each.id)
@@ -290,6 +324,42 @@ const TodoModal = ({
             index: indexDict,
           })
           .catch(error => console.log(error));
+
+        let allTodos = presentTodos;
+        for (let allTodosUser in allTodos) {
+          let userTodos = allTodos[allTodosUser];
+          userTodos = userTodos.map(eachTodo => {
+            if (eachTodo.id == each.id) {
+              let tempInd = eachTodo.index;
+              tempInd[user] = tempInd[user] + 1;
+              eachTodo.index = tempInd;
+              console.log('presentTodos', eachTodo.taskName, eachTodo.index);
+            }
+            return eachTodo;
+          });
+          allTodos[allTodosUser] = userTodos;
+        }
+        setPresentTodos(allTodos);
+
+        let allOriginalTodos = originalPresentTodos;
+        for (let allTodosUser in allOriginalTodos) {
+          let userTodos = allOriginalTodos[allTodosUser];
+          userTodos = userTodos.map(eachTodo => {
+            if (eachTodo.id == each.id) {
+              let tempInd = eachTodo.index;
+              tempInd[user] = tempInd[user] + 1;
+              eachTodo.index = tempInd;
+              console.log(
+                'original presentTodos',
+                eachTodo.taskName,
+                eachTodo.index,
+              );
+            }
+            return eachTodo;
+          });
+          allOriginalTodos[allTodosUser] = userTodos;
+        }
+        setOriginalPresentTodos(allTodos);
       }
     });
   }
@@ -301,20 +371,39 @@ const TodoModal = ({
     let finalPos = decidePosition(todos, todoTaskPriority);
     if (initialPos < finalPos) {
       todos.forEach(each => {
-        let indexDict = each.index;
-        let index = indexDict[user];
-        if (index > initialPos && index < finalPos) {
+        if (each.index[user] > initialPos && each.index[user] < finalPos) {
           // this reduces index of all items in between initial and final position by 1
-          for (let eachUser of each.users) {
-            if (
-              !todoTaskNewUsers().includes(eachUser) &&
-              !todoTaskRemovedUsers.includes(eachUser) &&
-              todoTaskUsers.includes(eachUser)
-            ) {
-              indexDict[eachUser] = indexDict[eachUser] - 1;
-            }
-          }
-          console.log('existing', each.taskName, indexDict);
+          // for (let eachUser of each.users) {
+          //   if (
+          //     !todoTaskNewUsers().includes(eachUser) &&
+          //     !todoTaskRemovedUsers.includes(eachUser) &&
+          //     todoTaskUsers.includes(eachUser)
+          //   ) {
+          //     if (presentTodos[eachUser] != undefined) {
+          //       let allTodos = presentTodos;
+          //       for (let allTodosUser in allTodos) {
+          //         let userTodos = allTodos[allTodosUser];
+          //         userTodos = userTodos.map(eachTodo => {
+          //           if (eachTodo.id == each.id) {
+          //             let tempInd = eachTodo.index;
+          //             tempInd[eachUser] = tempInd[eachUser] - 1;
+          //             eachTodo.index = tempInd;
+          //           }
+          //           return eachTodo;
+          //         });
+          //         allTodos[allTodosUser] = userTodos;
+          //       }
+          //       setPresentTodos(allTodos);
+          //     }
+
+          //     indexDict[eachUser] = indexDict[eachUser] - 1;
+          //   }
+          // }
+          // console.log('existing', each.taskName, indexDict);
+          let indexDict = each.index;
+          indexDict[user] = indexDict[user] - 1;
+
+          console.log(each.taskName, indexDict);
           firestore()
             .collection('todos')
             .doc(each.id)
@@ -322,27 +411,75 @@ const TodoModal = ({
               index: indexDict,
             })
             .catch(error => console.log(error));
+
+          let allTodos = presentTodos;
+          for (let allTodosUser in allTodos) {
+            let userTodos = allTodos[allTodosUser];
+            userTodos = userTodos.map(eachTodo => {
+              if (eachTodo.id == each.id) {
+                let tempInd = eachTodo.index;
+                tempInd[user] = tempInd[user] - 1;
+                eachTodo.index = tempInd;
+              }
+              return eachTodo;
+            });
+            allTodos[allTodosUser] = userTodos;
+          }
+          setPresentTodos(allTodos);
+
+          let allOriginalTodos = originalPresentTodos;
+          for (let allTodosUser in allOriginalTodos) {
+            let userTodos = allOriginalTodos[allTodosUser];
+            userTodos = userTodos.map(eachTodo => {
+              if (eachTodo.id == each.id) {
+                let tempInd = eachTodo.index;
+                tempInd[user] = tempInd[user] - 1;
+                eachTodo.index = tempInd;
+              }
+              return eachTodo;
+            });
+            allOriginalTodos[allTodosUser] = userTodos;
+          }
+          setOriginalPresentTodos(allTodos);
         }
       });
     } else if (initialPos > finalPos) {
       // this increases index of all items in between initial and final position by 1
       todos.forEach(each => {
-        let indexDict = each.index;
-        let index = indexDict[user];
-        if (index < initialPos && index >= finalPos) {
+        if (each.index[user] < initialPos && each.index[user] >= finalPos) {
           // this increases index of all items in between initial and final position by 1
-          for (let eachUser of each.users) {
-            //if todoTaskUsers.includes(eachUser)  not working cause its even adding for new users
-            // if !todoTaskNewUsers().includes(eachUser) not working cause its even adding for users where the task whose index is changed is not present
-            if (
-              !todoTaskNewUsers().includes(eachUser) &&
-              !todoTaskRemovedUsers.includes(eachUser) &&
-              todoTaskUsers.includes(eachUser)
-            ) {
-              indexDict[eachUser] = indexDict[eachUser] + 1;
-            }
-          }
-          console.log('existing', each.taskName, indexDict);
+          // for (let eachUser of each.users) {
+          //   //if todoTaskUsers.includes(eachUser)  not working cause its even adding for new users
+          //   // if !todoTaskNewUsers().includes(eachUser) not working cause its even adding for users where the task whose index is changed is not present
+          //   if (
+          //     !todoTaskNewUsers().includes(eachUser) &&
+          //     !todoTaskRemovedUsers.includes(eachUser) &&
+          //     todoTaskUsers.includes(eachUser)
+          //   ) {
+          //     if (presentTodos[eachUser] != undefined) {
+          //       let allTodos = presentTodos;
+          //       for (let allTodosUser in allTodos) {
+          //         let userTodos = allTodos[allTodosUser];
+          //         userTodos = userTodos.map(eachTodo => {
+          //           if (eachTodo.id == each.id) {
+          //             let tempInd = eachTodo.index;
+          //             tempInd[eachUser] = tempInd[eachUser] + 1;
+          //             eachTodo.index = tempInd;
+          //           }
+          //           return eachTodo;
+          //         });
+          //         allTodos[allTodosUser] = userTodos;
+          //       }
+          //       setPresentTodos(allTodos);
+          //     }
+
+          //     indexDict[eachUser] = indexDict[eachUser] + 1;
+          //   }
+          // }
+          // console.log('existing', each.taskName, indexDict);
+          let indexDict = each.index;
+          indexDict[user] = indexDict[user] + 1;
+          console.log(each.taskName, indexDict);
           firestore()
             .collection('todos')
             .doc(each.id)
@@ -350,6 +487,36 @@ const TodoModal = ({
               index: indexDict,
             })
             .catch(error => console.log(error));
+
+          let allTodos = presentTodos;
+          for (let allTodosUser in allTodos) {
+            let userTodos = allTodos[allTodosUser];
+            userTodos = userTodos.map(eachTodo => {
+              if (eachTodo.id == each.id) {
+                let tempInd = eachTodo.index;
+                tempInd[user] = tempInd[user] + 1;
+                eachTodo.index = tempInd;
+              }
+              return eachTodo;
+            });
+            allTodos[allTodosUser] = userTodos;
+          }
+          setPresentTodos(allTodos);
+
+          let allOriginalTodos = originalPresentTodos;
+          for (let allTodosUser in allOriginalTodos) {
+            let userTodos = allOriginalTodos[allTodosUser];
+            userTodos = userTodos.map(eachTodo => {
+              if (eachTodo.id == each.id) {
+                let tempInd = eachTodo.index;
+                tempInd[user] = tempInd[user] + 1;
+                eachTodo.index = tempInd;
+              }
+              return eachTodo;
+            });
+            allOriginalTodos[allTodosUser] = userTodos;
+          }
+          setOriginalPresentTodos(allTodos);
         }
       });
     }
@@ -435,7 +602,6 @@ const TodoModal = ({
           taskUser,
           presentTodos[taskUser],
           newIndices[taskUser],
-          true,
         );
         if (todoTaskUsers.indexOf(taskUser) == todoTaskUsers.length - 1) {
           // console.log(newIndices);
@@ -456,12 +622,11 @@ const TodoModal = ({
       //modifies the properties of original todo if some exisiting todo is opened in modal
       let indexDict = index;
       for (let deletedUser of todoTaskRemovedUsers) {
-        console.log('deleted');
+        // console.log('deleted');
         deleteTodoManagePri(
           deletedUser,
           originalPresentTodos[deletedUser],
           index[deletedUser],
-          true,
         );
         delete indexDict[deletedUser];
         // delete originalPresentTodos[deletedUser];
@@ -483,7 +648,6 @@ const TodoModal = ({
             taskUser,
             presentTodos[taskUser],
             newIndices[taskUser],
-            false,
           );
           indexDict[taskUser] = newIndices[taskUser];
         }
@@ -505,42 +669,44 @@ const TodoModal = ({
     reloadTodos();
   }
 
-  function deleteTodoManagePri(user, todos, taskIndex, userRemoved) {
+  function deleteTodoManagePri(user, todos, taskIndex) {
     //this function manages index of todos below a certain todo in case i delete it
     // console.log(allTodos)
     todos.forEach(each => {
       if (each.index[user] > taskIndex) {
+        // if (!userRemoved) {
+        //   //this works for delete function
+        //   for (let eachUser of each.users) {
+        //     if (todoTaskOriginalUsers.includes(eachUser)) {
+        //       indexDict[eachUser] = indexDict[eachUser] - 1;
+        //     }
+        //   }
+        // } else {
+        //   //this works for reducing index of todos higher than the todos where the user is removed
+        //   let allTodos = originalPresentTodos;
+        //   let reqUsers = each.users.filter(currentUser => {
+        //     return (
+        //       currentUser != user && todoTaskOriginalUsers.includes(currentUser)
+        //     );
+        //   });
+        //   for (let eachUser of reqUsers) {
+        //     let userTodos = allTodos[eachUser];
+        //     userTodos = userTodos.map(eachTodo => {
+        //       if (eachTodo.id == each.id) {
+        //         let tempInd = eachTodo.index;
+        //         tempInd[user] = tempInd[user] - 1;
+        //         eachTodo.index = tempInd;
+        //       }
+        //       return eachTodo;
+        //     });
+        //     allTodos[eachUser] = userTodos;
+        //   }
+        //   setOriginalPresentTodos(allTodos);
+        //   indexDict[user] = indexDict[user] - 1;
+        // }
         let indexDict = each.index;
-        if (!userRemoved) {
-          //this works for delete function
-          for (let eachUser of each.users) {
-            if (todoTaskOriginalUsers.includes(eachUser)) {
-              indexDict[eachUser] = indexDict[eachUser] - 1;
-            }
-          }
-        } else {
-          //this works for reducing index of todos higher than the todos where the user is removed
-          let allTodos = originalPresentTodos;
-          let reqUsers = each.users.filter(currentUser => {
-            return (
-              currentUser != user && todoTaskOriginalUsers.includes(currentUser)
-            );
-          });
-          for (let eachUser of reqUsers) {
-            let userTodos = allTodos[eachUser];
-            userTodos = userTodos.map(eachTodo => {
-              if (eachTodo.id == each.id) {
-                let tempInd = eachTodo.index;
-                tempInd[user] = tempInd[user] - 1;
-                eachTodo.index = tempInd;
-              }
-              return eachTodo;
-            });
-            allTodos[eachUser] = userTodos;
-          }
-          setOriginalPresentTodos(allTodos);
-          indexDict[user] = indexDict[user] - 1;
-        }
+        indexDict[user] = indexDict[user] - 1;
+        console.log(each.taskName, indexDict);
         firestore()
           .collection('todos')
           .doc(each.id)
@@ -548,6 +714,36 @@ const TodoModal = ({
             index: indexDict,
           })
           .catch(error => console.log(error));
+
+        let allTodos = presentTodos;
+        for (let allTodosUser in allTodos) {
+          let userTodos = allTodos[allTodosUser];
+          userTodos = userTodos.map(eachTodo => {
+            if (eachTodo.id == each.id) {
+              let tempInd = eachTodo.index;
+              tempInd[user] = tempInd[user] - 1;
+              eachTodo.index = tempInd;
+            }
+            return eachTodo;
+          });
+          allTodos[allTodosUser] = userTodos;
+        }
+        setPresentTodos(allTodos);
+
+        let allOriginalTodos = originalPresentTodos;
+        for (let allTodosUser in allOriginalTodos) {
+          let userTodos = allOriginalTodos[allTodosUser];
+          userTodos = userTodos.map(eachTodo => {
+            if (eachTodo.id == each.id) {
+              let tempInd = eachTodo.index;
+              tempInd[user] = tempInd[user] - 1;
+              eachTodo.index = tempInd;
+            }
+            return eachTodo;
+          });
+          allOriginalTodos[allTodosUser] = userTodos;
+        }
+        setOriginalPresentTodos(allTodos);
       }
     });
   }
@@ -559,7 +755,6 @@ const TodoModal = ({
         todoUser,
         originalPresentTodos[todoUser],
         index[todoUser],
-        false,
       );
       if (
         Object.keys(originalPresentTodos).indexOf(todoUser) ==
