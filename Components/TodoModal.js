@@ -36,6 +36,7 @@ import {NativeModules} from 'react-native';
 import {userContext} from '../context';
 import IonIcon from '../customIcons/IonIcon';
 import FriendsSelectorModal from './FriendsSelectorModal';
+import PostponeConfirmModal from './PostponeConfirmModal';
 // const {TaskReminder} = NativeModules;
 
 const TodoModal = ({
@@ -272,49 +273,8 @@ const TodoModal = ({
       if (each.index[user] >= newIndex) {
         //if this task contains multiple users, do increment index for every user if the new task is added to that user as well
 
-        // for (let eachUser of each.users) {
-        //   //!shouldn't run for existing user but it is
-        //   if (!todoTaskOriginalUsers.includes(eachUser)) {
-        //     console.log('new users', todoTaskNewUsers(), 'user', eachUser);
-        //     if (originalPresentTodos[eachUser] != undefined) {
-        //       let allTodos = originalPresentTodos;
-        //       for (let allTodosUser in allTodos) {
-        //         let userTodos = allTodos[allTodosUser];
-        //         userTodos = userTodos.map(eachTodo => {
-        //           if (eachTodo.id == each.id) {
-        //             let tempInd = eachTodo.index;
-        //             tempInd[eachUser] = tempInd[eachUser] + 1;
-        //             eachTodo.index = tempInd;
-        //             console.log(
-        //               'making a change in original todos',
-        //               eachTodo.taskName,
-        //               each.index,
-        //             );
-        //           }
-        //           return eachTodo;
-        //         });
-        //         allTodos[allTodosUser] = userTodos;
-        //       }
-        //       setOriginalPresentTodos(allTodos);
-        //     }
-        //     indexDict[eachUser] = indexDict[eachUser] + 1;
-        //     console.log(
-        //       'changed only if user is a new user in existing todos',
-        //       each.taskName,
-        //       indexDict,
-        //     );
-        //   }
-        //   if (absolutelyNewTodo) {
-        //     if (users[0] == eachUser) {
-        //       indexDict[eachUser] = indexDict[eachUser] + 1;
-
-        //       console.log('run in newTodoManagePri ', each.taskName, indexDict);
-        //     }
-        //   }
-        // }
-
         let indexDict = each.index;
-        console.log(each.taskName, indexDict);
+        // console.log(each.taskName, indexDict);
         indexDict[user] = indexDict[user] + 1;
 
         firestore()
@@ -373,32 +333,6 @@ const TodoModal = ({
       todos.forEach(each => {
         if (each.index[user] > initialPos && each.index[user] < finalPos) {
           // this reduces index of all items in between initial and final position by 1
-          // for (let eachUser of each.users) {
-          //   if (
-          //     !todoTaskNewUsers().includes(eachUser) &&
-          //     !todoTaskRemovedUsers.includes(eachUser) &&
-          //     todoTaskUsers.includes(eachUser)
-          //   ) {
-          //     if (presentTodos[eachUser] != undefined) {
-          //       let allTodos = presentTodos;
-          //       for (let allTodosUser in allTodos) {
-          //         let userTodos = allTodos[allTodosUser];
-          //         userTodos = userTodos.map(eachTodo => {
-          //           if (eachTodo.id == each.id) {
-          //             let tempInd = eachTodo.index;
-          //             tempInd[eachUser] = tempInd[eachUser] - 1;
-          //             eachTodo.index = tempInd;
-          //           }
-          //           return eachTodo;
-          //         });
-          //         allTodos[allTodosUser] = userTodos;
-          //       }
-          //       setPresentTodos(allTodos);
-          //     }
-
-          //     indexDict[eachUser] = indexDict[eachUser] - 1;
-          //   }
-          // }
           // console.log('existing', each.taskName, indexDict);
           let indexDict = each.index;
           indexDict[user] = indexDict[user] - 1;
@@ -448,34 +382,6 @@ const TodoModal = ({
       todos.forEach(each => {
         if (each.index[user] < initialPos && each.index[user] >= finalPos) {
           // this increases index of all items in between initial and final position by 1
-          // for (let eachUser of each.users) {
-          //   //if todoTaskUsers.includes(eachUser)  not working cause its even adding for new users
-          //   // if !todoTaskNewUsers().includes(eachUser) not working cause its even adding for users where the task whose index is changed is not present
-          //   if (
-          //     !todoTaskNewUsers().includes(eachUser) &&
-          //     !todoTaskRemovedUsers.includes(eachUser) &&
-          //     todoTaskUsers.includes(eachUser)
-          //   ) {
-          //     if (presentTodos[eachUser] != undefined) {
-          //       let allTodos = presentTodos;
-          //       for (let allTodosUser in allTodos) {
-          //         let userTodos = allTodos[allTodosUser];
-          //         userTodos = userTodos.map(eachTodo => {
-          //           if (eachTodo.id == each.id) {
-          //             let tempInd = eachTodo.index;
-          //             tempInd[eachUser] = tempInd[eachUser] + 1;
-          //             eachTodo.index = tempInd;
-          //           }
-          //           return eachTodo;
-          //         });
-          //         allTodos[allTodosUser] = userTodos;
-          //       }
-          //       setPresentTodos(allTodos);
-          //     }
-
-          //     indexDict[eachUser] = indexDict[eachUser] + 1;
-          //   }
-          // }
           // console.log('existing', each.taskName, indexDict);
           let indexDict = each.index;
           indexDict[user] = indexDict[user] + 1;
@@ -555,36 +461,40 @@ const TodoModal = ({
 
   function closeModal() {
     setModalOpen(false);
-    setTimeout(() => {
-      setTodoTaskName('');
-      setTodoTaskDesc('');
-      setTodoTaskUsers([user.uid]);
-      setTodoTaskPriority('0');
-    }, 1000);
+    // setTimeout(() => {
+    setTodoTaskName('');
+    setTodoTaskDesc('');
+    setTodoTaskUsers([user.uid]);
+    setTodoTaskPriority('0');
+    // }, 1000);
   }
 
+  const [postponeTodoModalVisible, setPostponeTodoModalVisible] =
+    useState(false);
+
   function postponeTodo() {
-    let presentTodos = allTodos != undefined ? allTodos : loadedTodos;
-    let newIndex = decidePosition(futureTodos, todoTaskPriority); //todo: calculate new index for every user
+    console.log('postpone this mfing task');
+    // let presentTodos = allTodos != undefined ? allTodos : loadedTodos;
+    // let newIndex = decidePosition(futureTodos, todoTaskPriority); //todo: calculate new index for every user
 
-    updateFutureTodosIndex(presentTodos, futureTodos, newIndex); //todo: run this for the future tasks of all users
+    // updateFutureTodosIndex(presentTodos, futureTodos, newIndex); //todo: run this for the future tasks of all users
 
-    let indexDict = index;
-    indexDict[user.uid] = newIndex; //todo: update indexDict for every user
+    // let indexDict = index;
+    // indexDict[user.uid] = newIndex; //todo: update indexDict for every user
 
-    firestore()
-      .collection('todos')
-      .doc(id)
-      .update({
-        time: nextTime(),
-        index: indexDict,
-        timesPostponed: timesPostponed != undefined ? timesPostponed + 1 : 1,
-      })
-      .then(() => {
-        closeModal();
-        setReloadEverything(!reloadEverything);
-        reloadTodos();
-      });
+    // firestore()
+    //   .collection('todos')
+    //   .doc(id)
+    //   .update({
+    //     time: nextTime(),
+    //     index: indexDict,
+    //     timesPostponed: timesPostponed != undefined ? timesPostponed + 1 : 1,
+    //   })
+    //   .then(() => {
+    //     closeModal();
+    //     setReloadEverything(!reloadEverything);
+    //     reloadTodos();
+    //   });
   }
 
   function saveTodo() {
@@ -671,39 +581,8 @@ const TodoModal = ({
 
   function deleteTodoManagePri(user, todos, taskIndex) {
     //this function manages index of todos below a certain todo in case i delete it
-    // console.log(allTodos)
     todos.forEach(each => {
       if (each.index[user] > taskIndex) {
-        // if (!userRemoved) {
-        //   //this works for delete function
-        //   for (let eachUser of each.users) {
-        //     if (todoTaskOriginalUsers.includes(eachUser)) {
-        //       indexDict[eachUser] = indexDict[eachUser] - 1;
-        //     }
-        //   }
-        // } else {
-        //   //this works for reducing index of todos higher than the todos where the user is removed
-        //   let allTodos = originalPresentTodos;
-        //   let reqUsers = each.users.filter(currentUser => {
-        //     return (
-        //       currentUser != user && todoTaskOriginalUsers.includes(currentUser)
-        //     );
-        //   });
-        //   for (let eachUser of reqUsers) {
-        //     let userTodos = allTodos[eachUser];
-        //     userTodos = userTodos.map(eachTodo => {
-        //       if (eachTodo.id == each.id) {
-        //         let tempInd = eachTodo.index;
-        //         tempInd[user] = tempInd[user] - 1;
-        //         eachTodo.index = tempInd;
-        //       }
-        //       return eachTodo;
-        //     });
-        //     allTodos[eachUser] = userTodos;
-        //   }
-        //   setOriginalPresentTodos(allTodos);
-        //   indexDict[user] = indexDict[user] - 1;
-        // }
         let indexDict = each.index;
         indexDict[user] = indexDict[user] - 1;
         console.log(each.taskName, indexDict);
@@ -774,15 +653,15 @@ const TodoModal = ({
     }
   }
 
-  for (let user in presentTodos) {
-    console.log('====');
-    console.log(user);
-    // console.log(presentTodos[user].length);
-    presentTodos[user].forEach(todo => {
-      console.log(todo.taskName, todo.index[user], todo.priority);
-    });
-    console.log('====');
-  }
+  // for (let user in presentTodos) {
+  //   console.log('====');
+  //   console.log(user);
+  //   // console.log(presentTodos[user].length);
+  //   presentTodos[user].forEach(todo => {
+  //     console.log(todo.taskName, todo.index[user], todo.priority);
+  //   });
+  //   console.log('====');
+  // }
 
   // for (let user in futureTodos) {
   //   console.log('====');
@@ -908,7 +787,7 @@ const TodoModal = ({
           <TextInput
             defaultValue={todoTaskDesc}
             onChangeText={newVal => setTodoTaskDesc(newVal)}
-            style={[styles.taskDesc, {}]}
+            style={styles.taskDesc}
             placeholder="Task Description"
             placeholderTextColor="#6C6C6C"
             multiline={true}
@@ -975,12 +854,18 @@ const TodoModal = ({
             {id != undefined && timeType != 'longTerm' ? (
               <TouchableOpacity
                 style={styles.postponeIcon}
-                onPress={postponeTodo}
+                onPress={() => setPostponeTodoModalVisible(true)}
                 onLongPress={() => Toast('Postpone')}>
                 <MaterialIcon
                   iconName="subdirectory-arrow-right"
                   iconColor="#ffffff"
                   iconSize={28}
+                />
+                <PostponeConfirmModal
+                  modalVisible={postponeTodoModalVisible}
+                  closeModal={() => setPostponeTodoModalVisible(false)}
+                  postponeTodo={postponeTodo}
+                  timeType={timeType}
                 />
               </TouchableOpacity>
             ) : (
