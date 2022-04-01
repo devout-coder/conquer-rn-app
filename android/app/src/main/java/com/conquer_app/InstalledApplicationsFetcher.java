@@ -149,6 +149,7 @@ public class InstalledApplicationsFetcher extends ReactContextBaseJavaModule {
         String timeDuration = sharedPref.getString("timeDuration", "none");
         String timeTypeDropdownValue = sharedPref.getString("timeTypeDropdownValue", "none");
         boolean ashneerGroverVoiceOn = sharedPref.getBoolean("ashneerGroverVoiceOn", false);
+        boolean takeUserHomeOn = sharedPref.getBoolean("takeUserHomeOn", false);
         String timeType = sharedPref.getString("timeType", "none");
 
         final WritableMap nudgerDetails = Arguments.createMap();
@@ -157,6 +158,7 @@ public class InstalledApplicationsFetcher extends ReactContextBaseJavaModule {
         nudgerDetails.putString("timeDuration", timeDuration);
         nudgerDetails.putString("timeTypeDropdownValue", timeTypeDropdownValue);
         nudgerDetails.putBoolean("ashneerGroverVoiceOn", ashneerGroverVoiceOn);
+        nudgerDetails.putBoolean("takeUserHomeOn", takeUserHomeOn);
         nudgerDetails.putString("timeType", timeType);
         callback.invoke(nudgerDetails);
 
@@ -164,7 +166,7 @@ public class InstalledApplicationsFetcher extends ReactContextBaseJavaModule {
 
     @ReactMethod
     public void saveNudgerDetails(String blacklistedApps, String blacklistedWebsites, String timeDuration,
-                                  String timeTypeDropdownValue, boolean ashneerGroverVoiceSwitch, String timeType) {
+                                  String timeTypeDropdownValue, boolean ashneerGroverVoiceSwitch, boolean takeUserHomeSwitch, String timeType) {
 
         SharedPreferences sharedPref = getReactApplicationContext().getSharedPreferences(
                 "ApplicationListener", Context.MODE_PRIVATE);
@@ -175,6 +177,7 @@ public class InstalledApplicationsFetcher extends ReactContextBaseJavaModule {
         editor.putString("timeDuration", timeDuration);
         editor.putString("timeTypeDropdownValue", timeTypeDropdownValue);
         editor.putBoolean("ashneerGroverVoiceOn", ashneerGroverVoiceSwitch);
+        editor.putBoolean("takeUserHomeOn", takeUserHomeSwitch);
         editor.putString("timeType", timeType);
         editor.apply();
 

@@ -50,6 +50,7 @@ const Nudger = ({navigation}) => {
   const [timeTypeDropdownValue, setTimeTypeDropdownValue] = useState('minutes');
   const [ashneerGroverVoiceSwitch, setAshneerGroverVoiceSwitch] =
     useState(false);
+  const [takeUserHomeSwitch, setTakeUserHomeSwitch] = useState(false);
   const [timeTypeDropdownItems, setTimeTypeDropdownItems] = useState([
     {label: 'minutes', value: 'minutes'},
     {label: 'hours', value: 'hours'},
@@ -79,16 +80,13 @@ const Nudger = ({navigation}) => {
     };
   });
 
-  useEffect(() => {
-    fetchNudgerDetails();
-  }, []);
-
   const setStateNudgerDetails = (
     blacklistedApps,
     blacklistedWebsites,
     timeDuration,
     timeTypeDropdownValue,
     ashneerGroverVoiceSwitch,
+    takeUserHomeSwitch,
     timeType,
   ) => {
     let blacklistedAppsArray = blacklistedApps.split(',');
@@ -98,6 +96,7 @@ const Nudger = ({navigation}) => {
     setTimeDuration(timeDuration);
     setTimeTypeDropdownValue(timeTypeDropdownValue);
     setAshneerGroverVoiceSwitch(ashneerGroverVoiceSwitch);
+    setTakeUserHomeSwitch(takeUserHomeSwitch);
     for (let i = 0; i < radio_props.length; i++) {
       if (radio_props[i].label == timeType) {
         setTimeTypeRadioInitial(i + 1);
@@ -113,6 +112,7 @@ const Nudger = ({navigation}) => {
     let ashneerGroverVoiceSwitch = storage.getBoolean(
       'ashneerGroverVoiceSwitch',
     );
+    let takeUserHomeSwitch = storage.getBoolean('takeUserHomeSwitch');
     let timeType = storage.getString('timeType');
     if (blacklistedApps != undefined) {
       //nudger details are stored in the mmkv storage
@@ -122,6 +122,7 @@ const Nudger = ({navigation}) => {
         timeDuration,
         timeTypeDropdownValue,
         ashneerGroverVoiceSwitch,
+        takeUserHomeSwitch,
         timeType,
       );
     } else {
@@ -141,6 +142,7 @@ const Nudger = ({navigation}) => {
             let ashneerGroverVoiceSwitch = detailsObj.get(
               'ashneerGroverVoiceSwitch',
             );
+            let takeUserHomeSwitch = detailsObj.get('takeUserHomeSwitch');
             let timeType = detailsObj.get('timeType');
             setStateNudgerDetails(
               blacklistedApps,
@@ -148,6 +150,7 @@ const Nudger = ({navigation}) => {
               timeDuration,
               timeTypeDropdownValue,
               ashneerGroverVoiceSwitch,
+              takeUserHomeSwitch,
               timeType,
             );
           }
@@ -155,6 +158,10 @@ const Nudger = ({navigation}) => {
     }
     setNudgerDetailsFetched(true);
   };
+
+  useEffect(() => {
+    fetchNudgerDetails();
+  }, []);
 
   const saveNudgerDetailsFirebase = () => {
     //saves all nudger details in firebase
@@ -166,6 +173,7 @@ const Nudger = ({navigation}) => {
       timeTypeDropdownValue: timeTypeDropdownValue,
       timeType: timeTypeRadio,
       ashneerGroverVoiceSwitch: ashneerGroverVoiceSwitch,
+      takeUserHomeSwitch: takeUserHomeSwitch,
       user: user.uid,
     };
     firestore()
@@ -193,6 +201,7 @@ const Nudger = ({navigation}) => {
       timeDuration,
       timeTypeDropdownValue,
       ashneerGroverVoiceSwitch,
+      takeUserHomeSwitch,
       timeTypeRadio,
     );
     saveNudgerDetailsFirebase();
@@ -201,6 +210,7 @@ const Nudger = ({navigation}) => {
     storage.set('timeDuration', timeDuration);
     storage.set('timeTypeDropdownValue', timeTypeDropdownValue);
     storage.set('ashneerGroverVoiceSwitch', ashneerGroverVoiceSwitch);
+    storage.set('takeUserHomeSwitch', takeUserHomeSwitch);
     storage.set('timeType', timeTypeRadio);
     navigation.navigate('Main');
   };
@@ -342,13 +352,29 @@ const Nudger = ({navigation}) => {
               </Text>
               <ToggleSwitch
                 isOn={ashneerGroverVoiceSwitch}
-                onColor="red"
-                offColor="blue"
+                onColor="#00ff00"
+                offColor="red"
                 animationSpeed={100}
                 labelStyle={{color: 'black', fontWeight: '900'}}
                 size="medium"
                 onToggle={newSwitchState =>
                   setAshneerGroverVoiceSwitch(newSwitchState)
+                }
+              />
+            </View>
+            <View style={styles.ashneerGroverVoiceView}>
+              <Text style={styles.nudgerNormalText}>
+                Quit the app if it is blacklisted and is being overused
+              </Text>
+              <ToggleSwitch
+                isOn={takeUserHomeSwitch}
+                onColor="#00ff00"
+                offColor="red"
+                animationSpeed={100}
+                labelStyle={{color: 'black', fontWeight: '900'}}
+                size="medium"
+                onToggle={newSwitchState =>
+                  setTakeUserHomeSwitch(newSwitchState)
                 }
               />
             </View>

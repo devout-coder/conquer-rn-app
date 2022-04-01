@@ -59,6 +59,7 @@ public class AlarmReceiver extends BroadcastReceiver {
         String storedPackage = sharedPref.getString("current_running_application", "none");
         String timeType = sharedPref.getString("timeType", "none");
         boolean ashneerGroverVoiceOn = sharedPref.getBoolean("ashneerGroverVoiceOn", false);
+        boolean takeUserHomeOn = sharedPref.getBoolean("takeUserHomeOn", false);
 
         if (!isDeviceLocked(context) && !storedPackage.equals("none")) {
             String user = FirebaseAuth.getInstance().getCurrentUser().getUid();
@@ -74,12 +75,14 @@ public class AlarmReceiver extends BroadcastReceiver {
                             if (!allTasks.equals("")) {
                                 NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
                                 notificationManager.notify(0,
-                                        createNotification(context, "You have stuff to do!", stripLastEmptyLine(allTasks), ashneerGroverVoiceOn?"task_reminders_asheers_voice":"task_reminders", NotificationCompat.PRIORITY_MAX).build());
+                                        createNotification(context, "You have stuff to do!", stripLastEmptyLine(allTasks), ashneerGroverVoiceOn ? "task_reminders_asheers_voice" : "task_reminders", NotificationCompat.PRIORITY_MAX).build());
 //                                this piece of code takes user to home screen
-//                                Intent startMain = new Intent(Intent.ACTION_MAIN);
-//                                startMain.addCategory(Intent.CATEGORY_HOME);
-//                                startMain.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//                                context.startActivity(startMain);
+                                if (takeUserHomeOn) {
+                                    Intent startMain = new Intent(Intent.ACTION_MAIN);
+                                    startMain.addCategory(Intent.CATEGORY_HOME);
+                                    startMain.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                    context.startActivity(startMain);
+                                }
                             }
                         } else {
                             Log.d("obscure_tag", "Error getting documents.", task.getException());
