@@ -53,6 +53,11 @@ const FriendsSelectorModal = ({
       let friends = (
         await firestore().collection('friends').doc(user.uid).get()
       ).get('friends');
+      todoTaskUsers.forEach(user => {
+        if (!friends.includes(user) && user != mainUser) {
+          friends.push(user);
+        }
+      });
       fetchFriendsDetails(friends);
     } else {
       let reqUsers = todoTaskUsers.filter(eachUser => eachUser != user.uid);

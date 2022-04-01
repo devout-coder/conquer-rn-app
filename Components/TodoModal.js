@@ -367,7 +367,7 @@ const TodoModal = ({
           // console.log('existing', each.taskName, indexDict);
           let indexDict = each.index;
           indexDict[user] = indexDict[user] + 1;
-          console.log(each.taskName, indexDict);
+          // console.log(each.taskName, indexDict);
           firestore()
             .collection('todos')
             .doc(each.id)
