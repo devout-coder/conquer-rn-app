@@ -99,7 +99,15 @@ const TodoModalEachFriend = ({
               source={require('../resources/images/avatar.png')}
             />
           )}
-          <Text style={styles.friendName}>{friend.friendName}</Text>
+          {friend.friendId == todoTaskUsers[0] ? (
+            <Text style={[styles.friendName, {width: '40%'}]}>
+              {friend.friendName}
+            </Text>
+          ) : (
+            <Text style={[styles.friendName, {width: '100%'}]}>
+              {friend.friendName}
+            </Text>
+          )}
           {friend.friendId == todoTaskUsers[0] ? (
             <Text style={styles.ownerText}>Owner</Text>
           ) : (
@@ -134,8 +142,6 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins-Regular',
     color: '#F1D7D7',
     fontSize: 20,
-    width: '80%',
-    // backgroundColor: '#ffffff',
     marginLeft: '8%',
   },
   ownerText: {

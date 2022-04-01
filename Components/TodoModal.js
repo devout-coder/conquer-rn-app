@@ -135,7 +135,7 @@ const TodoModal = ({
             if (todosTime == time) {
               if (firstRender.current) {
                 setOriginalPresentTodos(dict);
-                firstRender.current = false;
+                // firstRender.current = false;
               }
               setPresentTodos(dict);
             } else {
@@ -255,6 +255,16 @@ const TodoModal = ({
     }
   }, [todoTaskPriority]);
 
+  function closeModal() {
+    setModalOpen(false);
+    setTimeout(() => {
+      setTodoTaskName('');
+      setTodoTaskDesc('');
+      setTodoTaskUsers([user.uid]);
+      setTodoTaskPriority('0');
+    }, 1000);
+  }
+
   function decidePosition(todos, priority) {
     //this function takes a priority and returns the sutiable index for a new element of that priority
     let reqIndex;
@@ -265,6 +275,27 @@ const TodoModal = ({
     });
     return reqIndex;
   }
+
+  const alterIndex = (increaseOrDecrease, user, taskId, todos, setTodos) => {
+    let allTodos = todos;
+    for (let allTodosUser in allTodos) {
+      let userTodos = allTodos[allTodosUser];
+      userTodos = userTodos.map(eachTodo => {
+        if (eachTodo.id == taskId) {
+          let tempInd = eachTodo.index;
+          if (increaseOrDecrease == 'increase') {
+            tempInd[user] = tempInd[user] + 1;
+          } else if (increaseOrDecrease == 'decrease') {
+            tempInd[user] = tempInd[user] - 1;
+          }
+          eachTodo.index = tempInd;
+        }
+        return eachTodo;
+      });
+      allTodos[allTodosUser] = userTodos;
+    }
+    setTodos(allTodos);
+  };
 
   function newTodoManagePri(user, todos, newIndex) {
     // it increases the index of all todos which have index value equal to or more than newIndex
@@ -285,41 +316,14 @@ const TodoModal = ({
           })
           .catch(error => console.log(error));
 
-        let allTodos = presentTodos;
-        for (let allTodosUser in allTodos) {
-          let userTodos = allTodos[allTodosUser];
-          userTodos = userTodos.map(eachTodo => {
-            if (eachTodo.id == each.id) {
-              let tempInd = eachTodo.index;
-              tempInd[user] = tempInd[user] + 1;
-              eachTodo.index = tempInd;
-              console.log('presentTodos', eachTodo.taskName, eachTodo.index);
-            }
-            return eachTodo;
-          });
-          allTodos[allTodosUser] = userTodos;
-        }
-        setPresentTodos(allTodos);
-
-        let allOriginalTodos = originalPresentTodos;
-        for (let allTodosUser in allOriginalTodos) {
-          let userTodos = allOriginalTodos[allTodosUser];
-          userTodos = userTodos.map(eachTodo => {
-            if (eachTodo.id == each.id) {
-              let tempInd = eachTodo.index;
-              tempInd[user] = tempInd[user] + 1;
-              eachTodo.index = tempInd;
-              console.log(
-                'original presentTodos',
-                eachTodo.taskName,
-                eachTodo.index,
-              );
-            }
-            return eachTodo;
-          });
-          allOriginalTodos[allTodosUser] = userTodos;
-        }
-        setOriginalPresentTodos(allTodos);
+        alterIndex('increase', user, each.id, presentTodos, setPresentTodos);
+        alterIndex(
+          'increase',
+          user,
+          each.id,
+          originalPresentTodos,
+          setOriginalPresentTodos,
+        );
       }
     });
   }
@@ -337,7 +341,6 @@ const TodoModal = ({
           let indexDict = each.index;
           indexDict[user] = indexDict[user] - 1;
 
-          console.log(each.taskName, indexDict);
           firestore()
             .collection('todos')
             .doc(each.id)
@@ -346,35 +349,14 @@ const TodoModal = ({
             })
             .catch(error => console.log(error));
 
-          let allTodos = presentTodos;
-          for (let allTodosUser in allTodos) {
-            let userTodos = allTodos[allTodosUser];
-            userTodos = userTodos.map(eachTodo => {
-              if (eachTodo.id == each.id) {
-                let tempInd = eachTodo.index;
-                tempInd[user] = tempInd[user] - 1;
-                eachTodo.index = tempInd;
-              }
-              return eachTodo;
-            });
-            allTodos[allTodosUser] = userTodos;
-          }
-          setPresentTodos(allTodos);
-
-          let allOriginalTodos = originalPresentTodos;
-          for (let allTodosUser in allOriginalTodos) {
-            let userTodos = allOriginalTodos[allTodosUser];
-            userTodos = userTodos.map(eachTodo => {
-              if (eachTodo.id == each.id) {
-                let tempInd = eachTodo.index;
-                tempInd[user] = tempInd[user] - 1;
-                eachTodo.index = tempInd;
-              }
-              return eachTodo;
-            });
-            allOriginalTodos[allTodosUser] = userTodos;
-          }
-          setOriginalPresentTodos(allTodos);
+          alterIndex('decrease', user, each.id, presentTodos, setPresentTodos);
+          alterIndex(
+            'decrease',
+            user,
+            each.id,
+            originalPresentTodos,
+            setOriginalPresentTodos,
+          );
         }
       });
     } else if (initialPos > finalPos) {
@@ -394,110 +376,148 @@ const TodoModal = ({
             })
             .catch(error => console.log(error));
 
-          let allTodos = presentTodos;
-          for (let allTodosUser in allTodos) {
-            let userTodos = allTodos[allTodosUser];
-            userTodos = userTodos.map(eachTodo => {
-              if (eachTodo.id == each.id) {
-                let tempInd = eachTodo.index;
-                tempInd[user] = tempInd[user] + 1;
-                eachTodo.index = tempInd;
-              }
-              return eachTodo;
-            });
-            allTodos[allTodosUser] = userTodos;
-          }
-          setPresentTodos(allTodos);
-
-          let allOriginalTodos = originalPresentTodos;
-          for (let allTodosUser in allOriginalTodos) {
-            let userTodos = allOriginalTodos[allTodosUser];
-            userTodos = userTodos.map(eachTodo => {
-              if (eachTodo.id == each.id) {
-                let tempInd = eachTodo.index;
-                tempInd[user] = tempInd[user] + 1;
-                eachTodo.index = tempInd;
-              }
-              return eachTodo;
-            });
-            allOriginalTodos[allTodosUser] = userTodos;
-          }
-          setOriginalPresentTodos(allTodos);
+          alterIndex('increase', user, each.id, presentTodos, setPresentTodos);
+          alterIndex(
+            'increase',
+            user,
+            each.id,
+            originalPresentTodos,
+            setOriginalPresentTodos,
+          );
         }
       });
     }
   }
 
-  function updateFutureTodosIndex(presentTodos, futureTodos, newIndex) {
+  function postponeIndicesUpdate(
+    user,
+    presentTodosUser,
+    futureTodosUser,
+    newIndex,
+  ) {
     //reduces the index of all present tasks which ar below the postponed tasks and increases the index of future tasks which will be after the postponed task
-    let currentTaskIndex = index[user.uid];
-    presentTodos.forEach((each, index) => {
-      let indexDict = each.index;
-      if (indexDict[user.uid] > currentTaskIndex) {
-        indexDict[user.uid] = indexDict[user.uid] - 1;
-        firestore()
-          .collection('todos')
-          .doc(each.id)
-          .update({
-            index: indexDict,
-          })
-          .catch(error => console.log(error));
-      }
-    });
-    futureTodos.forEach((each, index) => {
-      let indexDict = each.index;
-      if (indexDict[user.uid] >= newIndex) {
-        indexDict[user.uid] = indexDict[user.uid] + 1;
-        firestore()
-          .collection('todos')
-          .doc(each.id)
-          .update({
-            index: indexDict,
-          })
-          .catch(error => console.log(error));
-      }
-    });
-  }
 
-  function closeModal() {
-    setModalOpen(false);
-    // setTimeout(() => {
-    setTodoTaskName('');
-    setTodoTaskDesc('');
-    setTodoTaskUsers([user.uid]);
-    setTodoTaskPriority('0');
-    // }, 1000);
+    let currentTaskIndex = index[user];
+    presentTodosUser.forEach(each => {
+      if (each.index[user] > currentTaskIndex) {
+        let indexDict = each.index;
+        indexDict[user] = indexDict[user] - 1;
+        firestore()
+          .collection('todos')
+          .doc(each.id)
+          .update({
+            index: indexDict,
+          })
+          .catch(error => console.log(error));
+
+        alterIndex('decrease', user, each.id, presentTodos, setPresentTodos);
+        alterIndex('decrease', user, each.id, futureTodos, setFutureTodos);
+        alterIndex(
+          'decrease',
+          user,
+          each.id,
+          originalPresentTodos,
+          setOriginalPresentTodos,
+        );
+        alterIndex(
+          'decrease',
+          user,
+          each.id,
+          originalFutureTodos,
+          setOriginalFutureTodos,
+        );
+      }
+    });
+
+    futureTodosUser.forEach(each => {
+      if (each.index[user] >= newIndex) {
+        let indexDict = each.index;
+        indexDict[user] = indexDict[user] + 1;
+        firestore()
+          .collection('todos')
+          .doc(each.id)
+          .update({
+            index: indexDict,
+          })
+          .catch(error => console.log(error));
+        alterIndex('increase', user, each.id, presentTodos, setPresentTodos);
+        alterIndex('increase', user, each.id, futureTodos, setFutureTodos);
+        alterIndex(
+          'increase',
+          user,
+          each.id,
+          originalPresentTodos,
+          setOriginalPresentTodos,
+        );
+        alterIndex(
+          'increase',
+          user,
+          each.id,
+          originalFutureTodos,
+          setOriginalFutureTodos,
+        );
+      }
+    });
   }
 
   const [postponeTodoModalVisible, setPostponeTodoModalVisible] =
     useState(false);
 
   function postponeTodo() {
-    console.log('postpone this mfing task');
-    // let presentTodos = allTodos != undefined ? allTodos : loadedTodos;
-    // let newIndex = decidePosition(futureTodos, todoTaskPriority); //todo: calculate new index for every user
+    let indexDict = index;
 
-    // updateFutureTodosIndex(presentTodos, futureTodos, newIndex); //todo: run this for the future tasks of all users
-
-    // let indexDict = index;
-    // indexDict[user.uid] = newIndex; //todo: update indexDict for every user
-
-    // firestore()
-    //   .collection('todos')
-    //   .doc(id)
-    //   .update({
-    //     time: nextTime(),
-    //     index: indexDict,
-    //     timesPostponed: timesPostponed != undefined ? timesPostponed + 1 : 1,
-    //   })
-    //   .then(() => {
-    //     closeModal();
-    //     setReloadEverything(!reloadEverything);
-    //     reloadTodos();
-    //   });
+    let newFutureIndices = {};
+    for (let deletedUser of todoTaskRemovedUsers) {
+      deleteTodoManagePri(
+        deletedUser,
+        originalPresentTodos[deletedUser],
+        index[deletedUser],
+      );
+    }
+    for (let taskUser of todoTaskUsers) {
+      newFutureIndices[taskUser] = decidePosition(
+        futureTodos[taskUser],
+        todoTaskPriority,
+      );
+      if (todoTaskOriginalUsers.includes(taskUser)) {
+        postponeIndicesUpdate(
+          taskUser,
+          originalPresentTodos[taskUser],
+          originalFutureTodos[taskUser],
+          newFutureIndices[taskUser],
+        );
+      } else {
+        newTodoManagePri(
+          taskUser,
+          futureTodos[taskUser],
+          newFutureIndices[taskUser],
+        );
+      }
+      if (todoTaskUsers.indexOf(taskUser) == todoTaskUsers.length - 1) {
+        // console.log(indexDict);
+        firestore()
+          .collection('todos')
+          .doc(id)
+          .update({
+            taskName: todoTaskName,
+            taskDesc: todoTaskDesc,
+            priority: todoTaskPriority,
+            users: todoTaskUsers,
+            index: newFutureIndices,
+            time: nextTime(),
+            timesPostponed:
+              timesPostponed != undefined ? timesPostponed + 1 : 1,
+          });
+        setPriChanged(false);
+        closeModal();
+        setReloadEverything(!reloadEverything);
+        reloadTodos();
+      }
+    }
   }
 
   function saveTodo() {
+    closeModal();
     let newIndices = {};
     for (let taskUser of todoTaskUsers) {
       newIndices[taskUser] = decidePosition(
@@ -585,7 +605,7 @@ const TodoModal = ({
       if (each.index[user] > taskIndex) {
         let indexDict = each.index;
         indexDict[user] = indexDict[user] - 1;
-        console.log(each.taskName, indexDict);
+        // console.log(each.taskName, indexDict);
         firestore()
           .collection('todos')
           .doc(each.id)
@@ -594,35 +614,14 @@ const TodoModal = ({
           })
           .catch(error => console.log(error));
 
-        let allTodos = presentTodos;
-        for (let allTodosUser in allTodos) {
-          let userTodos = allTodos[allTodosUser];
-          userTodos = userTodos.map(eachTodo => {
-            if (eachTodo.id == each.id) {
-              let tempInd = eachTodo.index;
-              tempInd[user] = tempInd[user] - 1;
-              eachTodo.index = tempInd;
-            }
-            return eachTodo;
-          });
-          allTodos[allTodosUser] = userTodos;
-        }
-        setPresentTodos(allTodos);
-
-        let allOriginalTodos = originalPresentTodos;
-        for (let allTodosUser in allOriginalTodos) {
-          let userTodos = allOriginalTodos[allTodosUser];
-          userTodos = userTodos.map(eachTodo => {
-            if (eachTodo.id == each.id) {
-              let tempInd = eachTodo.index;
-              tempInd[user] = tempInd[user] - 1;
-              eachTodo.index = tempInd;
-            }
-            return eachTodo;
-          });
-          allOriginalTodos[allTodosUser] = userTodos;
-        }
-        setOriginalPresentTodos(allTodos);
+        alterIndex('decrease', user, each.id, presentTodos, setPresentTodos);
+        alterIndex(
+          'decrease',
+          user,
+          each.id,
+          originalPresentTodos,
+          setOriginalPresentTodos,
+        );
       }
     });
   }
@@ -653,15 +652,15 @@ const TodoModal = ({
     }
   }
 
-  // for (let user in presentTodos) {
-  //   console.log('====');
-  //   console.log(user);
-  //   // console.log(presentTodos[user].length);
-  //   presentTodos[user].forEach(todo => {
-  //     console.log(todo.taskName, todo.index[user], todo.priority);
-  //   });
-  //   console.log('====');
-  // }
+  for (let user in presentTodos) {
+    console.log('====');
+    console.log(user);
+    // console.log(presentTodos[user].length);
+    presentTodos[user].forEach(todo => {
+      console.log(todo.taskName, todo.index[user], todo.priority);
+    });
+    console.log('====');
+  }
 
   // for (let user in futureTodos) {
   //   console.log('====');
