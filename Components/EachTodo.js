@@ -1,10 +1,17 @@
 import React, {useEffect, useState} from 'react';
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {
+  Dimensions,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import CheckBox from '@react-native-community/checkbox';
 import firestore from '@react-native-firebase/firestore';
 import TodoModal from './TodoModal';
 import auth from '@react-native-firebase/auth';
 import MaterialIcon from '../customIcons/MaterialIcon';
+import IonIcon from '../customIcons/IonIcon';
 
 const EachTodo = ({
   id,
@@ -126,19 +133,40 @@ const EachTodo = ({
                 ? '#20e734'
                 : 'rgba(198, 196, 196, 0.61)',
               textDecorationLine: finished ? 'line-through' : 'none',
-              width: finished ? 265 : 240,
+              width: finished
+                ? users.length > 1
+                  ? 245
+                  : 265
+                : users.length > 1 && !sidebarTodo
+                ? 220
+                : 240,
+              // width: '80%',
+              // backgroundColor: '#ffffff',
             },
           ]}>
           {taskName}
         </Text>
       </TouchableOpacity>
-      {sidebarTodo ? (
-        <TouchableOpacity onPress={() => handleTimePress()}>
-          <Text style={styles.time}>{time}</Text>
-        </TouchableOpacity>
-      ) : (
-        <View></View>
-      )}
+      <View
+        style={[styles.eachTodoExtremeRight, {width: sidebarTodo ? 70 : null}]}>
+        {users.length > 1 ? (
+          <IonIcon
+            iconName="people-circle-outline"
+            iconColor="#c6c4c4"
+            iconSize={26}
+            style={styles.sharedIcon}
+          />
+        ) : (
+          <></>
+        )}
+        {sidebarTodo ? (
+          <TouchableOpacity onPress={() => handleTimePress()}>
+            <Text style={styles.time}>{time}</Text>
+          </TouchableOpacity>
+        ) : (
+          <></>
+        )}
+      </View>
     </TouchableOpacity>
   );
 };
@@ -152,26 +180,28 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     marginTop: 10,
     marginBottom: 10,
-    // backgroundColor:"#ffffff",
-    width: 320,
+    // backgroundColor: '#ffffff',
+    width: '80%',
+    justifyContent: 'space-between',
   },
   taskName: {
     color: '#ffffff',
     // backgroundColor: '#ffffff',
     fontFamily: 'Ubuntu-Italic',
-    // backgroundColor:"#ffffff"
     lineHeight: 30,
     marginLeft: 8,
     fontSize: 20,
+  },
+  eachTodoExtremeRight: {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
   time: {
     color: 'rgba(115, 110, 110, 0.68)',
     fontFamily: 'Poppins-Regular',
     fontSize: 12,
-    marginLeft: 8,
-    position: 'relative',
-    top: 10,
-    // backgroundColor: '#ffffff',
-    width: 70,
+    marginTop: 5,
   },
 });

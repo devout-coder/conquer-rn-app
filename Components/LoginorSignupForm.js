@@ -112,13 +112,16 @@ const LoginorSignupForm = ({loginorSignup}) => {
     try {
       const {idToken} = await GoogleSignin.signIn();
       const googleCredential = auth.GoogleAuthProvider.credential(idToken);
-      await auth().signInWithCredential(googleCredential);
-      let currentUser = auth().currentUser;
-      firestore().collection('users').doc(currentUser.uid).set({
-        email: currentUser.email,
-        photoURL: currentUser.photoURL,
-        userName: currentUser.displayName,
-      });
+      await auth()
+        .signInWithCredential(googleCredential)
+        .then(() => {
+          let currentUser = auth().currentUser;
+          firestore().collection('users').doc(currentUser.uid).set({
+            email: currentUser.email,
+            photoURL: currentUser.photoURL,
+            userName: currentUser.displayName,
+          });
+        });
       setLoading(false);
       setUsername('');
       setEmail('');

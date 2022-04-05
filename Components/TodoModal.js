@@ -16,6 +16,8 @@ import {
   TouchableOpacity,
   View,
   ToastAndroid,
+  Dimensions,
+  KeyboardAvoidingView,
 } from 'react-native';
 import Modal from 'react-native-modal';
 import PrioritySelector from './PrioritySelector';
@@ -37,6 +39,7 @@ import {userContext} from '../context';
 import IonIcon from '../customIcons/IonIcon';
 import FriendsSelectorModal from './FriendsSelectorModal';
 import PostponeConfirmModal from './PostponeConfirmModal';
+import {SafeAreaView} from 'react-native-safe-area-context';
 // const {TaskReminder} = NativeModules;
 
 const TodoModal = ({
@@ -652,15 +655,15 @@ const TodoModal = ({
     }
   }
 
-  for (let user in presentTodos) {
-    console.log('====');
-    console.log(user);
-    // console.log(presentTodos[user].length);
-    presentTodos[user].forEach(todo => {
-      console.log(todo.taskName, todo.index[user], todo.priority);
-    });
-    console.log('====');
-  }
+  // for (let user in presentTodos) {
+  //   console.log('====');
+  //   console.log(user);
+  //   // console.log(presentTodos[user].length);
+  //   presentTodos[user].forEach(todo => {
+  //     console.log(todo.taskName, todo.index[user], todo.priority);
+  //   });
+  //   console.log('====');
+  // }
 
   // for (let user in futureTodos) {
   //   console.log('====');
@@ -792,13 +795,7 @@ const TodoModal = ({
             multiline={true}
             numberOfLines={200}
           />
-          <View
-            style={[
-              styles.bottomBar,
-              {
-                bottom: keyboardStatus ? -180 : -40,
-              },
-            ]}>
+          <View style={styles.bottomBar}>
             <PrioritySelector
               style={styles.prioritySelector}
               priority={todoTaskPriority}
@@ -936,6 +933,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     alignSelf: 'center',
     borderRadius: 50,
+    // backgroundColor: '#ffffff',
     padding: 40,
   },
   topbar: {
@@ -951,6 +949,8 @@ const styles = StyleSheet.create({
     flex: 1,
     display: 'flex',
     flexDirection: 'column',
+    // backgroundColor: '#ffffff',
+    // height: Dimensions.get('window').height,
   },
   taskName: {
     color: '#ffffff',
@@ -971,6 +971,7 @@ const styles = StyleSheet.create({
     textAlignVertical: 'top',
     lineHeight: 42,
     height: '70%',
+    // backgroundColor: '#ffffff',
   },
   postponeText: {
     fontSize: 20,
@@ -982,10 +983,10 @@ const styles = StyleSheet.create({
     display: 'flex',
     width: '105%',
     position: 'relative',
+    top: 20,
     flexDirection: 'row',
     alignItems: 'center',
     alignSelf: 'center',
     justifyContent: 'space-between',
-    // backgroundColor: '#ffffff',
   },
 });

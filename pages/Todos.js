@@ -28,7 +28,6 @@ import DraggableFlatList, {
 } from 'react-native-draggable-flatlist';
 import Toast from '../Components/Toast';
 import MaterialIcon from '../customIcons/MaterialIcon';
-import {isNamedExportBindings} from 'typescript';
 
 const Todos = ({navigation, route, year, longTerm}) => {
   let user = useContext(userContext);
@@ -127,7 +126,7 @@ const Todos = ({navigation, route, year, longTerm}) => {
         let all = [...finished, ...unfinished];
         setFinishedTodos(
           finished.sort((a, b) => {
-            return a.index[user.uid] - b.index[ndexuser.uid];
+            return a.index[user.uid] - b.index[user.uid];
           }),
         );
         setUnfinishedTodos(
@@ -416,6 +415,7 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'space-between',
+    width: '100%',
   },
   unfinishedTodos: {
     display: 'flex',
@@ -423,6 +423,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flex: 1,
     marginBottom: 50,
+    width: '100%',
   },
   unfinishedTodosList: {
     display: 'flex',
@@ -431,6 +432,7 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     width: 340,
     flex: 1,
+    width: '100%',
   },
   finishedTodos: {
     display: 'flex',
@@ -438,6 +440,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 10,
     // backgroundColor: '#ffffff',
+    width: '100%',
     flex: 1,
   },
   finishedTodosList: {
@@ -448,7 +451,7 @@ const styles = StyleSheet.create({
     // maxHeight: 120,
     padding: 10,
     borderRadius: 15,
-    width: 340,
+    width: '100%',
     // alignItems: 'center',
   },
   noTodosMessage: {

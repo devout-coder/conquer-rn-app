@@ -2,6 +2,7 @@ import React, {useContext, useEffect, useRef, useState} from 'react';
 import {
   ActivityIndicator,
   Animated,
+  Dimensions,
   Easing,
   ScrollView,
   StyleSheet,
@@ -54,7 +55,7 @@ const IncompleteTodosSidebar = ({timeType, navigation, year, changeYear}) => {
 
   function increaseHeight() {
     Animated.timing(contHeight, {
-      toValue: 600,
+      toValue: Dimensions.get('window').height - 150,
       duration: 600,
       easing: Easing.linear,
       useNativeDriver: false,
