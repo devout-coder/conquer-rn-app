@@ -282,7 +282,7 @@ const Todos = ({navigation, route, year, longTerm}) => {
             />
           </TouchableOpacity>
         </View>
-        {user != null ? (
+        {user != null && modalOpen ? (
           <TodoModal
             taskName=""
             taskDesc=""

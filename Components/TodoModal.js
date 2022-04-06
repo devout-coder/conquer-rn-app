@@ -75,20 +75,6 @@ const TodoModal = ({
   const toggleModal = () => {
     setDeleteModalVisible(!deleteModalVisible);
   };
-  const [keyboardStatus, setKeyboardStatus] = useState(undefined);
-  function provideKeyboardStatus() {
-    const showSubscription = Keyboard.addListener('keyboardDidShow', () => {
-      setKeyboardStatus(true);
-    });
-    const hideSubscription = Keyboard.addListener('keyboardDidHide', () => {
-      setKeyboardStatus(false);
-    });
-
-    return () => {
-      showSubscription.remove();
-      hideSubscription.remove();
-    };
-  }
 
   function postponeText() {
     let times = timesPostponed == 1 ? '1 time' : `${timesPostponed} times`;
@@ -218,10 +204,6 @@ const TodoModal = ({
       return `${day}/${month}/${year}`;
     }
   }
-
-  useEffect(() => {
-    provideKeyboardStatus();
-  }, []);
 
   function priPosition(todos) {
     //this function computes the appropriate position for any new todo of each priority
