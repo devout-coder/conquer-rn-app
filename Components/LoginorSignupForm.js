@@ -71,39 +71,49 @@ const LoginorSignupForm = ({loginorSignup}) => {
   }
 
   const signUp = async () => {
-    setLoading(true);
-    try {
-      await auth().createUserWithEmailAndPassword(email, password);
-      await auth().currentUser.updateProfile({displayName: username});
-      firestore().collection('users').doc(auth().currentUser.uid).set({
-        email: email,
-        photoURL: null,
-        userName: username,
-      });
-      setLoading(false);
-      setUsername('');
-      setEmail('');
-      setPassword('');
-      nav.push('Main');
-    } catch (error) {
+    if (username.length != 0 && email.length != 0 && password.length != 0) {
+      setLoading(true);
+      try {
+        await auth().createUserWithEmailAndPassword(email, password);
+        await auth().currentUser.updateProfile({displayName: username});
+        firestore().collection('users').doc(auth().currentUser.uid).set({
+          email: email,
+          photoURL: null,
+          userName: username,
+        });
+        setLoading(false);
+        setUsername('');
+        setEmail('');
+        setPassword('');
+        nav.push('Main');
+      } catch (error) {
+        setModalVisible(true);
+        setModalMessage(error.message);
+        setLoading(false);
+      }
+    } else {
       setModalVisible(true);
-      setModalMessage(error.message);
-      setLoading(false);
+      setModalMessage("Username, email or password can't be empty");
     }
   };
 
   const login = async () => {
-    setLoading(true);
-    try {
-      await auth().signInWithEmailAndPassword(email, password);
-      setLoading(false);
-      setEmail('');
-      setPassword('');
-      nav.push('Main');
-    } catch (error) {
+    if (email.length != 0 && password.length != 0) {
+      setLoading(true);
+      try {
+        await auth().signInWithEmailAndPassword(email, password);
+        setLoading(false);
+        setEmail('');
+        setPassword('');
+        nav.push('Main');
+      } catch (error) {
+        setModalVisible(true);
+        setModalMessage(error.message);
+        setLoading(false);
+      }
+    } else {
       setModalVisible(true);
-      setModalMessage(error.message);
-      setLoading(false);
+      setModalMessage("Email or password can't be empty");
     }
   };
 
