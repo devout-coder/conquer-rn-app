@@ -3,34 +3,41 @@ import {ActivityIndicator, StyleSheet, Text, View} from 'react-native';
 import ToggleSwitch from 'toggle-switch-react-native';
 import {NativeModules} from 'react-native';
 import NudgerConfirmationModal from './NudgerConfirmationModal';
-import {nudgerSwitchContext} from '../context';
+import {nudgerSwitchContext, userContext} from '../context';
 const {AccessibilityPermissionHandler} = NativeModules;
 const {InstalledApplicationsFetcher} = NativeModules;
-import {MMKV} from 'react-native-mmkv';
+import firestore from '@react-native-firebase/firestore';
 
 const NudgerToggleSwitch = () => {
-  const storage = new MMKV();
-
+  let user = useContext(userContext);
   const [confirmationModalVisible, setConfirmationModalVisible] =
     useState(false);
   let {nudgerSwitch, setNudgerSwitch} = useContext(nudgerSwitchContext);
   const [nudgerSwitchDetailsFetched, setNudgerSwitchDetailsFetched] =
     useState(false);
 
-  useEffect(() => {
-    // InstalledApplicationsFetcher.getNudgerSwitchState(nudgerSwitchState => {
+  const fetchNudgerSwitchDetails = () => {
     AccessibilityPermissionHandler.checkAccessibilityPermission(
       accessEnabled => {
-        if (storage.getBoolean('isNudgerOn') && accessEnabled == 1) {
-          setNudgerSwitch(true);
-          setNudgerSwitchDetailsFetched(true);
-        } else {
-          setNudgerSwitch(false);
-          setNudgerSwitchDetailsFetched(true);
-        }
+        firestore()
+          .collection('nudgerDetails')
+          .doc(user.uid)
+          .get()
+          .then(doc => {
+            let nudgerSwitchState = doc.get('nudgerSwitch');
+            if (nudgerSwitchState && accessEnabled == 1) {
+              setNudgerSwitch(true);
+              setNudgerSwitchDetailsFetched(true);
+            } else {
+              setNudgerSwitch(false);
+              setNudgerSwitchDetailsFetched(true);
+            }
+          });
       },
     );
-    // });
+  };
+  useEffect(() => {
+    fetchNudgerSwitchDetails();
   }, []);
 
   const checkIfAccessibilityIsOn = newSwitchState => {
@@ -47,7 +54,18 @@ const NudgerToggleSwitch = () => {
           } else if (accessEnabled == 1) {
             //accesibility permission is given
             InstalledApplicationsFetcher.saveNudgerSwitchState(newSwitchState);
-            storage.set('isNudgerOn', newSwitchState);
+
+            firestore()
+              .collection('nudgerDetails')
+              .doc(user.uid)
+              .update({nudgerSwitch: newSwitchState})
+              .catch(error => {
+                firestore()
+                  .collection('nudgerDetails')
+                  .doc(user.uid)
+                  .set({nudgerSwitch: newSwitchState});
+              });
+
             setNudgerSwitchDetailsFetched(true);
             setNudgerSwitch(newSwitchState);
           }
@@ -56,7 +74,12 @@ const NudgerToggleSwitch = () => {
     } else {
       //nudger is turned off
       InstalledApplicationsFetcher.saveNudgerSwitchState(newSwitchState);
-      storage.set('isNudgerOn', newSwitchState);
+
+      firestore()
+        .collection('nudgerDetails')
+        .doc(user.uid)
+        .update({nudgerSwitch: newSwitchState});
+
       setNudgerSwitch(newSwitchState);
     }
   };

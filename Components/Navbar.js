@@ -19,7 +19,6 @@ import MaterialCommunityIcon from '../customIcons/MaterialCommunityIcon';
 import Toast from './Toast';
 import {NativeModules} from 'react-native';
 const {InstalledApplicationsFetcher} = NativeModules;
-import {MMKV} from 'react-native-mmkv';
 import {Menu, MenuItem} from 'react-native-material-menu';
 import IonIcon from '../customIcons/IonIcon';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
@@ -29,15 +28,10 @@ const Navbar = ({page}) => {
   let {justLoggedOut, setJustLoggedOut} = useContext(loginContext);
   let {nav, setNav} = useContext(navbarContext);
   let {tabNav, setTabNav} = useContext(tabNavbarContext);
-  const storage = new MMKV();
 
   const logout = () => {
     hideMenu();
     InstalledApplicationsFetcher.deleteNudgerDetails();
-    const keys = storage.getAllKeys();
-    keys.forEach(key => {
-      storage.delete(key);
-    });
     // console.log('logging out');
     setJustLoggedOut(true);
     GoogleSignin.revokeAccess()

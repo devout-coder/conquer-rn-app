@@ -25,14 +25,11 @@ import {defineAnimation} from 'react-native-reanimated';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 const {InstalledApplicationsFetcher} = NativeModules;
-import {MMKV} from 'react-native-mmkv';
 import ToggleSwitch from 'toggle-switch-react-native';
 
 const windowHeight = Dimensions.get('window').height;
 
 const Nudger = ({navigation}) => {
-  const storage = new MMKV();
-
   let user = useContext(userContext);
 
   let {nudgerSwitch, setNudgerSwitch} = useContext(nudgerSwitchContext);
@@ -105,57 +102,30 @@ const Nudger = ({navigation}) => {
   };
 
   const fetchNudgerDetails = () => {
-    let blacklistedApps = storage.getString('blacklistedApps');
-    let blacklistedWebsites = storage.getString('blacklistedWebsites');
-    let timeDuration = storage.getString('timeDuration');
-    let timeTypeDropdownValue = storage.getString('timeTypeDropdownValue');
-    let ashneerGroverVoiceSwitch = storage.getBoolean(
-      'ashneerGroverVoiceSwitch',
-    );
-    let takeUserHomeSwitch = storage.getBoolean('takeUserHomeSwitch');
-    let timeType = storage.getString('timeType');
-    if (blacklistedApps != undefined) {
-      //nudger details are stored in the mmkv storage
-      setStateNudgerDetails(
-        blacklistedApps,
-        blacklistedWebsites,
-        timeDuration,
-        timeTypeDropdownValue,
-        ashneerGroverVoiceSwitch,
-        takeUserHomeSwitch,
-        timeType,
-      );
-    } else {
-      //nudger details are not stored in the mmkv storage
-      firestore()
-        .collection('nudgerDetails')
-        .where('user', '==', user.uid)
-        .get()
-        .then(snap => {
-          if (snap.docs.length != 0) {
-            //no previous nudger details for this user exist
-            let detailsObj = snap.docs[0];
-            let blacklistedApps = detailsObj.get('blacklistedApps');
-            let blacklistedWebsites = detailsObj.get('blacklistedWebsites');
-            let timeDuration = detailsObj.get('timeDuration');
-            let timeTypeDropdownValue = detailsObj.get('timeTypeDropdownValue');
-            let ashneerGroverVoiceSwitch = detailsObj.get(
-              'ashneerGroverVoiceSwitch',
-            );
-            let takeUserHomeSwitch = detailsObj.get('takeUserHomeSwitch');
-            let timeType = detailsObj.get('timeType');
-            setStateNudgerDetails(
-              blacklistedApps,
-              blacklistedWebsites,
-              timeDuration,
-              timeTypeDropdownValue,
-              ashneerGroverVoiceSwitch,
-              takeUserHomeSwitch,
-              timeType,
-            );
-          }
-        });
-    }
+    firestore()
+      .collection('nudgerDetails')
+      .doc(user.uid)
+      .get()
+      .then(doc => {
+        if (doc.get('blacklistedApps') != undefined) {
+          let blacklistedApps = doc.get('blacklistedApps');
+          let blacklistedWebsites = doc.get('blacklistedWebsites');
+          let timeDuration = doc.get('timeDuration');
+          let timeTypeDropdownValue = doc.get('timeTypeDropdownValue');
+          let ashneerGroverVoiceSwitch = doc.get('ashneerGroverVoiceSwitch');
+          let takeUserHomeSwitch = doc.get('takeUserHomeSwitch');
+          let timeType = doc.get('timeType');
+          setStateNudgerDetails(
+            blacklistedApps,
+            blacklistedWebsites,
+            timeDuration,
+            timeTypeDropdownValue,
+            ashneerGroverVoiceSwitch,
+            takeUserHomeSwitch,
+            timeType,
+          );
+        }
+      });
     setNudgerDetailsFetched(true);
   };
 
@@ -174,24 +144,10 @@ const Nudger = ({navigation}) => {
       timeType: timeTypeRadio,
       ashneerGroverVoiceSwitch: ashneerGroverVoiceSwitch,
       takeUserHomeSwitch: takeUserHomeSwitch,
-      user: user.uid,
+      nudgerSwitch: true,
     };
-    firestore()
-      .collection('nudgerDetails')
-      .where('user', '==', user.uid)
-      .get()
-      .then(snap => {
-        if (snap.docs.length == 0) {
-          //no previous nudger details for this user exist
-          firestore().collection('nudgerDetails').add(nudgerDetails);
-        } else {
-          //making changes to the previously existing nudger details
-          firestore()
-            .collection('nudgerDetails')
-            .doc(snap.docs[0].id)
-            .set(nudgerDetails);
-        }
-      });
+
+    firestore().collection('nudgerDetails').doc(user.uid).set(nudgerDetails);
   };
 
   const saveNudgerDetails = () => {
@@ -205,13 +161,6 @@ const Nudger = ({navigation}) => {
       timeTypeRadio,
     );
     saveNudgerDetailsFirebase();
-    storage.set('blacklistedApps', blacklistedApps.toString());
-    storage.set('blacklistedWebsites', blacklistedWebsites.toString());
-    storage.set('timeDuration', timeDuration);
-    storage.set('timeTypeDropdownValue', timeTypeDropdownValue);
-    storage.set('ashneerGroverVoiceSwitch', ashneerGroverVoiceSwitch);
-    storage.set('takeUserHomeSwitch', takeUserHomeSwitch);
-    storage.set('timeType', timeTypeRadio);
     navigation.navigate('Main');
   };
 
