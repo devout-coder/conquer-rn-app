@@ -385,6 +385,7 @@ const styles = StyleSheet.create({
   topInfoText: {
     color: '#878787',
     fontFamily: 'Poppins-Light',
+    marginLeft: 10,
   },
   mainContainer: {
     display: 'flex',

@@ -27,8 +27,7 @@ const PostponeConfirmModal = ({
       onBackButtonPress={closeModal}>
       <View style={styles.modal}>
         <Text style={styles.confirmText}>
-          Postponing the task will make it appear with todos of next
-          {correctTime()}. Do you want to do it?
+          {`Postponing the task will make it appear with todos of next ${correctTime()}. Do you want to do it?`}
         </Text>
         <View style={styles.buttons}>
           <TouchableOpacity onPress={closeModal}>
@@ -47,7 +46,7 @@ export default PostponeConfirmModal;
 
 const styles = StyleSheet.create({
   modal: {
-    flex: 0.16,
+    flex: 0.2,
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'space-between',

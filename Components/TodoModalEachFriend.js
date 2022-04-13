@@ -142,7 +142,9 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins-Regular',
     color: '#F1D7D7',
     fontSize: 20,
+    width: '65%',
     marginLeft: '8%',
+    // backgroundColor: '#ffffff',
   },
   ownerText: {
     fontSize: 16,
