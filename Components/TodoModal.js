@@ -39,7 +39,6 @@ import {userContext} from '../context';
 import IonIcon from '../customIcons/IonIcon';
 import FriendsSelectorModal from './FriendsSelectorModal';
 import PostponeConfirmModal from './PostponeConfirmModal';
-import {SafeAreaView} from 'react-native-safe-area-context';
 // const {TaskReminder} = NativeModules;
 
 const TodoModal = ({
@@ -64,11 +63,6 @@ const TodoModal = ({
   const [todoTaskPriority, setTodoTaskPriority] = useState(priority);
   const [todoTaskOriginalUsers, setTodoTaskOriginalUsers] = useState(users);
   const [todoTaskUsers, setTodoTaskUsers] = useState(users);
-  const todoTaskNewUsers = () => {
-    return todoTaskUsers.filter(eachUser => {
-      return !todoTaskOriginalUsers.includes(eachUser);
-    });
-  };
   const [todoTaskRemovedUsers, setTodoTaskRemovedUsers] = useState([]);
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
   const [reloadEverything, setReloadEverything] = useState(false);

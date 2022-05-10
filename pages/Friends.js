@@ -31,18 +31,6 @@ const Friends = ({navigation, route}) => {
   const [friendsConfirmModalVisible, setFriendsConfirmModalVisible] =
     useState(false);
 
-  const encryptData = (text, key) => {
-    return Aes.randomKey(16).then(iv => {
-      return Aes.encrypt(text, key, iv, 'aes-256-cbc').then(cipher => ({
-        cipher,
-        iv,
-      }));
-    });
-  };
-
-  const decryptData = (encryptedData, key) =>
-    Aes.decrypt(encryptedData.cipher, key, encryptedData.iv, 'aes-256-cbc');
-
   useEffect(() => {
     const backHandler = BackHandler.addEventListener(
       'hardwareBackPress',
@@ -63,9 +51,7 @@ const Friends = ({navigation, route}) => {
 
   const setFriendInfo = async () => {
     if (route.params != undefined) {
-      let friendInfo = route.params['friendInfo'];
-      let [cipher, iv] = friendInfo.split('~');
-      let friendId = await decryptData({cipher, iv}, cipherKey);
+      let friendId = route.params['friendInfo'];
       setFriendId(friendId);
       let doc = await firestore().collection('users').doc(friendId).get();
       setFriendName(doc.get('userName'));
@@ -76,15 +62,8 @@ const Friends = ({navigation, route}) => {
   const onShare = async () => {
     let urlData;
     try {
-      // encryptData(
-      //   ,
-      // ).then(({cipher, iv}) => {
-      //   urlData = cipher + '~' + iv;
-      // });
-      const {cipher, iv} = await encryptData(`${user.uid}`, cipherKey);
-      urlData = cipher + '~' + iv;
       const result = await Share.share({
-        message: `Tap this link to accept ${user.displayName}'s Conquer friend request\nhttps://conquer-goals.netlify.app/add-friend/${urlData}`,
+        message: `Tap this link to accept ${user.displayName}'s Conquer friend request\nhttps://conquer-goals.netlify.app/add-friend/${user.uid}`,
       });
     } catch (error) {
       alert(error.message);
@@ -108,7 +87,7 @@ const Friends = ({navigation, route}) => {
     }
     return newFriends;
   };
-  // console.log('heu')
+
   const addFriend = async () => {
     let oldFriendsOfUser = (
       await firestore().collection('friends').doc(user.uid).get()
@@ -269,7 +248,6 @@ const styles = StyleSheet.create({
     // margin: 18,
     marginTop: 40,
     alignSelf: 'center',
-    color: 'red',
     fontSize: 23,
     color: '#ffc0cb',
   },
