@@ -22,8 +22,13 @@ import android.widget.Toast;
 
 import com.facebook.react.ReactActivityDelegate;
 import com.facebook.react.ReactRootView;
+import com.facebook.react.bridge.Arguments;
+import com.facebook.react.bridge.ReactContext;
+import com.facebook.react.bridge.WritableMap;
+import com.facebook.react.modules.core.DeviceEventManagerModule;
 import com.swmansion.gesturehandler.react.RNGestureHandlerEnabledRootView;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -42,6 +47,15 @@ public class MainActivity extends ReactActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(null);
+
+//        Log.d("debug_tag", getIntent().getAction().toString());
+//        if(getIntent().getAction().equals("timeType_selector_clicked")){
+//            Log.d("debug_tag", "gotta fuck things up more now");
+//            final WritableMap params = Arguments.createMap();
+//            params.putString("val", "demo");
+//            ReactContext reactContext = (ReactContext) getApplicationContext();
+//            reactContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class).emit("timeType_expanded", params);
+//        }
         createNotificationChannel("task_reminders", "Task Reminders",
                 "This channel handles all notifications regarding task reminders", NotificationManager.IMPORTANCE_MAX);
         createNotificationChannel("task_reminders_asheers_voice", "Task Reminders Ashneer's Voice",
@@ -49,34 +63,6 @@ public class MainActivity extends ReactActivity {
                 NotificationManager.IMPORTANCE_MAX);
         Log.d("obscure_tag", "application has started!");
 
-    }
-
-    public String getApplicationName(PackageManager pm, String packageName) {
-        ApplicationInfo ai;
-        try {
-            ai = pm.getApplicationInfo(packageName, 0);
-        } catch (final PackageManager.NameNotFoundException e) {
-            ai = null;
-        }
-        final String appName = (String) (ai != null ? pm.getApplicationLabel(ai) : "(unknown)");
-        return appName;
-    }
-
-    private List<HashMap<String, String>> getInstalledApps() {
-        List<HashMap<String, String>> allInstalledApps = new ArrayList<>();
-        PackageManager pm = getPackageManager();
-        List<ApplicationInfo> apps = pm.getInstalledApplications(PackageManager.GET_META_DATA);
-
-        for (ApplicationInfo app : apps) {
-            if (pm.getLaunchIntentForPackage(app.packageName) != null) {
-                HashMap<String, String> appHash = new HashMap<>();
-                appHash.put("packageName", app.packageName);
-                appHash.put("appName", getApplicationName(pm, app.packageName));
-                allInstalledApps.add(appHash);
-            }
-
-        }
-        return allInstalledApps;
     }
 
 

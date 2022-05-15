@@ -162,6 +162,9 @@ android {
             keyPassword 'password'
         }
     }
+    buildFeatures {
+        viewBinding true
+    }
     buildTypes {
         debug {
             signingConfig signingConfigs.debug
@@ -207,6 +210,9 @@ dependencies {
     implementation 'com.google.firebase:firebase-firestore'
     implementation 'com.google.firebase:firebase-analytics'
     implementation 'com.google.firebase:firebase-core:16.0.0'
+    implementation 'androidx.appcompat:appcompat:1.4.1'
+    implementation 'com.google.android.material:material:1.6.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.3'
     debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}") {
         exclude group: 'com.facebook.fbjni'
     }

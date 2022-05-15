@@ -2,4 +2,7 @@
     <string name="app_name">Conquer</string>
     <string name="channel_name">Task Reminders</string>
     <string name="channel_description">This channel handles all notifications regarding task reminders</string>
+    <string name="appwidget_text">Day</string>
+    <string name="add_widget">Add widget</string>
+    <string name="app_widget_description">This is an app widget description</string>
 </resources>
