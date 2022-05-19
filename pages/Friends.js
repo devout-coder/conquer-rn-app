@@ -16,8 +16,6 @@ import {navbarContext, userContext} from '../context';
 import FriendConfirmationModal from '../Components/FriendConfirmationModal';
 import {FirebaseFirestoreTypes} from '@react-native-firebase/firestore';
 import Toast from '../Components/Toast';
-import Aes from 'react-native-aes-crypto';
-import {cipherKey} from '../sensitive-stuff';
 import {ScrollView} from 'react-native-gesture-handler';
 import IonIcon from '../customIcons/IonIcon';
 import MaterialIcon from '../customIcons/MaterialIcon';
