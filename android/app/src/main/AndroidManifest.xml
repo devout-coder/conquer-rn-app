@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.conquer_app">
+    package="com.conquer">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
@@ -11,18 +11,18 @@
     <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
-        android:name=".MainApplication"
+        android:name="com.conquer.MainApplication"
         android:allowBackup="false"
         android:icon="@mipmap/conquer_icon"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/conquer_icon"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".timeTypeSelector"
+            android:name="com.conquer.timeTypeSelector"
             android:exported="false" />
 
         <receiver
-            android:name=".IncompleteTodosWidget"
+            android:name="com.conquer.IncompleteTodosWidget"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
@@ -41,12 +41,12 @@
             android:resource="@color/conquerBackgroundColor" />
 
         <receiver
-            android:name=".AlarmReceiver"
+            android:name="com.conquer.AlarmReceiver"
             android:enabled="true"
             android:exported="true" />
 
         <service
-            android:name=".ApplicationListenerService"
+            android:name="com.conquer.ApplicationListenerService"
             android:enabled="true"
             android:exported="true"
             android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
@@ -74,7 +74,7 @@
         <!-- android:resource="@xml/accessibility_service_config" /> -->
         <!-- </service> -->
         <activity
-            android:name=".MainActivity"
+            android:name="com.conquer.MainActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize|uiMode"
             android:label="@string/app_name"
             android:launchMode="singleTask"

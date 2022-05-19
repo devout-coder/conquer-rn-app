@@ -1,4 +1,4 @@
-package com.conquer_app;
+package com.conquer;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -8,10 +8,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.provider.Settings;
 import android.util.Base64;
-import android.util.Log;
-import android.widget.Toast;
 
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.Callback;
@@ -22,9 +19,6 @@ import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableMap;
 
 import java.io.ByteArrayOutputStream;
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class InstalledApplicationsFetcher extends ReactContextBaseJavaModule {

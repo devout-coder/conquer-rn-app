@@ -1,4 +1,4 @@
-package com.conquer_app;
+package com.conquer;
 
 import com.facebook.react.ReactPackage;
 import com.facebook.react.bridge.NativeModule;
