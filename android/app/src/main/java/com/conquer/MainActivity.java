@@ -12,9 +12,11 @@ import com.facebook.react.ReactActivity;
 
 import android.util.Log;
 
+import androidx.appcompat.app.AppCompatDelegate;
+
 import com.facebook.react.ReactActivityDelegate;
 import com.facebook.react.ReactRootView;
-import com.swmansion.gesturehandler.react.RNGestureHandlerEnabledRootView;
+// import com.swmansion.gesturehandler.react.RNGestureHandlerEnabledRootView;
 
 public class MainActivity extends ReactActivity {
 
@@ -29,7 +31,7 @@ public class MainActivity extends ReactActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(null);
-
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
 //        Log.d("debug_tag", getIntent().getAction().toString());
 //        if(getIntent().getAction().equals("timeType_selector_clicked")){
 //            Log.d("debug_tag", "gotta fuck things up more now");
@@ -67,14 +69,14 @@ public class MainActivity extends ReactActivity {
         }
     }
 
-    @Override
-    protected ReactActivityDelegate createReactActivityDelegate() {
-        return new ReactActivityDelegate(this, getMainComponentName()) {
-            @Override
-            protected ReactRootView createRootView() {
-                return new RNGestureHandlerEnabledRootView(MainActivity.this);
-            }
-        };
-    }
+//    @Override
+//    protected ReactActivityDelegate createReactActivityDelegate() {
+//        return new ReactActivityDelegate(this, getMainComponentName()) {
+//            @Override
+//            protected ReactRootView createRootView() {
+//                return new RNGestureHandlerEnabledRootView(MainActivity.this);
+//            }
+//        };
+//    }
 
 }
