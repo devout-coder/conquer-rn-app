@@ -20,7 +20,7 @@ import {MenuContext} from 'react-native-menu';
 import Nudger from './pages/Nudger';
 import NudgerToggleSwitch from './Components/NudgerToggleSwitch';
 import Friends from './pages/Friends';
-import {NativeEventEmitter, NativeModules} from 'react-native';
+// import {NativeEventEmitter, NativeModules} from 'react-native';
 
 const Stack = createNativeStackNavigator();
 
@@ -47,15 +47,15 @@ const App = () => {
     });
   }, [user]);
 
-  useEffect(() => {
-    const eventEmitter = new NativeEventEmitter(NativeModules);
-    let eventListener = eventEmitter.addListener('timeType_expanded', event => {
-      console.log(event.eventProperty);
-    });
-    return () => {
-      eventListener.remove();
-    };
-  }, []);
+  // useEffect(() => {
+  //   const eventEmitter = new NativeEventEmitter(NativeModules);
+  //   let eventListener = eventEmitter.addListener('timeType_expanded', event => {
+  //     console.log(event.eventProperty);
+  //   });
+  //   return () => {
+  //     eventListener.remove();
+  //   };
+  // }, []);
 
   return (
     <userContext.Provider value={user}>

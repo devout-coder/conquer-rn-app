@@ -12,7 +12,7 @@ import com.facebook.react.ReactActivity;
 
 import android.util.Log;
 
-import androidx.appcompat.app.AppCompatDelegate;
+// import androidx.appcompat.app.AppCompatDelegate;
 
 import com.facebook.react.ReactActivityDelegate;
 import com.facebook.react.ReactRootView;
@@ -31,15 +31,7 @@ public class MainActivity extends ReactActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(null);
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-//        Log.d("debug_tag", getIntent().getAction().toString());
-//        if(getIntent().getAction().equals("timeType_selector_clicked")){
-//            Log.d("debug_tag", "gotta fuck things up more now");
-//            final WritableMap params = Arguments.createMap();
-//            params.putString("val", "demo");
-//            ReactContext reactContext = (ReactContext) getApplicationContext();
-//            reactContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class).emit("timeType_expanded", params);
-//        }
+        // AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         createNotificationChannel("task_reminders", "Task Reminders",
                 "This channel handles all notifications regarding task reminders", NotificationManager.IMPORTANCE_MAX);
         createNotificationChannel("task_reminders_asheers_voice", "Task Reminders Ashneer's Voice",

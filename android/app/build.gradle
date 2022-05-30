@@ -133,10 +133,10 @@ android {
 
     defaultConfig {
         applicationId "com.conquer"
-        minSdkVersion 29
+        minSdkVersion 27
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 2
-        versionName "2"
+        versionCode 5
+        versionName "2.3"
     }
     splits {
         abi {

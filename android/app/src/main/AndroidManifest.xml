@@ -17,22 +17,6 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/conquer_icon"
         android:theme="@style/AppTheme">
-        <activity
-            android:name="com.conquer.timeTypeSelector"
-            android:exported="false" />
-
-        <receiver
-            android:name="com.conquer.IncompleteTodosWidget"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-            </intent-filter>
-
-            <meta-data
-                android:name="android.appwidget.provider"
-                android:resource="@xml/incomplete_todos_widget_info" />
-        </receiver>
-
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
             android:resource="@drawable/notification_icon" />
